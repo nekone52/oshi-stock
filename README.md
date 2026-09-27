@@ -221,4 +221,4 @@ Figma: https://www.figma.com/design/x8DyodRF93ZeO06pU7G6Nn/%E7%84%A1%E9%A1%8C?no
 
 ## 12. ER図
 
-Figma: https://www.figma.com/design/XrL0yzquNzBhQm8O7GS8sQ/%E7%84%A1%E9%A1%8C?node-id=1-2&t=vRtOnmQahAtJsAVt-1
+Figma: https://www.figma.com/design/XrL0yzquNzBhQm8O7GS8sQ/%E7%84%A1%E9%A1%8C?node-id=0-1&t=vRtOnmQahAtJsAVt-1
