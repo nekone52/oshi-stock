@@ -11,4 +11,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "top#index"
+
+  get "login", to: "sessions#new", as: :login
 end
