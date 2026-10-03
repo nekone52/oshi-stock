@@ -6,7 +6,7 @@
   { key: :reservations, label: "予約", path: reservations_path, icon: "M3.5 5h17v15h-17zM3.5 10h17M8 3v4M16 3v4" },
   { key: :settings, label: "設定", path: settings_path, icon: "M4 7h10M18 7h2M4 17h4M12 17h8M16 7a2 2 0 1 0 0 .01M10 17a2 2 0 1 0 0 .01" }
 ] %>
-<nav aria-label="メインメニュー" class="fixed inset-x-0 bottom-0 z-20 mx-auto grid max-w-[430px] grid-cols-5 border-t border-line bg-white px-1 pt-1.5 pb-3">
+<nav aria-label="メインメニュー" class="fixed inset-x-0 bottom-0 z-20 mx-auto grid max-w-[430px] grid-cols-5 border-t border-line bg-white px-1 pt-1.5 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
   <% tabs.each do |tab| %>
     <% current = tab[:key] == active %>
     <%= link_to tab[:path], aria: { current: (current ? "page" : nil) }, class: "flex min-h-[52px] flex-col items-center justify-center gap-0.5 text-[11px] #{current ? 'font-bold text-accent-strong' : 'text-ink-soft'}" do %>

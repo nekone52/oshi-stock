@@ -16,11 +16,11 @@
   <div class="relative mt-3">
     <label for="goods-search" class="sr-only">所持グッズを検索</label>
     <svg class="pointer-events-none absolute top-1/2 left-3.5 h-[18px] w-[18px] -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
-    <input id="goods-search" type="search" placeholder="グッズ名・推し・作品名で検索" class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-[15px] text-ink placeholder:text-ink-faint">
+    <input id="goods-search" type="search" placeholder="グッズ名・推し・作品名で検索" class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-base text-ink placeholder:text-ink-faint">
   </div>
 
   <!-- カテゴリの絞り込み(横にスクロール) -->
-  <nav aria-label="カテゴリで絞り込み" class="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
+  <nav aria-label="カテゴリで絞り込み" class="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
     <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">すべて 42</button>
     <button type="button" aria-pressed="true" class="h-9 shrink-0 rounded-full bg-ink px-3.5 text-[13px] font-bold text-white">アクスタ 9</button>
     <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">缶バッジ 18</button>
@@ -47,7 +47,7 @@
         </div>
         <div class="flex flex-col gap-1 p-2.5">
           <span class="self-start rounded bg-line px-1.5 py-px text-[11px] font-bold text-ink-soft"><%= goods[:category] %></span>
-          <span class="text-sm font-bold text-ink"><%= goods[:name] %></span>
+          <span class="line-clamp-2 text-sm font-bold text-ink"><%= goods[:name] %></span>
           <span class="flex justify-between text-xs text-ink-soft"><span><%= goods[:chara] %></span><span>×<%= goods[:qty] %></span></span>
         </div>
       <% end %>
