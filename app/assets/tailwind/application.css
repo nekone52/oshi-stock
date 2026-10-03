@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+/* 色とフォントの名前を定義する(例: bg-accent、text-ink、font-display として使える) */
+@theme {
+  --color-bg: #FBF5F2;
+  --color-ink: #2B1E2A;
+  --color-ink-soft: #7C6870;
+  --color-ink-faint: #B7A6AC;
+  --color-line: #F0DEE3;
+  --color-hdr: #4A3A47;
+  --color-accent: #E8577A;
+  --color-accent-strong: #D43F63;
+  --color-accent-soft: #FBE1E7;
+  --color-paid: #2E8A6C;
+  --color-paid-bg: #DFF1E7;
+  --color-unpaid: #A9741C;
+  --color-unpaid-bg: #FBEBD2;
+  --color-chara-a: #E8577A;
+  --color-chara-a-soft: #FBE1E7;
+  --color-chara-b: #238E82;
+  --color-chara-b-soft: #DAF0EC;
+  --color-chara-c: #7D5FC4;
+  --color-chara-c-soft: #E9E2FA;
+  --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
+  --font-body: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
+}
