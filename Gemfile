@@ -61,6 +61,7 @@ group :development, :test do
   gem "rspec-rails"
   gem "factory_bot_rails"
 end
+gem "tailwindcss-rails"
 
 # Active Storageの保存先(S3)用
 gem "aws-sdk-s3", require: false
