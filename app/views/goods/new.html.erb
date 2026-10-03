@@ -1,0 +1,75 @@
+<div class="mx-auto max-w-[430px] px-4 pb-32">
+
+  <!-- ヘッダー(戻るとタイトル) -->
+  <header class="flex items-center gap-1 pt-4 pb-2">
+    <%= link_to goods_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+      <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+    <% end %>
+    <h1 class="font-display text-xl font-bold text-ink">グッズを登録</h1>
+  </header>
+
+  <div class="flex flex-col gap-4">
+    <!-- 商品ページのURL -->
+    <div class="flex flex-col gap-1.5">
+      <label for="item-url" class="text-[13px] font-bold text-ink">商品ページのURL</label>
+      <div class="flex gap-2">
+        <input id="item-url" type="url" placeholder="https://" class="h-12 min-w-0 flex-1 rounded-xl border border-line bg-white px-3 text-sm text-ink">
+        <button type="button" class="h-12 shrink-0 rounded-xl border border-accent bg-white px-3 text-[13px] font-bold text-accent-strong transition active:scale-95">読み込む</button>
+      </div>
+    </div>
+
+    <!-- グッズ名(必須) -->
+    <div class="flex flex-col gap-1.5">
+      <label for="item-name" class="text-[13px] font-bold text-ink">グッズ名 <span class="text-accent-strong">*</span></label>
+      <input id="item-name" type="text" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-[15px] text-ink">
+    </div>
+
+    <!-- 推しキャラ・購入先 -->
+    <div class="grid grid-cols-2 gap-2.5">
+      <div class="flex flex-col gap-1.5">
+        <label for="chara" class="text-[13px] font-bold text-ink">推しキャラ</label>
+        <select id="chara" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-sm text-ink">
+          <option>ミナト</option>
+          <option>ソラ</option>
+          <option>ハル</option>
+          <option>ツムギ</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="shop" class="text-[13px] font-bold text-ink">購入先</label>
+        <input id="shop" type="text" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-sm text-ink">
+      </div>
+    </div>
+
+    <!-- 単価・数量 -->
+    <div class="grid grid-cols-2 gap-2.5">
+      <div class="flex flex-col gap-1.5">
+        <label for="price" class="text-[13px] font-bold text-ink">単価（円）</label>
+        <input id="price" type="text" inputmode="numeric" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-sm text-ink">
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="qty" class="text-[13px] font-bold text-ink">数量</label>
+        <input id="qty" type="text" inputmode="numeric" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-sm text-ink">
+      </div>
+    </div>
+
+    <!-- 所持ステータス(ほしい物 / 予約中 / 所持) -->
+    <fieldset class="flex flex-col gap-1.5">
+      <legend class="text-[13px] font-bold text-ink">いまの状態</legend>
+      <div class="grid grid-cols-3 gap-1 rounded-xl bg-accent-soft/60 p-1">
+        <button type="button" aria-pressed="false" class="h-10 rounded-lg text-[13px] text-ink">ほしい物</button>
+        <button type="button" aria-pressed="false" class="h-10 rounded-lg text-[13px] text-ink">予約中</button>
+        <button type="button" aria-pressed="true" class="h-10 rounded-lg bg-white text-[13px] font-bold text-accent-strong">所持</button>
+      </div>
+    </fieldset>
+  </div>
+
+  <!-- 下の登録ボタン -->
+  <div class="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-[430px] items-center gap-3 border-t border-line bg-white px-5 pt-3 pb-5">
+    <div class="flex flex-col">
+      <span class="text-[11px] text-ink-soft">合計</span>
+      <span class="text-lg font-bold text-ink">¥0</span>
+    </div>
+    <button type="button" class="flex-1 rounded-2xl bg-accent py-3.5 font-display text-base font-bold text-white transition hover:bg-accent-strong active:scale-95">登録する</button>
+  </div>
+</div>

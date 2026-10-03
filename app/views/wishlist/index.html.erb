@@ -1,0 +1,63 @@
+<div class="mx-auto max-w-[430px] px-4 pb-28">
+
+  <!-- ヘッダー(見出しと登録ボタン) -->
+  <header class="flex items-center justify-between pt-6 pb-3">
+    <h1 class="font-display text-2xl font-bold text-ink">グッズ</h1>
+    <%= link_to "ほしい物を追加", new_good_path, class: "inline-flex h-11 items-center gap-1.5 rounded-full bg-accent px-4 text-sm font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
+  </header>
+
+  <!-- 所持グッズ / ほしい物の切り替え -->
+  <div class="grid grid-cols-2 gap-1 rounded-xl bg-accent-soft/60 p-1">
+    <%= link_to "所持グッズ", goods_path, class: "flex h-10 items-center justify-center rounded-lg text-sm text-ink" %>
+    <%= link_to "ほしい物", wishlist_path, aria: { current: "page" }, class: "flex h-10 items-center justify-center rounded-lg bg-white text-sm font-bold text-accent-strong" %>
+  </div>
+
+  <!-- 検索欄 -->
+  <div class="relative mt-3">
+    <label for="wish-search" class="sr-only">ほしい物を検索</label>
+    <svg class="pointer-events-none absolute top-1/2 left-3.5 h-[18px] w-[18px] -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+    <input id="wish-search" type="search" placeholder="グッズ名・推し・作品名で検索" class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-[15px] text-ink placeholder:text-ink-faint">
+  </div>
+
+  <!-- 優先度・カテゴリの絞り込み(横にスクロール) -->
+  <nav aria-label="絞り込み" class="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1">
+    <button type="button" aria-pressed="true" class="h-9 shrink-0 rounded-full bg-ink px-3.5 text-[13px] font-bold text-white">すべて 3</button>
+    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">優先度：高</button>
+    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">アクスタ</button>
+    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">缶バッジ</button>
+    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">ぬいぐるみ</button>
+  </nav>
+
+  <!-- ほしい物のカード(縦に並べる) -->
+  <ul class="mt-3 flex flex-col gap-2.5">
+    <% [
+      { name: "ぬいぐるみマスコット", chara: "ソラ", work: "作品A", price: "¥2,750", priority: "高", category: "ぬいぐるみ", release: "発売 12月", note: nil },
+      { name: "ミニアクスタ 第3弾", chara: "ハル", work: "作品B", price: "¥880", priority: "中", category: "アクスタ", release: "発売日 未定", note: "似たグッズ「ミニアクスタ」を3点所持しています" },
+      { name: "缶バッジ イベント限定", chara: "ミナト", work: "作品A", price: "¥550", priority: "低", category: "缶バッジ", release: "発売 1月", note: nil }
+    ].each do |item| %>
+      <li class="flex flex-col gap-2.5 rounded-2xl border border-line bg-white p-3.5">
+        <div class="flex items-center gap-1.5">
+          <span class="rounded bg-accent px-1.5 py-px text-[11px] font-bold text-white">優先度 <%= item[:priority] %></span>
+          <span class="rounded bg-line px-1.5 py-px text-[11px] font-bold text-ink-soft"><%= item[:category] %></span>
+          <span class="ml-auto text-xs text-ink-soft"><%= item[:release] %></span>
+        </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <div class="flex flex-col gap-0.5">
+            <span class="text-base font-bold text-ink"><%= item[:name] %></span>
+            <span class="text-xs text-ink-soft"><%= item[:chara] %> · <%= item[:work] %></span>
+          </div>
+          <span class="shrink-0 text-[15px] font-bold text-ink"><%= item[:price] %></span>
+        </div>
+        <% if item[:note] %>
+          <p class="rounded-lg bg-unpaid-bg px-2.5 py-2 text-xs text-unpaid"><%= item[:note] %></p>
+        <% end %>
+        <div class="grid grid-cols-2 gap-2">
+          <%= link_to "予約した", new_reservation_path, class: "flex h-10 items-center justify-center rounded-xl border border-accent text-[13px] font-bold text-accent-strong transition active:scale-95" %>
+          <button type="button" class="h-10 rounded-xl border border-line bg-white text-[13px] text-ink transition active:scale-95">買った</button>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<%= render "shared/bottom_nav", active: :goods %>
