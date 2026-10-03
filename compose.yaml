@@ -27,7 +27,6 @@ services:
       DATABASE_HOST: db
       DATABASE_USERNAME: app
       DATABASE_PASSWORD: password
-      RAILS_ENV: development
     depends_on:
       db:
         condition: service_healthy
