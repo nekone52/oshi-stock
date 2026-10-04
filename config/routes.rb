@@ -15,8 +15,8 @@ Rails.application.routes.draw do
   get "login", to: "sessions#new", as: :login
 
   # 画面モック(ロジックは後で入れる)
-  resources :reservations, only: [:index, :new]
-  resources :goods, only: [:index, :new]
+  resources :reservations, only: [ :index, :new ]
+  resources :goods, only: [ :index, :new ]
   get "wishlist", to: "wishlist#index", as: :wishlist
   get "settings", to: "settings#show", as: :settings
 end
