@@ -13,6 +13,18 @@
     </header>
     <p class="pb-2 text-[11px] text-ink-faint">サンプルデータで表示しています</p>
 
+    <!-- これから支払う金額のまとめ(予約注文へ) -->
+    <%= link_to reservations_path, class: "mt-2 flex items-center justify-between rounded-2xl border border-line bg-white px-4 py-3" do %>
+      <div class="flex flex-col">
+        <span class="text-xs text-ink-soft">これから支払う金額</span>
+        <span class="font-display text-2xl font-bold text-ink">¥12,100</span>
+      </div>
+      <div class="flex flex-col items-end gap-1">
+        <span class="rounded-lg bg-bg px-2 py-0.5 text-xs text-ink">未払い 2件</span>
+        <span class="rounded-lg bg-unpaid-bg px-2 py-0.5 text-xs font-bold text-unpaid">期限7日以内 1件</span>
+      </div>
+    <% end %>
+
     <!-- 推しキャラ(囲み) -->
     <div class="mt-2 rounded-2xl bg-white px-3 pt-3 pb-1">
 

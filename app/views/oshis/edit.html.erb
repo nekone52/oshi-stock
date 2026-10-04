@@ -1,0 +1,43 @@
+<div class="mx-auto max-w-[430px] px-4 pb-32">
+
+  <!-- ヘッダー(戻るとタイトル) -->
+  <header class="flex items-center gap-1 pt-4 pb-2">
+    <%= link_to oshis_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+      <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+    <% end %>
+    <h1 class="font-display text-xl font-bold text-ink">推しを編集</h1>
+  </header>
+
+  <div class="flex flex-col gap-5">
+    <!-- アイコン画像(登録済みのプレビュー) -->
+    <div class="flex flex-col items-center gap-2 pt-2">
+      <div class="flex h-28 w-28 items-center justify-center rounded-full bg-chara-a-soft font-display text-3xl font-bold text-chara-a">陽</div>
+      <span class="text-[13px] font-bold text-accent-strong">アイコンを変更</span>
+    </div>
+
+    <!-- 名前(必須) -->
+    <div class="flex flex-col gap-1.5">
+      <label for="oshi-name" class="text-[13px] font-bold text-ink">名前 <span class="text-accent-strong">*</span></label>
+      <input id="oshi-name" type="text" value="ヒナタ" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink">
+    </div>
+
+    <!-- 推しの色(カラーピッカーで自由に選ぶ。選んだ色はグラデーションで見せる) -->
+    <div class="flex flex-col gap-1.5">
+      <label for="oshi-color" class="text-[13px] font-bold text-ink">推しの色</label>
+      <div class="flex items-center gap-3">
+        <input id="oshi-color" type="color" value="#E8577A" class="h-12 w-14 shrink-0 cursor-pointer rounded-xl border border-line bg-white p-1">
+        <!-- 選んだ色のプレビュー -->
+        <div class="flex h-12 flex-1 items-center justify-end rounded-xl bg-gradient-to-r from-chara-a via-chara-a-soft to-white px-3 font-display text-base font-bold text-ink">ヒナタ</div>
+      </div>
+      <span class="text-xs text-ink-soft">名刺カードやアイコンに、この色のグラデーションがかかります</span>
+    </div>
+
+    <!-- 削除 -->
+    <%= link_to "この推しを削除する", confirm_delete_oshi_path(1), class: "flex h-12 w-full items-center justify-center rounded-xl border border-danger bg-white text-sm font-bold text-danger" %>
+  </div>
+
+  <!-- 下の保存ボタン -->
+  <div class="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px] border-t border-line bg-white px-5 pt-3 pb-5">
+    <button type="button" class="w-full rounded-2xl bg-accent py-3.5 font-display text-base font-bold text-white transition hover:bg-accent-strong active:scale-95">保存する</button>
+  </div>
+</div>

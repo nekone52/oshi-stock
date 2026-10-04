@@ -15,6 +15,9 @@
   --color-paid-bg: #DFF1E7;
   --color-unpaid: #A9741C;
   --color-unpaid-bg: #FBEBD2;
+  /* 退会・削除など、取り消せない操作の色 */
+  --color-danger: #D93636;
+  --color-danger-bg: #FDE4E4;
   --color-chara-a: #E8577A;
   --color-chara-a-soft: #FBE1E7;
   --color-chara-b: #238E82;

@@ -13,10 +13,21 @@ Rails.application.routes.draw do
   root "top#index"
 
   get "login", to: "sessions#new", as: :login
+  get "signup", to: "users#new", as: :signup
+  resources :passwords, param: :token, only: [ :new, :edit ]
+  get "terms", to: "pages#terms", as: :terms
+  get "privacy", to: "pages#privacy", as: :privacy
 
   # 画面モック(ロジックは後で入れる)
   resources :reservations, only: [ :index, :new ]
-  resources :goods, only: [ :index, :new ]
+  resources :goods, only: [ :index, :new, :edit ]
+  resources :oshis, only: [ :index, :show, :new, :edit ] do
+    get :confirm_delete, on: :member
+  end
+  resources :categories, only: [ :new ]
+  get "start", to: "top#start", as: :start
   get "wishlist", to: "wishlist#index", as: :wishlist
+  get "wishlist/new", to: "wishlist#new", as: :new_wishlist
   get "settings", to: "settings#show", as: :settings
+  get "settings/withdraw", to: "settings#withdraw", as: :withdraw
 end

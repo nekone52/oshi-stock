@@ -1,0 +1,17 @@
+<%# グッズ登録画面の上に、カテゴリ追加のシートを重ねて表示する %>
+<%= render template: "goods/new" %>
+
+<!-- カテゴリを追加(下から出るシート) -->
+<div class="fixed inset-0 z-40 flex items-end bg-ink/40">
+  <div role="dialog" aria-labelledby="category-title" class="mx-auto flex w-full max-w-[430px] flex-col gap-4 rounded-t-2xl bg-white px-5 pt-5 pb-8">
+    <h2 id="category-title" class="font-display text-lg font-bold text-ink">カテゴリを追加</h2>
+    <div class="flex flex-col gap-1.5">
+      <label for="category-name" class="text-[13px] font-bold text-ink">カテゴリ名</label>
+      <input id="category-name" type="text" placeholder="例：うちわ" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint">
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      <%= link_to "キャンセル", new_good_path, class: "flex h-11 items-center justify-center rounded-xl border border-line bg-white text-sm text-ink" %>
+      <button type="button" class="h-11 rounded-xl bg-accent text-sm font-bold text-white">追加する</button>
+    </div>
+  </div>
+</div>

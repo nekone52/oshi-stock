@@ -1,0 +1,15 @@
+<%# 推しキャラ一覧の上に、削除の確認を重ねて表示する %>
+<%= render template: "oshis/index" %>
+
+<!-- 削除の確認 -->
+<div class="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 px-6">
+  <div role="alertdialog" aria-labelledby="delete-title" class="flex w-full max-w-[340px] flex-col gap-3 rounded-2xl bg-white p-5">
+    <h2 id="delete-title" class="font-display text-lg font-bold text-ink">削除しますか？</h2>
+    <p class="text-sm text-ink">「ヒナタ」を削除します。この操作は取り消せません。</p>
+    <p class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">このキャラのグッズ(4件)もすべて削除されます</p>
+    <div class="mt-1 grid grid-cols-2 gap-2">
+      <%= link_to "やめる", oshis_path, class: "flex h-11 items-center justify-center rounded-xl border border-line bg-white text-sm text-ink" %>
+      <button type="button" class="h-11 rounded-xl bg-danger text-sm font-bold text-white">削除する</button>
+    </div>
+  </div>
+</div>

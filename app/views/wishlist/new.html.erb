@@ -1,0 +1,95 @@
+<div class="mx-auto max-w-[430px] px-4 pb-32">
+
+  <!-- ヘッダー(戻るとタイトル) -->
+  <header class="flex items-center gap-1 pt-4 pb-2">
+    <%= link_to wishlist_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+      <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+    <% end %>
+    <h1 class="font-display text-xl font-bold text-ink">ほしい物を追加</h1>
+  </header>
+
+  <div class="flex flex-col gap-4">
+    <!-- 商品画像(プレビューの枠) -->
+    <div class="flex flex-col gap-1.5">
+      <span class="text-[13px] font-bold text-ink">商品画像</span>
+      <div class="flex h-40 flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-line bg-white text-ink-soft">
+        <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
+        <span class="text-[13px] font-bold">画像を追加</span>
+      </div>
+    </div>
+
+    <!-- 商品ページのURL -->
+    <div class="flex flex-col gap-1.5">
+      <label for="item-url" class="text-[13px] font-bold text-ink">商品ページのURL</label>
+      <div class="flex gap-2">
+        <input id="item-url" type="url" placeholder="https://" class="h-12 min-w-0 flex-1 rounded-xl border border-line bg-white px-3 text-base text-ink">
+        <button type="button" class="h-12 shrink-0 rounded-xl border border-accent bg-white px-3 text-[13px] font-bold text-accent-strong transition active:scale-95">読み込む</button>
+      </div>
+    </div>
+
+    <!-- グッズ名(必須) -->
+    <div class="flex flex-col gap-1.5">
+      <label for="item-name" class="text-[13px] font-bold text-ink">グッズ名 <span class="text-accent-strong">*</span></label>
+      <input id="item-name" type="text" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink">
+    </div>
+
+    <!-- 推しキャラ -->
+    <div class="flex flex-col gap-1.5">
+      <label for="chara" class="text-[13px] font-bold text-ink">推しキャラ</label>
+      <select id="chara" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink">
+        <option>ミナト</option>
+        <option>ソラ</option>
+        <option>ハル</option>
+        <option>ツムギ</option>
+      </select>
+    </div>
+
+    <!-- カテゴリ(チップで選ぶ) -->
+    <fieldset class="flex flex-col gap-1.5">
+      <legend class="text-[13px] font-bold text-ink">カテゴリ</legend>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" aria-pressed="true" class="h-9 rounded-full bg-ink px-3.5 text-[13px] font-bold text-white">アクスタ</button>
+        <button type="button" aria-pressed="false" class="h-9 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">缶バッジ</button>
+        <button type="button" aria-pressed="false" class="h-9 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">ぬいぐるみ</button>
+        <button type="button" aria-pressed="false" class="h-9 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">ブロマイド</button>
+        <button type="button" aria-pressed="false" class="h-9 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">その他</button>
+        <!-- カテゴリの新規追加 -->
+        <button type="button" class="h-9 rounded-full border border-dashed border-accent bg-white px-3.5 text-[13px] font-bold text-accent-strong">＋ 追加</button>
+      </div>
+    </fieldset>
+
+    <!-- 単価 -->
+    <div class="flex flex-col gap-1.5">
+      <label for="price" class="text-[13px] font-bold text-ink">単価（円）</label>
+      <input id="price" type="text" inputmode="numeric" placeholder="例：1650" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint">
+    </div>
+
+    <!-- 発売月(年月だけ)・補足(上旬などのあいまいな書き方) -->
+    <div class="grid grid-cols-2 gap-2.5">
+      <div class="flex flex-col gap-1.5">
+        <label for="release-month" class="text-[13px] font-bold text-ink">発売月</label>
+        <select id="release-month" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink">
+          <option>未定</option>
+          <option>2026年10月</option>
+          <option>2026年11月</option>
+          <option>2026年12月</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label for="release-note" class="text-[13px] font-bold text-ink">補足</label>
+        <input id="release-note" type="text" placeholder="例：上旬" class="h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint">
+      </div>
+    </div>
+
+    <!-- メモ -->
+    <div class="flex flex-col gap-1.5">
+      <label for="memo" class="text-[13px] font-bold text-ink">メモ</label>
+      <textarea id="memo" rows="3" placeholder="例：特典付き、再販待ち" class="w-full rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink placeholder:text-ink-faint"></textarea>
+    </div>
+  </div>
+
+  <!-- 下の追加ボタン -->
+  <div class="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px] border-t border-line bg-white px-5 pt-3 pb-5">
+    <button type="button" class="w-full rounded-2xl bg-accent py-3.5 font-display text-base font-bold text-white transition hover:bg-accent-strong active:scale-95">追加する</button>
+  </div>
+</div>

@@ -25,6 +25,9 @@
   </head>
 
   <body class="bg-bg font-body text-ink antialiased">
-    <%= yield %>
+    <%# 今は見た目だけのモックなので、inert で入力・ボタン・リンクを効かなくしている(動くようにするときに外す) %>
+    <div inert>
+      <%= yield %>
+    </div>
   </body>
 </html>

@@ -1,0 +1,55 @@
+<div class="mx-auto max-w-[430px] px-4 pb-28">
+
+  <!-- ヘッダー(見出しと追加ボタン) -->
+  <header class="flex items-center justify-between gap-3 pt-6 pb-3">
+    <div class="flex flex-col">
+      <span class="text-xs font-bold tracking-[0.3em] text-ink-faint">MY OSHI</span>
+      <h1 class="bg-gradient-to-r from-accent to-chara-c bg-clip-text font-display text-3xl font-black text-transparent">推しキャラ</h1>
+    </div>
+    <%= link_to "＋ 推しを追加", new_oshi_path, class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
+  </header>
+
+  <!-- 推しキャラの一覧(名刺のような横長カード。押すと推しの詳細へ) -->
+  <ul class="flex flex-col gap-3">
+    <% [
+      { name: "ヒナタ", initial: "陽", bar: "bg-chara-a", photo: "from-chara-a-soft to-chara-a", from: "from-chara-a-soft", wish: 1, reserved: 1, owned: 2, total: "¥8,800" },
+      { name: "アオイ", initial: "蒼", bar: "bg-chara-b", photo: "from-chara-b-soft to-chara-b", from: "from-chara-b-soft", wish: 1, reserved: 1, owned: 1, total: "¥3,300" },
+      { name: "リン", initial: "凛", bar: "bg-chara-c", photo: "from-chara-c-soft to-chara-c", from: "from-chara-c-soft", wish: 1, reserved: 1, owned: 1, total: "¥4,950" }
+    ].each do |oshi| %>
+      <li class="relative">
+        <%= link_to oshi_path(1), class: "flex aspect-[91/55] overflow-hidden rounded-2xl border border-line bg-gradient-to-br #{oshi[:from]} to-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.98]" do %>
+          <!-- 左:推しの画像(画像がないときは、推しの色のグラデーションと頭文字) -->
+          <div class="relative flex w-[44%] shrink-0 items-center justify-center bg-gradient-to-br <%= oshi[:photo] %> font-display text-6xl font-bold text-white">
+            <!-- うっすら水玉の模様 -->
+            <span class="absolute inset-0 bg-[radial-gradient(rgb(255_255_255/0.22)_1.5px,transparent_1.5px)] bg-[length:14px_14px]" aria-hidden="true"></span>
+            <span class="relative"><%= oshi[:initial] %></span>
+          </div>
+          <!-- 右:名前・合計・グッズの数 -->
+          <div class="flex min-w-0 flex-1 flex-col justify-end gap-3 p-3.5">
+            <div class="flex flex-col gap-0.5">
+              <span class="truncate pr-8 font-display text-[28px] leading-tight font-black text-ink"><%= oshi[:name] %></span>
+              <!-- 名前の下の短い線(推しの色) -->
+              <span class="mb-1 h-1 w-10 rounded-full <%= oshi[:bar] %>"></span>
+              <span class="inline-flex items-baseline gap-1.5 self-start rounded-full border border-line bg-white/80 px-3 py-1 text-xs text-ink-soft">所持グッズ合計 <span class="text-base font-bold text-ink"><%= oshi[:total] %></span></span>
+            </div>
+            <!-- グッズの数(チップ風。詳細画面で一覧が見られる) -->
+            <div class="grid grid-cols-3 gap-1.5">
+              <% [ [ "ほしい", oshi[:wish] ], [ "予約中", oshi[:reserved] ], [ "所持", oshi[:owned] ] ].each do |label, count| %>
+                <span class="flex flex-col items-center rounded-lg border border-line bg-white py-1">
+                  <span class="text-xs text-ink-soft"><%= label %></span><span class="text-lg leading-tight font-bold text-ink"><%= count %></span>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        <!-- 右上:編集・削除のメニュー(…) -->
+        <button type="button" aria-label="<%= oshi[:name] %>のメニュー" class="absolute top-2.5 right-2.5 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white text-ink shadow-sm">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+        </button>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+
+<%= render "shared/bottom_nav", active: :oshi %>
