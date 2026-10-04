@@ -223,8 +223,8 @@
 
 ## 11. 画面遷移図
 
-Figma: https://www.figma.com/design/x8DyodRF93ZeO06pU7G6Nn/%E7%84%A1%E9%A1%8C?node-id=17-2135&t=MjXHvc7yTAG2GM4J-1
+Figma: https://www.figma.com/design/ypn9abNmlObGwAR7fnPMrg/%E6%8E%A8%E3%81%97%E3%82%B9%E3%83%88%E3%83%83%E3%82%AF-%E7%94%BB%E9%9D%A2%E9%81%B7%E7%A7%BB%E5%9B%B3-%E3%83%AF%E3%82%A4%E3%83%A4%E3%83%BC-?node-id=4-2&t=rL3IvPIyyBg1hpZB-1
 
 ## 12. ER図
 
-Figma: https://www.figma.com/design/XrL0yzquNzBhQm8O7GS8sQ/%E7%84%A1%E9%A1%8C?node-id=7-2&t=adqv1bUhHN3ZO509-1
+Figma: https://www.figma.com/design/XrL0yzquNzBhQm8O7GS8sQ/%E7%84%A1%E9%A1%8C?node-id=7-2&t=HNQNEbkUR6Zp99ma-1

@@ -1,0 +1,57 @@
+<div class="mx-auto max-w-[430px] px-4 pb-28">
+
+  <header class="pt-6 pb-3">
+    <h1 class="font-display text-2xl font-bold text-ink">設定</h1>
+  </header>
+
+  <!-- アカウント -->
+  <section aria-labelledby="account-heading" class="flex flex-col gap-2">
+    <h2 id="account-heading" class="border-l-4 border-accent pl-2.5 font-display text-base font-bold text-ink">アカウント</h2>
+    <div class="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
+      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+        表示名
+        <span class="text-sm text-ink-soft">ニックネーム ›</span>
+      </button>
+      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+        メールアドレス
+        <span class="text-sm text-ink-soft">変更 ›</span>
+      </button>
+      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+        パスワード
+        <span class="text-sm text-ink-soft">変更 ›</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 通知・表示 -->
+  <section aria-labelledby="display-heading" class="mt-6 flex flex-col gap-2">
+    <h2 id="display-heading" class="border-l-4 border-chara-b pl-2.5 font-display text-base font-bold text-ink">通知・表示</h2>
+    <div class="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
+      <div class="flex h-14 items-center justify-between px-4 text-[15px] text-ink">
+        支払期限の通知
+        <span class="rounded-full bg-paid-bg px-2.5 py-0.5 text-xs font-bold text-paid">オン</span>
+      </div>
+      <div class="flex h-14 items-center justify-between px-4 text-[15px] text-ink">
+        発売日の通知
+        <span class="rounded-full bg-line px-2.5 py-0.5 text-xs font-bold text-ink-soft">オフ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- その他 -->
+  <section aria-labelledby="other-heading" class="mt-6 flex flex-col gap-2">
+    <h2 id="other-heading" class="border-l-4 border-unpaid pl-2.5 font-display text-base font-bold text-ink">その他</h2>
+    <div class="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
+      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+        利用規約
+        <span class="text-sm text-ink-soft">›</span>
+      </button>
+      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+        ログアウト
+        <span class="text-sm text-ink-soft">›</span>
+      </button>
+    </div>
+  </section>
+</div>
+
+<%= render "shared/bottom_nav", active: :settings %>
