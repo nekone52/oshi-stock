@@ -1,0 +1,61 @@
+<div class="mx-auto max-w-[430px] px-4 pb-28">
+
+  <!-- ヘッダー(戻る・名前・編集) -->
+  <header class="flex items-center gap-1 pt-4 pb-2">
+    <%= link_to oshis_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+      <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+    <% end %>
+    <h1 class="flex-1 font-display text-xl font-bold text-ink">ヒナタ</h1>
+    <%= link_to "編集", edit_oshi_path(1), class: "flex h-9 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
+  </header>
+
+  <!-- 推しの画像(大きく)と合計 -->
+  <section class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
+    <div class="flex aspect-[16/9] items-center justify-center bg-gradient-to-br from-chara-a-soft to-chara-a font-display text-7xl font-bold text-white">陽</div>
+    <div class="grid grid-cols-4 divide-x divide-line py-3 text-center">
+      <div><p class="text-[11px] text-ink-soft">ほしい</p><p class="text-base font-bold text-ink">1</p></div>
+      <div><p class="text-[11px] text-ink-soft">予約中</p><p class="text-base font-bold text-ink">1</p></div>
+      <div><p class="text-[11px] text-ink-soft">所持</p><p class="text-base font-bold text-ink">2</p></div>
+      <div><p class="text-[11px] text-ink-soft">所持合計</p><p class="text-base font-bold text-ink">¥8,800</p></div>
+    </div>
+  </section>
+
+  <h2 class="mt-6 mb-2 font-display text-lg font-bold text-ink">ヒナタのグッズ</h2>
+
+  <!-- 状態ごとのグッズ一覧 -->
+  <% [
+    [ "ほしい物", "border-chara-a", [ { name: "缶バッジ第3弾", sub: "発売 未定", price: "¥550", badge: nil } ] ],
+    [ "予約注文中", "border-unpaid", [ { name: "夏祭りアクリルスタンド", sub: "10月上旬予定", price: "¥1,650", badge: [ "未払い", "bg-unpaid-bg text-unpaid" ] } ] ],
+    [ "所持グッズ", "border-chara-b", [
+      { name: "缶バッジ vol.1", sub: "×3", price: "¥1,100", badge: [ "支払い完了", "bg-paid-bg text-paid" ] },
+      { name: "ぬい服セット", sub: "×1", price: "¥5,500", badge: [ "支払い完了", "bg-paid-bg text-paid" ] }
+    ] ]
+  ].each do |title, border, items| %>
+    <section class="mt-4">
+      <h3 class="mb-2 border-l-4 <%= border %> pl-2.5 font-display text-base font-bold text-ink"><%= title %> <span class="text-[13px] font-normal text-ink-soft"><%= items.size %>件</span></h3>
+      <ul class="flex flex-col gap-2">
+        <% items.each do |item| %>
+          <li>
+            <%= link_to edit_good_path(1), class: "flex items-center gap-3 rounded-2xl border border-line bg-white p-2.5" do %>
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-chara-a-soft text-chara-a">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-bold text-ink"><%= item[:name] %></p>
+                <div class="mt-0.5 flex items-center gap-2">
+                  <% if item[:badge] %>
+                    <span class="rounded-full px-2 py-0.5 text-[11px] font-bold <%= item[:badge][1] %>"><%= item[:badge][0] %></span>
+                  <% end %>
+                  <span class="text-xs text-ink-soft"><%= item[:sub] %></span>
+                </div>
+              </div>
+              <span class="shrink-0 text-sm font-bold text-ink"><%= item[:price] %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+</div>
+
+<%= render "shared/bottom_nav", active: :oshi %>

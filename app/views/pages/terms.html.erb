@@ -1,0 +1,81 @@
+<div class="mx-auto max-w-[430px] px-4 pb-16">
+
+  <!-- ヘッダー(戻るとタイトル) -->
+  <header class="flex items-center gap-1 pt-4 pb-2">
+    <%= link_to settings_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+      <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+    <% end %>
+    <h1 class="font-display text-xl font-bold text-ink">利用規約</h1>
+  </header>
+
+  <!-- 本文 -->
+  <article class="flex flex-col gap-5 rounded-2xl border border-line bg-white p-5 text-sm leading-relaxed text-ink">
+    <p>この利用規約(以下「本規約」)は、個人開発者のしゃん(以下「運営者」)が提供する「推しストック」(以下「本サービス」)の利用条件を定めるものです。本サービスを利用する方(以下「ユーザー」)は、本規約に同意したうえで利用するものとします。</p>
+
+    <!-- 第1条 -->
+    <section class="flex flex-col gap-1.5">
+      <h2 class="font-display text-base font-bold">第1条(アカウント)</h2>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>ユーザーは、メールアドレスとパスワードでアカウントを登録します。</li>
+        <li>パスワードは、ユーザー自身が責任を持って管理してください。第三者に知られたことで起きた損害について、運営者は責任を負いません。</li>
+        <li>ユーザーは、設定画面の「退会する」から、いつでもアカウントを削除して退会できます。退会すると、登録した内容(推し・グッズ・画像など)はすべて削除され、元に戻せません。</li>
+      </ul>
+    </section>
+
+    <!-- 第2条 -->
+    <section class="flex flex-col gap-1.5">
+      <h2 class="font-display text-base font-bold">第2条(登録する内容)</h2>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>推しの名前・アイコン画像、グッズの情報・画像・メモなど、ユーザーが登録した内容の管理は、ユーザー自身が行います。</li>
+        <li>メモ欄などに、クレジットカード番号・口座の暗証番号など、他人に知られると困る情報は書かないでください。</li>
+        <li>画像は、ユーザー自身が使う範囲で登録してください。公式の画像などを使う場合は、権利を持つ人の決まりを守ってください。</li>
+      </ul>
+    </section>
+
+    <!-- 第3条 -->
+    <section class="flex flex-col gap-1.5">
+      <h2 class="font-display text-base font-bold">第3条(禁止事項)</h2>
+      <p>ユーザーは、次のことをしてはいけません。</p>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>法令や公序良俗に反すること</li>
+        <li>他人の著作権・肖像権などの権利を侵害すること</li>
+        <li>他人のアカウントを使うこと、不正にログインしようとすること</li>
+        <li>本サービスのサーバーに過度な負担をかけること、運営を妨げること</li>
+      </ul>
+    </section>
+
+    <!-- 第4条 -->
+    <section class="flex flex-col gap-1.5">
+      <h2 class="font-display text-base font-bold">第4条(サービスの変更・停止)</h2>
+      <p>運営者は、事前に知らせることなく、本サービスの内容を変更したり、提供を一時停止・終了したりすることがあります。</p>
+    </section>
+
+    <!-- 第5条 -->
+    <section class="flex flex-col gap-1.5">
+      <h2 class="font-display text-base font-bold">第5条(免責事項)</h2>
+      <ul class="list-disc space-y-1 pl-5">
+        <li>本サービスに表示される支払期限・発売月などは、ユーザーが登録した内容をもとにしたものです。運営者は、その正確さを保証しません。</li>
+        <li>支払いの遅れ、注文の自動キャンセル、グッズの二重購入などでユーザーに損害が出ても、運営者は責任を負いません。支払いや注文の状況は、必ず購入先のサイトでも確認してください。</li>
+        <li>サーバーの不具合などで登録内容が消えても、運営者は責任を負いません。</li>
+      </ul>
+    </section>
+
+    <!-- 第6条 -->
+    <section class="flex flex-col gap-1.5">
+      <h2 class="font-display text-base font-bold">第6条(規約の変更)</h2>
+      <p>運営者は、必要に応じて本規約を変更することがあります。変更後の規約は、本サービス上に表示した時点から効力を持ちます。</p>
+    </section>
+
+    <!-- 第7条 -->
+    <section class="flex flex-col gap-1.5">
+      <h2 class="font-display text-base font-bold">第7条(準拠法)</h2>
+      <p>本規約は、日本の法律に従って解釈します。</p>
+    </section>
+
+    <!-- 問い合わせ・日付 -->
+    <section class="flex flex-col gap-1.5 border-t border-line pt-4 text-[13px] text-ink-soft">
+      <p>お問い合わせ:お問い合わせフォーム(〇〇)</p>
+      <p>2026年〇月〇日 制定</p>
+    </section>
+  </article>
+</div>
