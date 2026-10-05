@@ -43,7 +43,8 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.2"
 # image_processing 2 からは、画像を加工する部分(ruby-vips)を自分で書く必要がある
-gem "ruby-vips"
+# require: false で、libvips がない場所(CI の scan_js など)では起動時に読み込まないようにする
+gem "ruby-vips", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
