@@ -125,9 +125,14 @@
               <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-a"></span>ヒナタ</span>
               <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
               <span class="text-[11px] tabular-nums text-ink-soft">10月上旬予定</span>
+              <span class="text-[11px] font-bold tabular-nums text-unpaid">支払期限 10/8(あと4日)</span>
             </div>
           </div>
-          <button class="shrink-0 whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-2 text-xs font-bold text-accent-strong">届いた</button>
+          <!-- ワンタップの切り替え(支払い・受け取り) -->
+          <div class="flex shrink-0 flex-col gap-1.5">
+            <button class="whitespace-nowrap rounded-full border border-paid bg-white px-3 py-1.5 text-xs font-bold text-paid">支払った</button>
+            <button class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
+          </div>
         </div>
         <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
           <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-chara-c-soft text-chara-c"><span class="h-4 w-4 rounded-full border-2 border-current"></span></div>
@@ -139,7 +144,11 @@
               <span class="text-[11px] tabular-nums text-ink-soft">11月中旬予定</span>
             </div>
           </div>
-          <button class="shrink-0 whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-2 text-xs font-bold text-accent-strong">届いた</button>
+          <!-- ワンタップの切り替え(支払い・受け取り) -->
+          <div class="flex shrink-0 flex-col gap-1.5">
+            <button aria-pressed="true" class="whitespace-nowrap rounded-full bg-paid-bg px-3 py-1.5 text-xs font-bold text-paid">✓ 支払い済み</button>
+            <button class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
+          </div>
         </div>
         <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
           <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-chara-b-soft text-chara-b"><span class="h-4 w-4 rounded-sm border-2 border-current"></span></div>
@@ -148,10 +157,15 @@
             <div class="flex flex-wrap items-center gap-2">
               <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-b"></span>アオイ</span>
               <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
-              <span class="text-[11px] tabular-nums text-ink-soft">発送日未定</span>
+              <span class="text-[11px] tabular-nums text-ink-soft">発売 未定</span>
+              <span class="text-[11px] tabular-nums text-ink-soft">支払期限 未定</span>
             </div>
           </div>
-          <button class="shrink-0 whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-2 text-xs font-bold text-accent-strong">届いた</button>
+          <!-- ワンタップの切り替え(支払い・受け取り) -->
+          <div class="flex shrink-0 flex-col gap-1.5">
+            <button class="whitespace-nowrap rounded-full border border-paid bg-white px-3 py-1.5 text-xs font-bold text-paid">支払った</button>
+            <button class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
+          </div>
         </div>
       </div>
     </section>

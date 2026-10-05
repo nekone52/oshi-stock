@@ -16,7 +16,7 @@
   <div class="relative mt-3">
     <label for="goods-search" class="sr-only">所持グッズを検索</label>
     <svg class="pointer-events-none absolute top-1/2 left-3.5 h-[18px] w-[18px] -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
-    <input id="goods-search" type="search" placeholder="グッズ名・推し・作品名で検索" class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-base text-ink placeholder:text-ink-faint">
+    <input id="goods-search" type="search" placeholder="グッズ名・推しで検索" class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-base text-ink placeholder:text-ink-faint">
   </div>
 
   <!-- カテゴリの絞り込み(横にスクロール) -->
@@ -37,10 +37,10 @@
   <!-- 所持グッズのカード(2列) -->
   <div class="mt-2 grid grid-cols-2 gap-3">
     <% [
-      { name: "アクリルスタンド", category: "アクスタ", chara: "ミナト", qty: 2, tone: "bg-chara-b-soft text-chara-b" },
-      { name: "誕生日アクスタ 2026", category: "アクスタ", chara: "ソラ", qty: 1, tone: "bg-accent-soft text-accent-strong" },
-      { name: "ミニアクスタ", category: "アクスタ", chara: "ハル", qty: 3, tone: "bg-chara-c-soft text-chara-c" },
-      { name: "コラボカフェ アクスタ", category: "アクスタ", chara: "ツムギ", qty: 1, tone: "bg-unpaid-bg text-unpaid" }
+      { name: "アクリルスタンド", category: "アクスタ", chara: "アオイ", qty: 2, tone: "bg-chara-b-soft text-chara-b" },
+      { name: "誕生日アクスタ 2026", category: "アクスタ", chara: "ヒナタ", qty: 1, tone: "bg-chara-a-soft text-chara-a" },
+      { name: "ミニアクスタ", category: "アクスタ", chara: "リン", qty: 3, tone: "bg-chara-c-soft text-chara-c" },
+      { name: "コラボカフェ アクスタ", category: "アクスタ", chara: "ヒナタ", qty: 1, tone: "bg-chara-a-soft text-chara-a" }
     ].each do |goods| %>
       <%= link_to "#", class: "flex flex-col overflow-hidden rounded-2xl border border-line bg-white" do %>
         <div class="flex h-24 items-center justify-center <%= goods[:tone] %>">
