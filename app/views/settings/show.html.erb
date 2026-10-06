@@ -1,3 +1,6 @@
+<%# ログアウトを本物にしたので、この画面は押せるようにする(ほかの項目はまだ見た目だけ) %>
+<% content_for :interactive, true %>
+
 <div class="mx-auto max-w-[430px] px-4 pb-28">
 
   <header class="pt-6 pb-3">
@@ -48,10 +51,11 @@
         プライバシーポリシー
         <span class="text-sm text-ink-soft">›</span>
       <% end %>
-      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+      <!-- ログアウト(DELETE /session → sessions#destroy) -->
+      <%= button_to session_path, method: :delete, form_class: "contents", class: "flex h-14 w-full items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg" do %>
         ログアウト
         <span class="text-sm text-ink-soft">›</span>
-      </button>
+      <% end %>
       <!-- 退会(アカウント削除) -->
       <%= link_to withdraw_path, class: "flex h-14 items-center justify-between px-4 text-[15px] font-bold text-danger transition hover:bg-bg" do %>
         退会する

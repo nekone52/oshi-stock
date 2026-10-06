@@ -43,12 +43,7 @@
             <!-- 目のアイコンを押すと、伏せ字と文字を切り替える(password_visibility_controller.js) -->
             <div class="relative" data-controller="password-visibility">
               <%= f.password_field :password, required: true, minlength: 8, autocomplete: "new-password", placeholder: "••••••••", data: { password_visibility_target: "input" }, class: "w-full pr-11 rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
-              <button type="button" data-action="password-visibility#toggle" aria-label="パスワードを表示する" class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-ink hover:text-accent-strong">
-                <!-- 目のアイコン(伏せ字のとき) -->
-                <svg data-password-visibility-target="showIcon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15c2.4-5 5.6-7.5 9-7.5s6.6 2.5 9 7.5"/><circle cx="12" cy="15" r="3.3"/></svg>
-                <!-- 斜線の入った目のアイコン(文字が見えているとき) -->
-                <svg data-password-visibility-target="hideIcon" class="hidden h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15c2.4-5 5.6-7.5 9-7.5s6.6 2.5 9 7.5"/><circle cx="12" cy="15" r="3.3"/><path d="M4 4l16 16"/></svg>
-              </button>
+              <%= render "shared/password_visibility_button" %>
             </div>
           </label>
 
@@ -57,12 +52,7 @@
             <!-- 目のアイコンを押すと、伏せ字と文字を切り替える(password_visibility_controller.js) -->
             <div class="relative" data-controller="password-visibility">
               <%= f.password_field :password_confirmation, required: true, minlength: 8, autocomplete: "new-password", placeholder: "••••••••", data: { password_visibility_target: "input" }, class: "w-full pr-11 rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
-              <button type="button" data-action="password-visibility#toggle" aria-label="パスワードを表示する" class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-ink hover:text-accent-strong">
-                <!-- 目のアイコン(伏せ字のとき) -->
-                <svg data-password-visibility-target="showIcon" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15c2.4-5 5.6-7.5 9-7.5s6.6 2.5 9 7.5"/><circle cx="12" cy="15" r="3.3"/></svg>
-                <!-- 斜線の入った目のアイコン(文字が見えているとき) -->
-                <svg data-password-visibility-target="hideIcon" class="hidden h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15c2.4-5 5.6-7.5 9-7.5s6.6 2.5 9 7.5"/><circle cx="12" cy="15" r="3.3"/><path d="M4 4l16 16"/></svg>
-              </button>
+              <%= render "shared/password_visibility_button" %>
             </div>
           </label>
         </div>
