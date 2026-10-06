@@ -25,9 +25,9 @@
   </head>
 
   <body class="bg-bg font-body text-ink antialiased">
-    <!-- お知らせ(登録しました・回数が多すぎます など。数秒で読める位置に出す) -->
+    <!-- お知らせ(登録しました・回数が多すぎます など。数秒で読める位置に出して、3秒で消す。flash_controller.js) -->
     <% flash.each do |type, message| %>
-      <div role="status" class="fixed inset-x-0 top-3 z-50 mx-auto w-[calc(100%-2rem)] max-w-[398px] rounded-xl px-4 py-3 text-sm font-bold shadow-md <%= type == "notice" ? "bg-paid-bg text-paid" : "bg-danger-bg text-danger" %>">
+      <div role="status" data-controller="flash" class="fixed inset-x-0 top-3 z-50 mx-auto w-[calc(100%-2rem)] max-w-[398px] rounded-xl px-4 py-3 text-sm font-bold shadow-md transition-opacity duration-500 <%= type == "notice" ? "bg-paid-bg text-paid" : "bg-danger-bg text-danger" %>">
         <%= message %>
       </div>
     <% end %>

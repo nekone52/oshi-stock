@@ -3,8 +3,14 @@ ja:
   activerecord:
     models:
       user: ユーザー
+      character: 推しキャラ
     attributes:
       user:
         email_address: メールアドレス
         password: パスワード
         password_confirmation: パスワード(確認)
+      character:
+        name: 推しキャラ名
+        color: 推しキャラの色
+        icon: アイコン画像
+        user: ユーザー
