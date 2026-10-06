@@ -13,7 +13,6 @@ RSpec.describe "App screens (mock)", type: :request do
     "推しキャラ" => "/oshis",
     "推しを追加" => "/oshis/new",
     "ヒナタのグッズ" => "/oshis/1",
-    "推しを編集" => "/oshis/1/edit",
     "削除しますか？" => "/oshis/1/confirm_delete",
     "退会しますか？" => "/settings/withdraw",
     "グッズを編集" => "/goods/1/edit",

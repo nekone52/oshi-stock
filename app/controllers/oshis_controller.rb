@@ -29,7 +29,22 @@ class OshisController < ApplicationController
     end
   end
 
+  # 推しを編集の画面を開く(ログイン中ユーザーの推しの中からだけ探す。ほかの人の推しは見つからない)
   def edit
+    @character = Current.user.characters.find(params[:id])
+  end
+
+  # 「保存する」ボタンを押したときの更新処理
+  def update
+    @character = Current.user.characters.find(params[:id])
+
+    if @character.update(character_params)
+      # 更新に成功:推し一覧画面へ移動し、完了メッセージを表示
+      redirect_to oshis_path, notice: "推しを更新しました"
+    else
+      # 更新に失敗(名前が空など):編集画面を再表示し、エラーメッセージを画面に残す
+      render :edit, status: :unprocessable_content
+    end
   end
 
   # 削除の確認(まだモック)。後ろに推しキャラ一覧を重ねて表示するので、一覧と同じ推しを用意する
