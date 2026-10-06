@@ -7,6 +7,11 @@ class User < ApplicationRecord
   # ユーザーが持つログインセッションを紐付け、退会時には自動で全セッションを削除する
   has_many :sessions, dependent: :destroy
   has_many :characters, dependent: :destroy
+  # ユーザーが持つカテゴリ(推しキャラみんなで共有)。退会時には、そのカテゴリも削除する
+  has_many :categories, dependent: :destroy
+
+  # 【最初のカテゴリ】ユーザーが作られたら、最初の5種類のカテゴリを自動で作る
+  after_create :create_default_categories
 
   # 【メールアドレスの表記ゆれ防止（お掃除係）】
   # 「入口（登録）」と「照合（ログイン）」の両方で、Railsが勝手にキレイにしてから処理してくれる
@@ -25,4 +30,13 @@ class User < ApplicationRecord
   validates :password,
             length: { minimum: 8 },                      # 8文字以上
             allow_nil: true                              # 編集時、パスワードを変更しないなら空欄でもOK
+
+  private
+
+  # 最初の5種類のカテゴリを、このユーザーのカテゴリとして作る(あとから自分で増やしたり消したりできる)
+  def create_default_categories
+    %w[アクスタ 缶バッジ ぬいぐるみ ブロマイド その他].each do |name|
+      categories.create!(name: name)
+    end
+  end
 end

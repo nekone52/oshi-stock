@@ -4,6 +4,8 @@ ja:
     models:
       user: ユーザー
       character: 推しキャラ
+      category: カテゴリ
+      item: グッズ
     attributes:
       user:
         email_address: メールアドレス
@@ -14,3 +16,21 @@ ja:
         color: 推しキャラの色
         icon: アイコン画像
         user: ユーザー
+      category:
+        name: カテゴリ名
+        user: ユーザー
+      item:
+        name: グッズ名
+        url: 商品URL
+        category: カテゴリ
+        release_month: 発売月
+        release_period: 発売時期
+        shop_name: 購入先
+        price: 単価
+        quantity: 個数
+        status: ステータス
+        paid: 支払い済み
+        payment_deadline: 支払い期限
+        memo: メモ
+        character: 推しキャラ
+        image: 商品画像

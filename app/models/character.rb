@@ -1,5 +1,7 @@
 class Character < ApplicationRecord
   belongs_to :user
+  # 推しはたくさんのグッズを持つ ＆ 推しを消したらグッズも道連れで削除
+  has_many :items, dependent: :destroy
   # アイコン画像(1人に1枚)。表示用に、縦横600px以内に小さくしたもの(:display)も作れるようにする
   has_one_attached :icon do |attachable|
     attachable.variant :display, resize_to_limit: [ 600, 600 ]
