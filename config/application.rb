@@ -22,6 +22,9 @@ module App
     # in config/environments, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
+
+    # 画面やエラーメッセージを日本語にする(翻訳は rails-i18n と config/locales/ja.yml)
+    config.i18n.default_locale = :ja
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

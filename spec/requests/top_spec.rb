@@ -2,7 +2,13 @@ require "rails_helper"
 
 RSpec.describe "Top", type: :request do
   describe "GET /" do
-    it "トップページが表示される" do
+    it "ログインしていないと、ログイン画面へ移る" do
+      get root_path
+      expect(response).to redirect_to(new_session_path)
+    end
+
+    it "ログインしていれば、トップページが表示される" do
+      sign_in_as(create(:user))
       get root_path
 
       expect(response).to have_http_status(:ok)
