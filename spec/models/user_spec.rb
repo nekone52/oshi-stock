@@ -18,6 +18,11 @@ RSpec.describe User, type: :model do
       expect(user.errors[:email_address]).to include("は不正な値です")
     end
 
+    it "メールアドレスが256文字以上の場合は無効であること" do
+      user = build(:user, email_address: "#{'a' * 244}@example.com") # 244 + 12 = 256文字
+      expect(user).to be_invalid
+    end
+
     it "同じメールアドレスは登録できない(大文字・小文字がちがっても同じとみなす)" do
       create(:user, email_address: "oshi@example.com")
       user = build(:user, email_address: "OSHI@example.com")
