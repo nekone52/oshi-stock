@@ -48,11 +48,18 @@
               </div>
             </div>
           <% end %>
-          <%# 編集・削除のメニューは、編集(#21)・削除(#22)のときに作る。今は押しても何も起きない %>
+          <%# details は HTML の部品で、summary(…)を押すたびにメニューが開く・閉じる(JavaScript なし) %>
           <!-- 右上:編集・削除のメニュー(…) -->
-          <button type="button" aria-label="<%= character.name %>のメニュー" class="absolute top-2.5 right-2.5 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-white text-ink shadow-sm">
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
-          </button>
+          <details class="absolute top-2.5 right-2.5">
+            <summary aria-label="<%= character.name %>のメニュー" class="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-white text-ink shadow-sm [&::-webkit-details-marker]:hidden">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
+            </summary>
+            <!-- 開いたメニュー(削除は Issue 22 で本物にする。今は削除の確認のモックへ移るだけ) -->
+            <div class="absolute top-12 right-0 z-10 flex w-36 flex-col overflow-hidden rounded-xl border border-line bg-white text-sm font-bold shadow-md">
+              <%= link_to "編集する", edit_oshi_path(character), class: "px-4 py-3 text-ink hover:bg-accent-soft" %>
+              <%= link_to "削除する", confirm_delete_oshi_path(character), class: "border-t border-line px-4 py-3 text-danger hover:bg-danger-bg" %>
+            </div>
+          </details>
         </li>
       <% end %>
     </ul>
