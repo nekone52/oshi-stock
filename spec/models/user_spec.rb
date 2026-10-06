@@ -77,5 +77,17 @@ RSpec.describe User, type: :model do
       create_list(:character, 2, user: user)
       expect { user.destroy }.to change(Character, :count).by(-2)
     end
+
+    it "ユーザーを消すと、そのユーザーのカテゴリも消える" do
+      user = create(:user)
+      expect { user.destroy }.to change(Category, :count).by(-5)
+    end
+  end
+
+  describe "最初のカテゴリ" do
+    it "ユーザーを作ると、最初の5種類のカテゴリが自動でできる" do
+      user = create(:user)
+      expect(user.categories.pluck(:name)).to contain_exactly("アクスタ", "缶バッジ", "ぬいぐるみ", "ブロマイド", "その他")
+    end
   end
 end

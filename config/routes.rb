@@ -23,7 +23,8 @@ Rails.application.routes.draw do
 
   # 画面モック(ロジックは後で入れる)
   resources :reservations, only: [ :index, :new ]
-  resources :goods, only: [ :index, :new, :edit ]
+  # グッズ(新規登録は本物。一覧・編集はまだモック)
+  resources :goods, only: [ :index, :new, :create, :edit ]
   # 推しキャラ(一覧・登録・編集・削除は本物。詳細はまだモック)
   resources :oshis, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     get :confirm_delete, on: :member
