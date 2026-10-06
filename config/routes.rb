@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -13,8 +15,9 @@ Rails.application.routes.draw do
   root "top#index"
 
   get "login", to: "sessions#new", as: :login
-  get "signup", to: "users#new", as: :signup
-  resources :passwords, param: :token, only: [ :new, :edit ]
+  # 新規登録(画面の表示 new と、登録の create)
+  resource :registration, only: [ :new, :create ]
+  get "signup", to: "registrations#new", as: :signup
   get "terms", to: "pages#terms", as: :terms
   get "privacy", to: "pages#privacy", as: :privacy
 

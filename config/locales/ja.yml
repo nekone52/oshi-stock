@@ -1,0 +1,10 @@
+# 項目の名前の日本語(エラーメッセージの「メールアドレスを入力してください」などに使われる)
+ja:
+  activerecord:
+    models:
+      user: ユーザー
+    attributes:
+      user:
+        email_address: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード(確認)

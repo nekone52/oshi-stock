@@ -25,8 +25,16 @@
   </head>
 
   <body class="bg-bg font-body text-ink antialiased">
-    <%# 今は見た目だけのモックなので、inert で入力・ボタン・リンクを効かなくしている(動くようにするときに外す) %>
-    <div inert>
+    <!-- お知らせ(登録しました・回数が多すぎます など。数秒で読める位置に出す) -->
+    <% flash.each do |type, message| %>
+      <div role="status" class="fixed inset-x-0 top-3 z-50 mx-auto w-[calc(100%-2rem)] max-w-[398px] rounded-xl px-4 py-3 text-sm font-bold shadow-md <%= type == "notice" ? "bg-paid-bg text-paid" : "bg-danger-bg text-danger" %>">
+        <%= message %>
+      </div>
+    <% end %>
+
+    <%# まだ見た目だけのモックの画面は、inert で入力・ボタン・リンクを効かなくしている %>
+    <%# 本物にした画面は content_for :interactive を書くと、押せるようになる %>
+    <div <%= "inert" unless content_for?(:interactive) %>>
       <%= yield %>
     </div>
   </body>
