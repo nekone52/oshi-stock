@@ -1,6 +1,5 @@
-<p>
-  You can reset your password on
-  <%= link_to "this password reset page", edit_password_url(@user.password_reset_token) %>.
-
-  This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
-</p>
+<p>推しストックのパスワード再設定のご案内です。</p>
+<p>下のリンクから、新しいパスワードを決めてください。</p>
+<p><%= link_to "パスワードを再設定する", edit_password_url(@user.password_reset_token) %></p>
+<p>このリンクの有効期限は<%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>です。<br>
+心当たりがない場合は、このメールを無視してください。</p>

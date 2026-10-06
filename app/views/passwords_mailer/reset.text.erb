@@ -1,4 +1,7 @@
-You can reset your password on
+推しストックのパスワード再設定のご案内です。
+
+下のリンクから、新しいパスワードを決めてください。
 <%= edit_password_url(@user.password_reset_token) %>
 
-This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+このリンクの有効期限は<%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>です。
+心当たりがない場合は、このメールを無視してください。
