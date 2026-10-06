@@ -6,6 +6,7 @@ class User < ApplicationRecord
   # 【入場パスの管理と後片付け】
   # ユーザーが持つログインセッションを紐付け、退会時には自動で全セッションを削除する
   has_many :sessions, dependent: :destroy
+  has_many :characters, dependent: :destroy
 
   # 【メールアドレスの表記ゆれ防止（お掃除係）】
   # 「入口（登録）」と「照合（ログイン）」の両方で、Railsが勝手にキレイにしてから処理してくれる

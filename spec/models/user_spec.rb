@@ -71,5 +71,11 @@ RSpec.describe User, type: :model do
       user.sessions.create!
       expect { user.destroy }.to change(Session, :count).by(-1)
     end
+
+    it "ユーザーを消すと、そのユーザーの推しキャラも消える" do
+      user = create(:user)
+      create_list(:character, 2, user: user)
+      expect { user.destroy }.to change(Character, :count).by(-2)
+    end
   end
 end

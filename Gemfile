@@ -46,6 +46,9 @@ gem "image_processing", "~> 2.2"
 # require: false で、libvips がない場所(CI の scan_js など)では起動時に読み込まないようにする
 gem "ruby-vips", require: false
 
+# Active Storage の添付ファイルのチェック(画像の種類・大きさ)
+gem "active_storage_validations"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
