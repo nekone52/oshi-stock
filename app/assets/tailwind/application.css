@@ -26,4 +26,15 @@
   --color-chara-c-soft: #E9E2FA;
   --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
   --font-body: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
+  /* お知らせが出たときに、光の線が左から右へスッと走る(animate-shine として使える) */
+  --animate-shine: shine 0.9s ease-out 0.15s both;
+
+  @keyframes shine {
+    from {
+      transform: translateX(-120%) skewX(-20deg);
+    }
+    to {
+      transform: translateX(320%) skewX(-20deg);
+    }
+  }
 }
