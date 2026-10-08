@@ -57,6 +57,15 @@ RSpec.describe "グッズ", type: :request do
       expect(response.body).to include('href="https://example.com/goods/1"', 'rel="noopener noreferrer"')
     end
 
+    it "http・https 以外の URL は、リンクにしない(javascript: などを開かせない)" do
+      item.update_column(:url, "javascript:alert(1)") # チェックを通らない値を、むりやり入れた場合
+      sign_in_as(user)
+      get good_path(item)
+
+      expect(response.body).not_to include("javascript:alert(1)")
+      expect(response.body).not_to include("商品ページ")
+    end
+
     it "ほかのユーザーのグッズは、見つからない(404)" do
       other_item = create(:item, character: create(:character, user: create(:user)))
 
