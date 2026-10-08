@@ -1,0 +1,7 @@
+<%# カテゴリを追加できたときの画面の書きかえ(画面は移らない) %>
+<%# ① グッズのフォームのチップの最後に、新しいカテゴリを「選んだ状態」で足す %>
+<%= turbo_stream.append "category_chips", partial: "goods/category_chip", locals: { category: @category, checked: true } %>
+<%# ② シートの「今あるカテゴリ」の最後に、行を足す %>
+<%= turbo_stream.append "category_rows", partial: "goods/category_row", locals: { category: @category } %>
+<%# ③ 前に出ていたエラーを消す %>
+<%= turbo_stream.update "category_errors", "" %>

@@ -78,6 +78,13 @@ RSpec.describe User, type: :model do
       expect { user.destroy }.to change(Character, :count).by(-2)
     end
 
+    it "推しキャラを通して、自分のグッズだけをまとめて取り出せる(has_many through)" do
+      user = create(:user)
+      my_item = create(:item, character: create(:character, user: user))
+      create(:item, character: create(:character, user: create(:user)))
+      expect(user.items).to contain_exactly(my_item)
+    end
+
     it "ユーザーを消すと、そのユーザーのカテゴリも消える" do
       user = create(:user)
       expect { user.destroy }.to change(Category, :count).by(-5)

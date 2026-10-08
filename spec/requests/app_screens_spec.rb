@@ -14,9 +14,7 @@ RSpec.describe "App screens (mock)", type: :request do
     "推しを追加" => "/oshis/new",
     "ヒナタのグッズ" => "/oshis/1",
     "退会しますか？" => "/settings/withdraw",
-    "グッズを編集" => "/goods/1/edit",
-    "まだ推しがいません" => "/start",
-    "カテゴリを追加" => "/categories/new"
+    "まだ推しがいません" => "/start"
   }.each do |title, path|
     it "ログインしていないと、ログイン画面へ移る(#{path})" do
       get path

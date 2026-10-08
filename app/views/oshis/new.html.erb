@@ -12,8 +12,8 @@
   </header>
 
   <!-- 推しの登録フォーム(送り先は POST /oshis → oshis#create) -->
-  <%# 選んだ色と画像を、その場でプレビューする(oshi_preview_controller.js) %>
-  <%= form_with model: @character, url: oshis_path, data: { controller: "oshi-preview", action: "submit->oshi-preview#submit" } do |f| %>
+  <%# 選んだ色を、その場でプレビューする(oshi_preview_controller.js)。アイコンの切り抜きは image_cropper_controller.js %>
+  <%= form_with model: @character, url: oshis_path, data: { controller: "oshi-preview" } do |f| %>
     <div class="flex flex-col gap-5">
       <!-- 入力ミスのお知らせ(保存できなかったときだけ出す) -->
       <% if @character.errors.any? %>
@@ -26,37 +26,42 @@
         </div>
       <% end %>
 
-      <!-- アイコン画像(丸い枠を押すと、画像を選ぶ画面が開く) -->
-      <label class="flex cursor-pointer flex-col items-center gap-2 pt-2">
-        <div class="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-line bg-white text-ink-soft">
-          <%# JS が使う名札(image)。登録画面では、見えない画像の枠として置いておく %>
-          <img data-oshi-preview-target="image" alt="選んだアイコン画像" class="hidden h-full w-full object-cover">
-          <!-- 画像を選ぶ前の絵(画像を選ぶと隠れる) -->
-          <svg data-oshi-preview-target="placeholder" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
-          <!-- 切り抜いた結果のプレビュー(画像を選んだときだけ出す) -->
-          <div data-oshi-preview-target="cropPreview" class="hidden h-full w-full overflow-hidden"></div>
-        </div>
-        <span class="text-[13px] font-bold text-accent-strong">アイコン画像を追加</span>
-        <%# 画像を選ぶ欄(選ぶと、下に切り抜きの場所が出る) %>
-        <%= f.file_field :icon, accept: "image/png,image/jpeg,image/webp", data: { oshi_preview_target: "fileInput", action: "oshi-preview#updateImage" }, class: "w-full text-xs text-ink-soft file:mr-2 file:rounded-full file:border-0 file:bg-accent-soft file:px-3 file:py-1 file:text-xs file:font-bold file:text-accent-strong" %>
-      </label>
-
-      <!-- アイコンの切り抜き(画像を選ぶと出てくる。ドラッグで位置、スライダーや指でつまんで拡大縮小) -->
-      <div data-oshi-preview-target="cropArea" class="hidden">
-        <div class="flex flex-col items-center gap-3">
-          <div class="aspect-square w-full max-w-[280px] overflow-hidden rounded-xl bg-ink/5">
-            <%# Cropper.js が、この画像を切り抜きの道具に変える %>
-            <img data-oshi-preview-target="cropImage" alt="切り抜く画像" class="block max-w-full">
+      <%# アイコン画像を選ぶところと、切り抜きの場所をまとめて image_cropper_controller.js が担当する %>
+      <%# 切り抜く形は名刺と同じ縦長(8:11)。保存する大きさは 480×660px %>
+      <%= tag.div class: "flex flex-col gap-5", data: { controller: "image-cropper", image_cropper_aspect_value: 8.0 / 11, image_cropper_width_value: 480, image_cropper_height_value: 660 } do %>
+        <!-- アイコン画像(枠を押すと、画像を選ぶ画面が開く) -->
+        <label class="flex cursor-pointer flex-col items-center gap-2 pt-2">
+          <div class="flex h-[132px] w-24 items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-line bg-white text-ink-soft">
+            <%# JS が使う名札(image)。登録画面では、見えない画像の枠として置いておく %>
+            <img data-image-cropper-target="image" alt="選んだアイコン画像" class="hidden h-full w-full object-cover">
+            <!-- 画像を選ぶ前の絵(画像を選ぶと隠れる) -->
+            <svg data-image-cropper-target="placeholder" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
+            <!-- 切り抜いた結果のプレビュー(画像を選んだときだけ出す) -->
+            <div data-image-cropper-target="preview" class="hidden h-full w-full overflow-hidden"></div>
           </div>
-          <!-- 拡大・縮小のスライダー(1倍〜4倍) -->
-          <label class="flex w-full max-w-[280px] items-center gap-3 text-xs text-ink-soft">
-            <span class="shrink-0">縮小</span>
-            <input type="range" min="1" max="4" step="0.01" value="1" data-oshi-preview-target="zoom" data-action="input->oshi-preview#zoom" aria-label="アイコンの拡大・縮小" class="w-full accent-accent">
-            <span class="shrink-0">拡大</span>
-          </label>
-          <p class="text-xs text-ink-soft">画像をドラッグして、丸の中に入る位置を決めてください</p>
+          <span class="text-[13px] font-bold text-accent-strong">アイコン画像を追加</span>
+          <%# 画像を選ぶ欄(選ぶと、下に切り抜きの場所が出る) %>
+          <%= f.file_field :icon, accept: "image/png,image/jpeg,image/webp", data: { image_cropper_target: "fileInput", action: "image-cropper#choose" }, class: "w-full text-xs text-ink-soft file:mr-2 file:rounded-full file:border-0 file:bg-accent-soft file:px-3 file:py-1 file:text-xs file:font-bold file:text-accent-strong" %>
+        </label>
+
+        <!-- アイコンの切り抜き(画像を選ぶと出てくる。ドラッグで位置、スライダーや指でつまんで拡大縮小) -->
+        <div data-image-cropper-target="cropArea" class="hidden">
+          <div class="flex flex-col items-center gap-3">
+            <%# crop-card:切り抜く範囲を名刺と同じ縦長にして、丸い点線のガイドを重ねる(cropper.css) %>
+            <div class="crop-card aspect-[8/11] w-full max-w-[220px] overflow-hidden rounded-xl bg-ink/5">
+              <%# Cropper.js が、この画像を切り抜きの道具に変える %>
+              <img data-image-cropper-target="cropImage" alt="切り抜く画像" class="block max-w-full">
+            </div>
+            <!-- 拡大・縮小のスライダー(1倍〜4倍) -->
+            <label class="flex w-full max-w-[220px] items-center gap-3 text-xs text-ink-soft">
+              <span class="shrink-0">縮小</span>
+              <input type="range" min="1" max="4" step="0.01" value="1" data-image-cropper-target="zoom" data-action="input->image-cropper#zoom" aria-label="アイコンの拡大・縮小" class="w-full accent-accent">
+              <span class="shrink-0">拡大</span>
+            </label>
+            <p class="text-xs text-ink-soft">画像をドラッグして、点線の丸の中に顔を入れてください</p>
+          </div>
         </div>
-      </div>
+      <% end %>
 
       <!-- 名前(必須) -->
       <div class="flex flex-col gap-1.5">
