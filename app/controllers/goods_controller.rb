@@ -57,6 +57,16 @@ class GoodsController < ApplicationController
     end
   end
 
+  # 編集画面の「このグッズを削除する」を押したときの削除処理(確認はアプリの確認ダイアログ。confirm_dialog.js)
+  def destroy
+    # 自分のグッズの中からだけ探す(ほかの人のグッズは見つからず 404)
+    @item = Current.user.items.find(params[:id])
+    @item.destroy
+    # 削除のあとは、グッズ一覧へ移動し、完了メッセージを表示
+    # status: :see_other(303)は「次は GET で見に行ってね」の合図(DELETE のまま一覧へ行かないように)
+    redirect_to goods_path, status: :see_other, notice: "グッズを消しました"
+  end
+
   private
 
   # フォームの選択肢(推し・カテゴリ)を用意する。ログイン中ユーザーのものだけ

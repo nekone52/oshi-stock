@@ -175,11 +175,6 @@
       <%= f.text_area :memo, rows: 3, placeholder: "例：送料+660円、保存用、特典付き", class: "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
-    <% if @item.persisted? %>
-      <%# 削除は Issue 25 で本物にする(今は押しても何も起きない) %>
-      <!-- 削除(編集のときだけ出す) -->
-      <button type="button" class="h-12 w-full rounded-xl border border-danger bg-white text-sm font-bold text-danger">このグッズを削除する</button>
-    <% end %>
   </div>
 
   <!-- 下の合計(単価×個数の自動表示)と登録・保存ボタン -->
@@ -189,6 +184,18 @@
       <span data-item-form-target="total" class="text-lg font-bold text-ink">¥0</span>
     </div>
     <%= f.submit submit_label, class: "flex-1 cursor-pointer rounded-2xl bg-accent py-3.5 font-display text-base font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
+  </div>
+<% end %>
+
+<% if @item.persisted? %>
+  <%# 削除のボタン(編集のときだけ出す。DELETE /goods/:id → goods#destroy) %>
+  <%# button_to はボタンごとにフォームを作るので、グッズのフォームの外に置く(フォームの中にフォームは入れられない) %>
+  <%# 消す前に、確認ダイアログを出す(turbo_confirm。見た目は confirm_dialog.js とレイアウトの confirm_dialog) %>
+  <!-- 削除(編集のときだけ出す) -->
+  <div class="mt-4">
+    <%= button_to "このグッズを削除する", good_path(@item), method: :delete,
+          form: { data: { turbo_confirm: "「#{@item.name_was}」を消去します。\nこの操作は取り消せません。" } },
+          class: "h-12 w-full cursor-pointer rounded-xl border border-danger bg-white text-sm font-bold text-danger" %>
   </div>
 <% end %>
 
