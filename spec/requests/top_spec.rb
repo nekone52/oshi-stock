@@ -83,6 +83,17 @@ RSpec.describe "ホーム画面", type: :request do
         expect(response.body.scan("アオイのタオル").size).to be >= 2
       end
 
+      it "予約注文中は、未払いを先に、支払い期限の近い順に並べる" do
+        create(:item, character: hinata, name: "期限が近い未払い", status: :reserved, paid: false, payment_deadline: Date.current + 1)
+        get root_path
+        section = response.body[/予約注文中.*?所持グッズ/m]
+
+        # 期限が近い未払い → ヒナタのアクスタ(未払い・3日後)→ アオイのタオル(届いた・未払い・期限なし)→ アオイのぬい(支払い済み)
+        expect(section.index("期限が近い未払い")).to be < section.index("ヒナタのアクスタ")
+        expect(section.index("ヒナタのアクスタ")).to be < section.index("アオイのタオル")
+        expect(section.index("アオイのタオル")).to be < section.index("アオイのぬい")
+      end
+
       it "グッズ名で検索すると、その言葉をふくむグッズだけを出す" do
         get root_path(q: "アクスタ")
         body = response.body

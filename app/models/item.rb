@@ -16,6 +16,10 @@ class Item < ApplicationRecord
   # validate: true … フォームから決まっていない名前(例: "hack")が送られてきたら、エラーで止めずに「不正な値です」と画面に出す
   enum :status, { wanted: 0, reserved: 1, owned: 2 }, validate: true
 
+  # 【並べ方】未払いを先に、支払い期限の近い順に並べる(期限が未定のものは、未払いの中で最後になる)
+  # -> { } で包んでおくと、.unpaid_first と書くたびに、そのときのデータで並べてくれる
+  scope :unpaid_first, -> { reorder(paid: :asc, payment_deadline: :asc) }
+
   # 【グッズ名】入力必須（空っぽ禁止）＆ 長すぎ防止のため最大50文字まで
   validates :name, presence: true, length: { maximum: 50 }
 
