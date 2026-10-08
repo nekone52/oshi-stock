@@ -83,10 +83,8 @@
 
     <!-- ほしい物リスト(横にスクロールするカード) -->
     <section class="pt-2">
-      <div class="mb-2.5 flex flex-col gap-0.5 border-l-4 border-chara-a pl-2.5">
-        <h2 class="font-display text-[1.05rem] font-bold">ほしい物リスト <span class="ml-1 rounded-full bg-chara-a-soft px-2 py-0.5 font-body text-[11px] font-bold text-chara-a"><%= @wanted_items.size %></span></h2>
-        <p class="text-[11px] text-ink-soft">まだ買っていないもの</p>
-      </div>
+      <%= render "top/section_header", title: "ほしい物リスト", count: @wanted_items.size, note: "まだ買っていないもの",
+                 border: "border-chara-a", badge: "bg-chara-a-soft text-chara-a" %>
       <% if @wanted_items.any? %>
         <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
           <% @wanted_items.each do |item| %>
@@ -105,16 +103,14 @@
           <% end %>
         </div>
       <% else %>
-        <p class="rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
+        <%= render "top/empty" %>
       <% end %>
     </section>
 
     <!-- 予約注文中(1行ずつのリスト) -->
     <section class="pt-6">
-      <div class="mb-2.5 flex flex-col gap-0.5 border-l-4 border-unpaid pl-2.5">
-        <h2 class="font-display text-[1.05rem] font-bold">予約注文中 <span class="ml-1 rounded-full bg-unpaid-bg px-2 py-0.5 font-body text-[11px] font-bold text-unpaid"><%= @reserved_items.size %></span></h2>
-        <p class="text-[11px] text-ink-soft">注文済み・支払いや到着を待っているもの</p>
-      </div>
+      <%= render "top/section_header", title: "予約注文中", count: @reserved_items.size, note: "注文済み・支払いや到着を待っているもの",
+                 border: "border-unpaid", badge: "bg-unpaid-bg text-unpaid" %>
       <% if @reserved_items.any? %>
         <div class="flex flex-col gap-2.5">
           <% @reserved_items.each do |item| %>
@@ -157,16 +153,14 @@
           <% end %>
         </div>
       <% else %>
-        <p class="rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
+        <%= render "top/empty" %>
       <% end %>
     </section>
 
     <!-- 所持グッズ(2列のカード) -->
     <section class="pt-6">
-      <div class="mb-2.5 flex flex-col gap-0.5 border-l-4 border-chara-b pl-2.5">
-        <h2 class="font-display text-[1.05rem] font-bold">所持グッズ <span class="ml-1 rounded-full bg-chara-b-soft px-2 py-0.5 font-body text-[11px] font-bold text-chara-b"><%= @owned_items.size %></span></h2>
-        <p class="text-[11px] text-ink-soft">手元にあるもの</p>
-      </div>
+      <%= render "top/section_header", title: "所持グッズ", count: @owned_items.size, note: "手元にあるもの",
+                 border: "border-chara-b", badge: "bg-chara-b-soft text-chara-b" %>
       <% if @owned_items.any? %>
         <div class="grid grid-cols-2 gap-3">
           <% @owned_items.each do |item| %>
@@ -185,7 +179,7 @@
           <% end %>
         </div>
       <% else %>
-        <p class="rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
+        <%= render "top/empty" %>
       <% end %>
     </section>
 

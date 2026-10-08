@@ -1,8 +1,10 @@
 class OshisController < ApplicationController
+  # 1人の推しに対するアクションは、最初に「自分の推しの中から」探しておく(ほかの人の推しは見つからず 404)
+  before_action :set_character, only: [ :edit, :update, :confirm_delete, :destroy ]
+
   # 推しキャラの一覧(ログイン中ユーザーの推しだけを、登録した順に並べる)
   def index
-    # with_attached_icon:アイコン画像もまとめて取り出す(推しの数だけデータベースに聞きに行かないようにする)
-    @characters = Current.user.characters.with_attached_icon.order(:created_at)
+    @characters = my_characters
   end
 
   def show
@@ -29,15 +31,12 @@ class OshisController < ApplicationController
     end
   end
 
-  # 推しを編集の画面を開く(ログイン中ユーザーの推しの中からだけ探す。ほかの人の推しは見つからない)
+  # 推しを編集の画面を開く(推しは before_action の set_character で探してある)
   def edit
-    @character = Current.user.characters.find(params[:id])
   end
 
   # 「保存する」ボタンを押したときの更新処理
   def update
-    @character = Current.user.characters.find(params[:id])
-
     if @character.update(character_params)
       # 更新に成功:推し一覧画面へ移動し、完了メッセージを表示
       redirect_to oshis_path, notice: "推しを更新しました"
@@ -47,18 +46,14 @@ class OshisController < ApplicationController
     end
   end
 
-  # 削除の確認の画面を開く
+  # 消去の確認の画面を開く(消す推しは set_character で探してある)
   def confirm_delete
-    # 消す推し(ログイン中ユーザーの推しの中からだけ探す。ほかの人の推しは見つからない)
-    @character = Current.user.characters.find(params[:id])
     # 後ろに推しキャラ一覧を重ねて表示するので、一覧と同じ推しも用意する
-    @characters = Current.user.characters.with_attached_icon.order(:created_at)
+    @characters = my_characters
   end
 
   # 確認の画面で「消去する」を押したときの消去処理
   def destroy
-    # 消す推し(ログイン中ユーザーの推しの中からだけ探す)
-    @character = Current.user.characters.find(params[:id])
     @character.destroy
     # 消去のあとは、一覧へ移動し、完了メッセージを表示
     # status: :see_other(303)は「次は GET で見に行ってね」の合図(DELETE のまま一覧へ行かないように)
@@ -66,6 +61,17 @@ class OshisController < ApplicationController
   end
 
   private
+
+  # URL の番号の推しを、ログイン中ユーザーの推しの中から探す
+  def set_character
+    @character = Current.user.characters.find(params[:id])
+  end
+
+  # ログイン中ユーザーの推したち(一覧と消去の確認で使う)
+  # with_attached_icon:アイコン画像もまとめて取り出す(推しの数だけデータベースに聞きに行かないようにする)
+  def my_characters
+    Current.user.characters.with_attached_icon.order(:created_at)
+  end
 
   # ストロングパラメーター：不正なデータ送信を防ぎ、許可した項目だけを取り出す安全フィルター
   def character_params

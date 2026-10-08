@@ -17,8 +17,7 @@
     <!-- 商品画像(画像がないときは、推しの色の背景にカメラの絵)と、状態のバッジ -->
     <div class="relative">
       <%= render "top/item_thumb", item: @item, css: "aspect-square" %>
-      <% status_label = { "wanted" => "ほしい物", "reserved" => "予約中", "owned" => "所持" }[@item.status] %>
-      <span class="absolute top-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-bold text-ink shadow-sm"><%= status_label %></span>
+      <span class="absolute top-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-bold text-ink shadow-sm"><%= status_label(@item) %></span>
     </div>
 
     <!-- 名前・推し・カテゴリ -->
