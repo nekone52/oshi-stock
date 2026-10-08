@@ -67,6 +67,24 @@ class GoodsController < ApplicationController
     redirect_to goods_path, status: :see_other, notice: "グッズを消しました"
   end
 
+  # ホームの「届いた」ボタン:所持に変える(支払い済みかどうかは、そのまま残す)
+  def receive
+    # 自分のグッズの中からだけ探す(ほかの人のグッズは見つからず 404)
+    @item = Current.user.items.find(params[:id])
+    # enum のおかげで、「所持に変えて保存」が1行で書ける
+    @item.owned!
+    # 押した画面(ホーム)に戻る。推しで絞り込んでいても、そのまま戻れる
+    redirect_back_or_to root_path, notice: "「#{@item.name}」を所持グッズに移しました"
+  end
+
+  # ホームの「支払った」ボタン:押すたびに、支払い済み ⇔ 未払い を切り替える
+  def toggle_paid
+    @item = Current.user.items.find(params[:id])
+    # !(びっくりマーク)を前に付けると反対になる(true → false、false → true)
+    @item.update(paid: !@item.paid)
+    redirect_back_or_to root_path, notice: (@item.paid ? "支払い済みにしました" : "未払いに戻しました")
+  end
+
   private
 
   # フォームの選択肢(推し・カテゴリ)を用意する。ログイン中ユーザーのものだけ
