@@ -29,8 +29,32 @@ class GoodsController < ApplicationController
     end
   end
 
-  # グッズの編集(まだモック)
+  # グッズを編集の画面を開く
   def edit
+    # ログイン中ユーザーのグッズの中からだけ探す(推しキャラを通して持っているグッズ。ほかの人のグッズは見つからず 404)
+    @item = Current.user.items.find(params[:id])
+    set_form_choices
+  end
+
+  # 「保存する」ボタンを押したときの更新処理
+  def update
+    # ① 自分のグッズの中から探す(edit と同じ)
+    @item = Current.user.items.find(params[:id])
+    # ② 送られてきた中身を入れる(まだ保存しない。推しとカテゴリをつなげてから保存するため)
+    @item.assign_attributes(item_params)
+    # ③ 推しとカテゴリを、ログイン中ユーザーのものの中から探してつなげる(create と同じ)
+    @item.character = Current.user.characters.find_by(id: params.dig(:item, :character_id))
+    @item.category = Current.user.categories.find_by(id: params.dig(:item, :category_id))
+
+    # ④ 保存して、成功・失敗で分ける
+    if @item.save
+      # 更新に成功:グッズ一覧へ移動し、完了メッセージを表示
+      redirect_to goods_path, notice: "グッズを更新しました"
+    else
+      # 更新に失敗(名前が空など):編集画面を再表示し、エラーメッセージを画面に残す
+      set_form_choices
+      render :edit, status: :unprocessable_content
+    end
   end
 
   private

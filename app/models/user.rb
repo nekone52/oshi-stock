@@ -7,6 +7,9 @@ class User < ApplicationRecord
   # ユーザーが持つログインセッションを紐付け、退会時には自動で全セッションを削除する
   has_many :sessions, dependent: :destroy
   has_many :characters, dependent: :destroy
+  # 推しキャラを通して、グッズもたくさん持っている(Current.user.items で「自分のグッズ」をまとめて取れる)
+  # グッズは推しキャラの dependent: :destroy で消えるので、ここには dependent を書かない
+  has_many :items, through: :characters
   # ユーザーが持つカテゴリ(推しキャラみんなで共有)。退会時には、そのカテゴリも削除する
   has_many :categories, dependent: :destroy
 
