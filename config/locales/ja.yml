@@ -11,6 +11,7 @@ ja:
         email_address: メールアドレス
         password: パスワード
         password_confirmation: パスワード(確認)
+        theme_color: テーマの色
       character:
         name: 推しキャラ名
         color: 推しキャラの色

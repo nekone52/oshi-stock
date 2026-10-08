@@ -34,6 +34,10 @@ class User < ApplicationRecord
             length: { minimum: 8 },                      # 8文字以上
             allow_nil: true                              # 編集時、パスワードを変更しないなら空欄でもOK
 
+  # 【テーマの色のルールチェック】「#」+ 16進数6桁(例:#E8577A)だけ。画面の style に入れるので、それ以外の文字を入れさせない
+  # 空っぽ禁止(presence)。空のときは「入力してください」だけ出すため、形のチェックは allow_blank にする
+  validates :theme_color, presence: true, format: { with: /\A#\h{6}\z/, allow_blank: true }
+
   private
 
   # 最初の5種類のカテゴリを、このユーザーのカテゴリとして作る(あとから自分で増やしたり消したりできる)
