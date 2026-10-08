@@ -89,4 +89,16 @@ RSpec.describe Item, type: :model do
       expect { character.destroy }.to change(Item, :count).by(-2)
     end
   end
+
+  describe ".unpaid_first(並べ方)" do
+    it "未払いを先に、支払い期限の近い順に並べる(期限が未定のものは、未払いの中で最後)" do
+      character = create(:character)
+      paid = create(:item, character: character, paid: true, payment_deadline: Date.current + 1)
+      no_deadline = create(:item, character: character, paid: false, payment_deadline: nil)
+      later = create(:item, character: character, paid: false, payment_deadline: Date.current + 20)
+      soon = create(:item, character: character, paid: false, payment_deadline: Date.current + 3)
+
+      expect(Item.unpaid_first).to eq([ soon, later, no_deadline, paid ])
+    end
+  end
 end

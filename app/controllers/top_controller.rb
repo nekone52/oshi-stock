@@ -19,7 +19,8 @@ class TopController < ApplicationController
     # ③ ステータスごとに3つに分ける(enum のおかげで、名前で書ける)
     @wanted_items   = @items.wanted      # ほしい物
     # 予約中 + 届いたけど未払いのもの(README:支払うまで予約注文中にも残して、払い忘れを防ぐ)
-    @reserved_items = @items.reserved.or(@items.owned.where(paid: false))
+    # 未払いを先に、支払い期限の近い順に並べる(Item の scope。期限切れを見落とさないように)
+    @reserved_items = @items.reserved.or(@items.owned.where(paid: false)).unpaid_first
     @owned_items    = @items.owned       # 所持
 
     # これから支払う金額のまとめ(支払っていない、予約中・所持のグッズ。絞り込み・検索に関係なく全部の推しで数える)
