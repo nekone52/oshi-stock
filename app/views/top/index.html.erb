@@ -1,29 +1,34 @@
+<%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
+<% content_for :interactive, true %>
+
   <div class="mx-auto max-w-[430px] px-4 pb-10">
 
     <header class="sticky top-0 z-10 flex items-center justify-between bg-bg pb-2 pt-4">
       <%= image_tag "logo.png", alt: "推しストック", class: "w-[9.5rem] h-auto" %>
       <!-- 設定 -->
-      <button class="inline-flex items-center gap-2 rounded-full border-2 border-ink bg-white px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-bg active:scale-95">
+      <%= link_to settings_path, class: "inline-flex items-center gap-2 rounded-full border-2 border-ink bg-white px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-bg active:scale-95" do %>
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
           <circle cx="12" cy="12" r="3" />
         </svg>
         設定
-      </button>
+      <% end %>
     </header>
-    <p class="pb-2 text-[11px] text-ink-faint">サンプルデータで表示しています</p>
 
-    <!-- これから支払う金額のまとめ(予約注文へ) -->
-    <%= link_to reservations_path, class: "mt-2 flex items-center justify-between rounded-2xl border border-line bg-white px-4 py-3" do %>
+    <%# これから支払う金額のまとめ。#41 で並び順やバッジを整える(予約注文の画面へのリンクは、その画面ができたらつなぐ) %>
+    <!-- これから支払う金額のまとめ(支払っていない、予約中・所持のグッズ) -->
+    <div class="mt-2 flex items-center justify-between rounded-2xl border border-line bg-white px-4 py-3">
       <div class="flex flex-col">
         <span class="text-xs text-ink-soft">これから支払う金額</span>
-        <span class="font-display text-2xl font-bold text-ink">¥12,100</span>
+        <span class="font-display text-2xl font-bold text-ink">¥<%= number_with_delimiter(@unpaid_total) %></span>
       </div>
       <div class="flex flex-col items-end gap-1">
-        <span class="rounded-lg bg-bg px-2 py-0.5 text-xs text-ink">未払い 2件</span>
-        <span class="rounded-lg bg-unpaid-bg px-2 py-0.5 text-xs font-bold text-unpaid">期限7日以内 1件</span>
+        <span class="rounded-lg bg-bg px-2 py-0.5 text-xs text-ink">未払い <%= @unpaid_count %>件</span>
+        <% if @due_soon_count.positive? %>
+          <span class="rounded-lg bg-unpaid-bg px-2 py-0.5 text-xs font-bold text-unpaid">期限7日以内 <%= @due_soon_count %>件</span>
+        <% end %>
       </div>
-    <% end %>
+    </div>
 
     <!-- 推しキャラ(囲み) -->
     <div class="mt-2 rounded-2xl bg-white px-3 pt-3 pb-1">
@@ -31,185 +36,153 @@
     <!-- 推しキャラ一覧(見出し) -->
     <div class="flex items-center justify-between border-l-4 border-unpaid pl-2.5">
       <h2 class="font-display text-xl font-bold text-unpaid">推しキャラ</h2>
-      <span class="inline-flex items-center gap-1 rounded-full border-2 border-ink bg-white px-3 py-1 text-xs font-bold">推しキャラ一覧 <span aria-hidden="true">→</span></span>
+      <%= link_to oshis_path, class: "inline-flex items-center gap-1 rounded-full border-2 border-ink bg-white px-3 py-1 text-xs font-bold" do %>推しキャラ一覧 <span aria-hidden="true">→</span><% end %>
     </div>
 
-    <!-- キャラ絞り込み -->
-    <nav class="-mx-4 flex gap-3.5 overflow-x-auto px-4 pb-4 pt-1">
-      <button class="flex shrink-0 flex-col items-center gap-1.5">
-        <span class="flex h-16 w-16 items-center justify-center rounded-full bg-[#64748B] font-display text-lg font-bold text-white ring-4 ring-[#64748B]/20">全</span>
-        <span class="text-[11px] font-bold text-ink">すべて</span>
-      </button>
-      <button class="flex shrink-0 flex-col items-center gap-1.5">
-        <span class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-transparent bg-chara-a-soft font-display text-lg font-bold text-chara-a">陽</span>
-        <span class="text-[11px] text-ink-soft">ヒナタ</span>
-      </button>
-      <button class="flex shrink-0 flex-col items-center gap-1.5">
-        <span class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-transparent bg-chara-b-soft font-display text-lg font-bold text-chara-b">蒼</span>
-        <span class="text-[11px] text-ink-soft">アオイ</span>
-      </button>
-      <button class="flex shrink-0 flex-col items-center gap-1.5">
-        <span class="flex h-16 w-16 items-center justify-center rounded-full border-2 border-transparent bg-chara-c-soft font-display text-lg font-bold text-chara-c">凛</span>
-        <span class="text-[11px] text-ink-soft">リン</span>
-      </button>
+    <!-- キャラ絞り込み(押すと /?character_id=番号 になって、その推しのグッズだけになる。検索の言葉は引きつぐ) -->
+    <nav class="-mx-4 flex gap-3.5 overflow-x-auto px-4 pb-4 pt-1" aria-label="推しキャラで絞り込む">
+      <%= link_to root_path(q: @query.presence), class: "flex shrink-0 flex-col items-center gap-1.5", aria: { current: (@selected_character ? nil : "true") } do %>
+        <span class="flex h-24 w-24 items-center justify-center rounded-full bg-[#64748B] font-display text-lg font-bold text-white <%= "ring-4 ring-[#64748B]/30" unless @selected_character %>">全</span>
+        <span class="font-display text-base <%= @selected_character ? "text-ink-soft" : "font-bold text-ink" %>">すべて</span>
+      <% end %>
+      <% @characters.each do |character| %>
+        <% selected = character == @selected_character %>
+        <% color = character.display_color %>
+        <%= link_to root_path(character_id: character.id, q: @query.presence), class: "flex shrink-0 flex-col items-center gap-1.5", aria: { current: (selected ? "true" : nil) } do %>
+          <%# 選んでいる推しには、推しの色のふちを付ける %>
+          <span style="background-color: color-mix(in srgb, <%= color %> 20%, white); color: <%= color %>; <%= "box-shadow: 0 0 0 4px color-mix(in srgb, #{color} 35%, transparent)" if selected %>" class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full font-display text-lg font-bold">
+            <% if character.icon.attached? %>
+              <%# アイコンは縦長(名刺の形)なので、真ん中を丸く切って見せる(切り抜きの丸いガイドと同じ場所) %>
+              <%= image_tag character.icon.variant(:display), alt: "", class: "h-full w-full object-cover" %>
+            <% else %>
+              <%= character.name.first %>
+            <% end %>
+          </span>
+          <span class="max-w-24 truncate font-display text-base <%= selected ? "font-bold text-ink" : "text-ink-soft" %>"><%= character.name %></span>
+        <% end %>
+      <% end %>
     </nav>
 
     </div>
 
-    <!-- 検索 -->
-    <div class="relative mt-2 mb-4">
+    <!-- 検索(グッズ名で探す。GET /?q=言葉。選んでいる推しは引きつぐ) -->
+    <%= form_with url: root_path, method: :get, class: "relative mt-2 mb-4" do |f| %>
+      <%= hidden_field_tag :character_id, @selected_character&.id if @selected_character %>
       <svg class="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <circle cx="11" cy="11" r="7" />
         <path stroke-linecap="round" d="M20 20l-3.5-3.5" />
       </svg>
-      <input type="search" placeholder="グッズ名で検索..." class="w-full rounded-full border border-line bg-white py-2.5 pr-4 pl-11 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none">
-    </div>
+      <%= f.search_field :q, value: @query, placeholder: "グッズ名で検索...", aria: { label: "グッズ名で検索" }, class: "w-full rounded-full border border-line bg-white py-2.5 pr-4 pl-11 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
+    <% end %>
+    <% if @query.present? %>
+      <!-- 検索中のお知らせ(検索をやめるリンク付き) -->
+      <p class="-mt-2 mb-3 text-xs text-ink-soft">「<%= @query %>」の検索結果 ・ <%= link_to "検索をやめる", root_path(character_id: @selected_character&.id), class: "font-bold text-accent-strong underline" %></p>
+    <% end %>
 
-    <!-- ほしい物リスト -->
+    <!-- ほしい物リスト(横にスクロールするカード) -->
     <section class="pt-2">
-      <div class="mb-2.5 flex items-baseline justify-between">
-        <div class="flex flex-col gap-0.5 border-l-4 border-chara-a pl-2.5">
-          <h2 class="font-display text-[1.05rem] font-bold">ほしい物リスト <span class="ml-1 rounded-full bg-chara-a-soft px-2 py-0.5 font-body text-[11px] font-bold text-chara-a">3</span></h2>
-          <p class="text-[11px] text-ink-soft">まだ買っていないもの</p>
+      <div class="mb-2.5 flex flex-col gap-0.5 border-l-4 border-chara-a pl-2.5">
+        <h2 class="font-display text-[1.05rem] font-bold">ほしい物リスト <span class="ml-1 rounded-full bg-chara-a-soft px-2 py-0.5 font-body text-[11px] font-bold text-chara-a"><%= @wanted_items.size %></span></h2>
+        <p class="text-[11px] text-ink-soft">まだ買っていないもの</p>
+      </div>
+      <% if @wanted_items.any? %>
+        <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
+          <% @wanted_items.each do |item| %>
+            <%# カードを押すと、そのグッズの編集画面へ %>
+            <%= link_to edit_good_path(item), class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
+              <%= render "top/item_thumb", item: item, css: "h-20" %>
+              <div class="p-2">
+                <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug"><%= item.name %></p>
+                <p class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 shrink-0 rounded-full"></span><span class="truncate"><%= item.character.name %></span></p>
+                <%# URL だけで、画像がまだないもの %>
+                <% if item.url.present? && !item.image.attached? %>
+                  <span class="mt-1 inline-block rounded-full border border-line bg-bg px-2 py-0.5 text-[10px] font-bold text-ink-faint">URLのみ</span>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
         </div>
-        <span class="inline-flex items-center gap-1 rounded-full border-2 border-chara-a text-chara-a bg-white px-3 py-1 text-xs font-bold">すべて見る <span aria-hidden="true">→</span></span>
-      </div>
-      <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
-        <article class="w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm">
-          <div class="flex h-20 items-center justify-center bg-chara-a-soft text-chara-a">
-            <span class="h-8 w-8 rounded-full border-2 border-current"></span>
-          </div>
-          <div class="p-2">
-            <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug">缶バッジ第3弾</p>
-            <p class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-a"></span>ヒナタ</p>
-            <span class="mt-1 inline-block rounded-full border border-line bg-bg px-2 py-0.5 text-[10px] font-bold text-ink-faint">URLのみ</span>
-          </div>
-        </article>
-        <article class="w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm">
-          <div class="flex h-20 items-center justify-center bg-chara-b-soft text-chara-b">
-            <span class="h-8 w-8 rounded-md border-2 border-current"></span>
-          </div>
-          <div class="p-2">
-            <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug">ライブTシャツ2026</p>
-            <p class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-b"></span>アオイ</p>
-            <span class="mt-1 inline-block rounded-full border border-line bg-bg px-2 py-0.5 text-[10px] font-bold text-ink-faint">URLのみ</span>
-          </div>
-        </article>
-        <article class="w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm">
-          <div class="flex h-20 items-center justify-center bg-chara-c-soft text-chara-c">
-            <span class="h-10 w-7 rounded-md border-2 border-current"></span>
-          </div>
-          <div class="p-2">
-            <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug">海辺verアクリルスタンド</p>
-            <p class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-c"></span>リン</p>
-          </div>
-        </article>
-      </div>
+      <% else %>
+        <p class="rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
+      <% end %>
     </section>
 
-    <!-- 予約注文中 -->
+    <!-- 予約注文中(1行ずつのリスト) -->
     <section class="pt-6">
-      <div class="mb-2.5 flex items-baseline justify-between">
-        <div class="flex flex-col gap-0.5 border-l-4 border-unpaid pl-2.5">
-          <h2 class="font-display text-[1.05rem] font-bold">予約注文中 <span class="ml-1 rounded-full bg-unpaid-bg px-2 py-0.5 font-body text-[11px] font-bold text-unpaid">3</span></h2>
-          <p class="text-[11px] text-ink-soft">注文済み・支払いや到着を待っているもの</p>
-        </div>
-        <span class="inline-flex items-center gap-1 rounded-full border-2 border-unpaid text-unpaid bg-white px-3 py-1 text-xs font-bold">すべて見る <span aria-hidden="true">→</span></span>
+      <div class="mb-2.5 flex flex-col gap-0.5 border-l-4 border-unpaid pl-2.5">
+        <h2 class="font-display text-[1.05rem] font-bold">予約注文中 <span class="ml-1 rounded-full bg-unpaid-bg px-2 py-0.5 font-body text-[11px] font-bold text-unpaid"><%= @reserved_items.size %></span></h2>
+        <p class="text-[11px] text-ink-soft">注文済み・支払いや到着を待っているもの</p>
       </div>
-      <div class="flex flex-col gap-2.5">
-        <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
-          <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-chara-a-soft text-chara-a"><span class="h-5 w-3.5 rounded-sm border-2 border-current"></span></div>
-          <div class="min-w-0 flex-1">
-            <p class="mb-1 truncate text-[14px] font-medium">夏祭りアクリルスタンド</p>
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-a"></span>ヒナタ</span>
-              <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
-              <span class="text-[11px] tabular-nums text-ink-soft">10月上旬予定</span>
-              <span class="text-[11px] font-bold tabular-nums text-unpaid">支払期限 10/8(あと4日)</span>
+      <% if @reserved_items.any? %>
+        <div class="flex flex-col gap-2.5">
+          <% @reserved_items.each do |item| %>
+            <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
+              <%= link_to edit_good_path(item), class: "flex min-w-0 flex-1 items-center gap-3" do %>
+                <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl" %>
+                <div class="min-w-0 flex-1">
+                  <p class="mb-1 truncate text-[14px] font-medium"><%= item.name %></p>
+                  <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 rounded-full"></span><%= item.character.name %></span>
+                    <% if item.paid %>
+                      <span class="rounded-full bg-paid-bg px-2 py-0.5 text-[10px] font-bold text-paid">支払い完了</span>
+                    <% else %>
+                      <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
+                    <% end %>
+                    <span class="text-[11px] tabular-nums text-ink-soft"><%= release_label(item) %></span>
+                    <% unless item.paid %>
+                      <span class="text-[11px] tabular-nums <%= payment_due_soon?(item) ? "font-bold text-unpaid" : "text-ink-soft" %>"><%= payment_deadline_label(item) %></span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+              <%# 「支払った」「届いた」のワンタップの切り替えは #26 で本物にする(今は押せない) %>
+              <!-- ワンタップの切り替え(支払い・受け取り) -->
+              <div class="flex shrink-0 flex-col gap-1.5 opacity-50">
+                <% if item.paid %>
+                  <button type="button" disabled class="whitespace-nowrap rounded-full bg-paid-bg px-3 py-1.5 text-xs font-bold text-paid">✓ 支払い済み</button>
+                <% else %>
+                  <button type="button" disabled class="whitespace-nowrap rounded-full border border-paid bg-white px-3 py-1.5 text-xs font-bold text-paid">支払った</button>
+                <% end %>
+                <button type="button" disabled class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
+              </div>
             </div>
-          </div>
-          <!-- ワンタップの切り替え(支払い・受け取り) -->
-          <div class="flex shrink-0 flex-col gap-1.5">
-            <button class="whitespace-nowrap rounded-full border border-paid bg-white px-3 py-1.5 text-xs font-bold text-paid">支払った</button>
-            <button class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
-          </div>
+          <% end %>
         </div>
-        <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
-          <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-chara-c-soft text-chara-c"><span class="h-4 w-4 rounded-full border-2 border-current"></span></div>
-          <div class="min-w-0 flex-1">
-            <p class="mb-1 truncate text-[14px] font-medium">ぬいぐるみ Mサイズ</p>
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-c"></span>リン</span>
-              <span class="rounded-full bg-paid-bg px-2 py-0.5 text-[10px] font-bold text-paid">支払い完了</span>
-              <span class="text-[11px] tabular-nums text-ink-soft">11月中旬予定</span>
-            </div>
-          </div>
-          <!-- ワンタップの切り替え(支払い・受け取り) -->
-          <div class="flex shrink-0 flex-col gap-1.5">
-            <button aria-pressed="true" class="whitespace-nowrap rounded-full bg-paid-bg px-3 py-1.5 text-xs font-bold text-paid">✓ 支払い済み</button>
-            <button class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
-          <div class="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-xl bg-chara-b-soft text-chara-b"><span class="h-4 w-4 rounded-sm border-2 border-current"></span></div>
-          <div class="min-w-0 flex-1">
-            <p class="mb-1 truncate text-[14px] font-medium">トレーディングカードファイル</p>
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span class="h-2 w-2 rounded-full bg-chara-b"></span>アオイ</span>
-              <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
-              <span class="text-[11px] tabular-nums text-ink-soft">発売 未定</span>
-              <span class="text-[11px] tabular-nums text-ink-soft">支払期限 未定</span>
-            </div>
-          </div>
-          <!-- ワンタップの切り替え(支払い・受け取り) -->
-          <div class="flex shrink-0 flex-col gap-1.5">
-            <button class="whitespace-nowrap rounded-full border border-paid bg-white px-3 py-1.5 text-xs font-bold text-paid">支払った</button>
-            <button class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
-          </div>
-        </div>
-      </div>
+      <% else %>
+        <p class="rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
+      <% end %>
     </section>
 
-    <!-- 所持グッズ -->
+    <!-- 所持グッズ(2列のカード) -->
     <section class="pt-6">
-      <div class="mb-2.5 flex items-baseline justify-between">
-        <div class="flex flex-col gap-0.5 border-l-4 border-chara-b pl-2.5">
-          <h2 class="font-display text-[1.05rem] font-bold">所持グッズ <span class="ml-1 rounded-full bg-chara-b-soft px-2 py-0.5 font-body text-[11px] font-bold text-chara-b">4</span></h2>
-          <p class="text-[11px] text-ink-soft">手元にあるもの</p>
+      <div class="mb-2.5 flex flex-col gap-0.5 border-l-4 border-chara-b pl-2.5">
+        <h2 class="font-display text-[1.05rem] font-bold">所持グッズ <span class="ml-1 rounded-full bg-chara-b-soft px-2 py-0.5 font-body text-[11px] font-bold text-chara-b"><%= @owned_items.size %></span></h2>
+        <p class="text-[11px] text-ink-soft">手元にあるもの</p>
+      </div>
+      <% if @owned_items.any? %>
+        <div class="grid grid-cols-2 gap-3">
+          <% @owned_items.each do |item| %>
+            <%= link_to edit_good_path(item), class: "overflow-hidden rounded-2xl bg-white shadow-sm" do %>
+              <div class="relative">
+                <%= render "top/item_thumb", item: item, css: "aspect-[1.15]" %>
+                <%# 右上:どの推しのグッズか(推しの色の丸と頭文字) %>
+                <span style="background-color: <%= item.character.display_color %>" class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white font-display text-[10px] font-bold text-white"><%= item.character.name.first %></span>
+                <%# 届いたけど未払いのもの(支払い忘れを防ぐ) %>
+                <% unless item.paid %>
+                  <span class="absolute bottom-2 left-2 rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
+                <% end %>
+              </div>
+              <p class="p-2.5 text-[13px] font-medium leading-snug"><%= item.name %></p>
+            <% end %>
+          <% end %>
         </div>
-        <span class="inline-flex items-center gap-1 rounded-full border-2 border-chara-b text-chara-b bg-white px-3 py-1 text-xs font-bold">すべて見る <span aria-hidden="true">→</span></span>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <article class="overflow-hidden rounded-2xl bg-white shadow-sm">
-          <div class="relative flex aspect-[1.15] items-center justify-center bg-chara-a-soft text-chara-a">
-            <span class="h-8 w-8 rounded-full border-2 border-current"></span>
-            <span class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-chara-a font-display text-[10px] font-bold text-white">陽</span>
-          </div>
-          <p class="p-2.5 text-[13px] font-medium leading-snug">缶バッジ vol.1</p>
-        </article>
-        <article class="overflow-hidden rounded-2xl bg-white shadow-sm">
-          <div class="relative flex aspect-[1.15] items-center justify-center bg-chara-c-soft text-chara-c">
-            <span class="h-10 w-7 rounded-md border-2 border-current"></span>
-            <span class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-chara-c font-display text-[10px] font-bold text-white">凛</span>
-          </div>
-          <p class="p-2.5 text-[13px] font-medium leading-snug">学園verアクリルスタンド</p>
-        </article>
-        <article class="overflow-hidden rounded-2xl bg-white shadow-sm">
-          <div class="relative flex aspect-[1.15] items-center justify-center bg-chara-b-soft text-chara-b">
-            <span class="h-8 w-8 rounded-md border-2 border-current"></span>
-            <span class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-chara-b font-display text-[10px] font-bold text-white">蒼</span>
-          </div>
-          <p class="p-2.5 text-[13px] font-medium leading-snug">マフラータオル</p>
-        </article>
-        <article class="overflow-hidden rounded-2xl bg-white shadow-sm">
-          <div class="relative flex aspect-[1.15] items-center justify-center bg-chara-a-soft text-chara-a">
-            <span class="h-8 w-6 rounded-md border-2 border-current"></span>
-            <span class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-chara-a font-display text-[10px] font-bold text-white">陽</span>
-          </div>
-          <p class="p-2.5 text-[13px] font-medium leading-snug">ぬい服セット</p>
-        </article>
-      </div>
+      <% else %>
+        <p class="rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
+      <% end %>
     </section>
+
+    <!-- グッズを登録(ボタン) -->
+    <%= link_to "＋ グッズを登録", new_good_path, class: "mt-6 flex h-12 w-full items-center justify-center rounded-2xl bg-accent font-display text-base font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
 
     <footer class="mt-6 border-t border-dashed border-line pt-4 text-[11px] leading-relaxed text-ink-faint">
       上のアイコンでキャラを絞り込めます(未選択なら全キャラ表示)。「届いた」を押すと、支払い状況に関わらず所持グッズへ自動で移動します。
