@@ -25,6 +25,16 @@ class GoodsController < ApplicationController
     @item.character = Current.user.characters.find_by(id: params.dig(:item, :character_id))
     @item.category = Current.user.categories.find_by(id: params.dig(:item, :category_id))
 
+    # 自分のグッズに同じ名前のものがあって、かつ、まだ「それでも登録する」を押していなかったら
+    # 保存せずに、警告と一緒に登録画面をもう一度出す(ダブり買いを防ぐ。布教用・保存用なら、そのまま登録できる)
+    if Current.user.items.where(name: @item.name).exists? && params[:confirm_duplicate].blank?
+      # 同じ名前のグッズ(警告の中に、推しと状態を出す)
+      @duplicate_items = Current.user.items.includes(:character).where(name: @item.name)
+      set_form_choices
+      render :new, status: :unprocessable_content
+      return
+    end
+
     if @item.save
       # 保存に成功:登録したグッズの詳細へ移動し、完了メッセージを表示
       redirect_to good_path(@item), notice: "グッズを登録しました"
