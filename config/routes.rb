@@ -24,7 +24,13 @@ Rails.application.routes.draw do
   # 画面モック(ロジックは後で入れる)
   resources :reservations, only: [ :index, :new ]
   # グッズ(新規登録・編集・削除は本物。一覧はまだモック)
-  resources :goods, only: [ :index, :new, :create, :edit, :update, :destroy ]
+  resources :goods, only: [ :index, :new, :create, :edit, :update, :destroy ] do
+    # 1つのグッズに対する道(URL に番号が入る)。ホームのワンタップの切り替えで使う
+    member do
+      patch :receive       # 届いた    PATCH /goods/:id/receive
+      patch :toggle_paid   # 支払った  PATCH /goods/:id/toggle_paid
+    end
+  end
   # 推しキャラ(一覧・登録・編集・削除は本物。詳細はまだモック)
   resources :oshis, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     get :confirm_delete, on: :member

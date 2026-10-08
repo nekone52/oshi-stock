@@ -62,6 +62,20 @@ RSpec.describe "ホーム画面", type: :request do
         expect(response.body).not_to include("ほかの人のグッズ")
       end
 
+      it "予約注文中に「支払った」「届いた」のボタンがある" do
+        reserved_item = Item.find_by!(name: "ヒナタのアクスタ")
+        get root_path
+
+        expect(response.body).to include(toggle_paid_good_path(reserved_item), receive_good_path(reserved_item))
+      end
+
+      it "届いたけど未払いのものは、予約注文中にも「届いた・未払い」として残す" do
+        get root_path
+        # アオイのタオルは所持・未払い
+        expect(response.body).to include("届いた・未払い")
+        expect(response.body.scan("アオイのタオル").size).to be >= 2
+      end
+
       it "グッズ名で検索すると、その言葉をふくむグッズだけを出す" do
         get root_path(q: "アクスタ")
         body = response.body

@@ -1,5 +1,7 @@
 <%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
+<%# ボタンを押してホームに戻ったとき、画面全体を読みこみ直さず、変わったところだけ書きかえる(スクロールの位置もそのまま) %>
+<% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
   <div class="mx-auto max-w-[430px] px-4 pb-10">
 
@@ -125,6 +127,9 @@
                     <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 rounded-full"></span><%= item.character.name %></span>
                     <% if item.paid %>
                       <span class="rounded-full bg-paid-bg px-2 py-0.5 text-[10px] font-bold text-paid">支払い完了</span>
+                    <% elsif item.owned? %>
+                      <%# 届いたけど、まだ払っていないもの(所持グッズにも出ている) %>
+                      <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">届いた・未払い</span>
                     <% else %>
                       <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
                     <% end %>
@@ -135,15 +140,18 @@
                   </div>
                 </div>
               <% end %>
-              <%# 「支払った」「届いた」のワンタップの切り替えは #26 で本物にする(今は押せない) %>
-              <!-- ワンタップの切り替え(支払い・受け取り) -->
-              <div class="flex shrink-0 flex-col gap-1.5 opacity-50">
+              <!-- ワンタップの切り替え(支払い・受け取り。画面は移らず、ホームのまま) -->
+              <div class="flex shrink-0 flex-col gap-1.5">
+                <%# 支払った:押すたびに 支払い済み ⇔ 未払い を切り替える(PATCH /goods/:id/toggle_paid) %>
                 <% if item.paid %>
-                  <button type="button" disabled class="whitespace-nowrap rounded-full bg-paid-bg px-3 py-1.5 text-xs font-bold text-paid">✓ 支払い済み</button>
+                  <%= button_to "✓ 支払い済み", toggle_paid_good_path(item), method: :patch, aria: { pressed: "true" }, class: "w-full cursor-pointer whitespace-nowrap rounded-full bg-paid-bg px-3 py-1.5 text-xs font-bold text-paid" %>
                 <% else %>
-                  <button type="button" disabled class="whitespace-nowrap rounded-full border border-paid bg-white px-3 py-1.5 text-xs font-bold text-paid">支払った</button>
+                  <%= button_to "支払った", toggle_paid_good_path(item), method: :patch, aria: { pressed: "false" }, class: "w-full cursor-pointer whitespace-nowrap rounded-full border border-paid bg-white px-3 py-1.5 text-xs font-bold text-paid" %>
                 <% end %>
-                <button type="button" disabled class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong">届いた</button>
+                <%# 届いた:所持グッズに移す(PATCH /goods/:id/receive)。もう届いているものには出さない %>
+                <% unless item.owned? %>
+                  <%= button_to "届いた", receive_good_path(item), method: :patch, class: "w-full cursor-pointer whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3 py-1.5 text-xs font-bold text-accent-strong" %>
+                <% end %>
               </div>
             </div>
           <% end %>
