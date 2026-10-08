@@ -1,0 +1,10 @@
+<%# グッズの画像(画像がないときは、推しの色の背景にカメラの絵)。ホームの3つのセクションで使う %>
+<%# item:グッズ / css:枠の大きさなど %>
+<% color = item.character.display_color %>
+<div style="background-color: color-mix(in srgb, <%= color %> 18%, white); color: <%= color %>" class="flex items-center justify-center overflow-hidden <%= css %>">
+  <% if item.image.attached? %>
+    <%= image_tag item.image.variant(:display), alt: item.name, class: "h-full w-full object-cover" %>
+  <% else %>
+    <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
+  <% end %>
+</div>
