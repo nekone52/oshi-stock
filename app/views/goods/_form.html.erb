@@ -5,6 +5,26 @@
 <%# @item が保存ずみなら、送り方は自動で PATCH(更新)になる %>
 <%= form_with model: @item, url: url, data: { controller: "item-form" } do |f| %>
   <div class="flex flex-col gap-4">
+    <% if @duplicate_items.present? %>
+      <%# 同じ名前のグッズがあるときの警告(ダブり買いを防ぐ)。「それでも登録する」で、そのまま保存できる %>
+      <!-- 同じ名前のグッズがあるときの警告 -->
+      <div role="alert" class="flex flex-col gap-2 rounded-xl border border-unpaid bg-unpaid-bg px-4 py-3 text-[13px] text-ink">
+        <p class="flex items-center gap-1.5 font-bold text-unpaid">
+          <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>
+          同じ名前のグッズがあります
+        </p>
+        <ul class="list-disc space-y-0.5 pl-5">
+          <% status_labels = { "wanted" => "ほしい物", "reserved" => "予約中", "owned" => "所持" } %>
+          <% @duplicate_items.each do |item| %>
+            <li><%= item.name %>(<%= item.character.name %>・<%= status_labels[item.status] %>)</li>
+          <% end %>
+        </ul>
+        <p class="text-ink-soft">布教用・保存用など、わざと増やすときは、そのまま登録できます。</p>
+        <%# name="confirm_duplicate" のボタン:押すと params[:confirm_duplicate] が届いて、警告を出さずに保存する %>
+        <%= button_tag "それでも登録する", type: "submit", name: "confirm_duplicate", value: "1", class: "h-10 cursor-pointer self-start rounded-full border border-unpaid bg-white px-4 text-[13px] font-bold text-unpaid" %>
+      </div>
+    <% end %>
+
     <!-- 入力ミスのお知らせ(保存できなかったときだけ出す) -->
     <% if @item.errors.any? %>
       <div role="alert" class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">
