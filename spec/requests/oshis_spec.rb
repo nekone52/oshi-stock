@@ -187,11 +187,11 @@ RSpec.describe "推しキャラ", type: :request do
       expect(response).to redirect_to(new_session_path)
     end
 
-    it "自分の推しなら、名前と削除のボタンがある確認画面が開ける" do
+    it "自分の推しなら、名前と消去のボタンがある確認画面が開ける" do
       sign_in_as(user)
       get confirm_delete_oshi_path(character)
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("「ヒナタ」を削除します")
+      expect(response.body).to include("「ヒナタ」を消去します")
       expect(response.body).to include('name="_method" value="delete"')
     end
 
@@ -212,14 +212,14 @@ RSpec.describe "推しキャラ", type: :request do
       expect(response).to redirect_to(new_session_path)
     end
 
-    it "自分の推しを削除して、一覧へ移る(303)" do
+    it "自分の推しを消去して、一覧へ移る(303)" do
       sign_in_as(user)
       expect { delete oshi_path(character) }.to change(Character, :count).by(-1)
       expect(response).to have_http_status(:see_other)
       expect(response).to redirect_to(oshis_path)
 
       follow_redirect!
-      expect(response.body).to include("推しを削除しました")
+      expect(response.body).to include("推しを消去しました")
     end
 
     it "ほかのユーザーの推しは、削除できない(404)" do

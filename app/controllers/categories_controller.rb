@@ -30,7 +30,7 @@ class CategoriesController < ApplicationController
     respond_to do |format|
       # 成功:categories/destroy.turbo_stream.erb で、チップとシートの行を消す
       format.turbo_stream
-      format.html { redirect_back_or_to new_good_path, status: :see_other, notice: "カテゴリを削除しました" }
+      format.html { redirect_back_or_to new_good_path, status: :see_other, notice: "カテゴリを消去しました" }
     end
   end
 

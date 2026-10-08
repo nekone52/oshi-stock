@@ -55,14 +55,14 @@ class OshisController < ApplicationController
     @characters = Current.user.characters.with_attached_icon.order(:created_at)
   end
 
-  # 確認の画面で「削除する」を押したときの削除処理
+  # 確認の画面で「消去する」を押したときの消去処理
   def destroy
     # 消す推し(ログイン中ユーザーの推しの中からだけ探す)
     @character = Current.user.characters.find(params[:id])
     @character.destroy
-    # 削除のあとは、一覧へ移動し、完了メッセージを表示
+    # 消去のあとは、一覧へ移動し、完了メッセージを表示
     # status: :see_other(303)は「次は GET で見に行ってね」の合図(DELETE のまま一覧へ行かないように)
-    redirect_to oshis_path, status: :see_other, notice: "推しを削除しました"
+    redirect_to oshis_path, status: :see_other, notice: "推しを消去しました"
   end
 
   private

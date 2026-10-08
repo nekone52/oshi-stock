@@ -18,6 +18,15 @@ module ItemsHelper
     "支払期限 #{item.payment_deadline.month}/#{item.payment_deadline.day}(#{rest})"
   end
 
+  # 商品ページの URL が、http か https で始まる安全なものなら、その URL を返す(それ以外は nil)
+  # モデルでも同じチェックをしているが、画面でも確かめて、javascript: などの危ない URL をリンクにしない
+  def safe_item_url(item)
+    uri = URI.parse(item.url.to_s)
+    uri.to_s if uri.is_a?(URI::HTTP) && uri.host.present?
+  rescue URI::InvalidURIError
+    nil
+  end
+
   # 支払い期限が7日以内(または、すぎている)か。目立たせるために使う
   def payment_due_soon?(item)
     item.payment_deadline.present? && item.payment_deadline <= 7.days.from_now.to_date

@@ -1,10 +1,10 @@
-<%# カテゴリの追加・削除のシート(グッズのフォームの「＋ 追加・削除」で開く。dialog_controller.js) %>
+<%# カテゴリの追加・消去のシート(グッズのフォームの「＋ 追加・削除」で開く。dialog_controller.js) %>
 <%# グッズのフォームの「外」に置く(フォームの中にフォームは入れられないため) %>
 <%# 追加・削除は Turbo Stream で、画面を移らずにその場で反映する(入力中のグッズの内容は消えない) %>
 <dialog id="category_dialog" data-controller="dialog" data-action="click->dialog#closeOnBackdrop" aria-labelledby="category-dialog-title" class="mx-auto mt-auto mb-0 w-full max-w-[430px] rounded-t-2xl bg-white p-0 backdrop:bg-ink/40">
   <div class="flex flex-col gap-4 px-5 pt-5 pb-8">
     <div class="flex items-center justify-between">
-      <h2 id="category-dialog-title" class="font-display text-lg font-bold text-ink">カテゴリの追加・削除</h2>
+      <h2 id="category-dialog-title" class="font-display text-lg font-bold text-ink">カテゴリの追加・消去</h2>
       <button type="button" data-action="dialog#close" aria-label="閉じる" class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink hover:bg-bg">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
@@ -24,7 +24,7 @@
       </div>
     <% end %>
 
-    <!-- 今あるカテゴリ(削除ボタン付き) -->
+    <!-- 今あるカテゴリ(消去ボタン付き) -->
     <div class="flex flex-col gap-1">
       <p class="text-[13px] font-bold text-ink">今あるカテゴリ</p>
       <ul id="category_rows" class="divide-y divide-line">

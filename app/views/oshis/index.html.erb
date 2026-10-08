@@ -57,7 +57,7 @@
             <!-- 開いたメニュー(削除は Issue 22 で本物にする。今は削除の確認のモックへ移るだけ) -->
             <div class="absolute top-12 right-0 z-10 flex w-36 flex-col overflow-hidden rounded-xl border border-line bg-white text-sm font-bold shadow-md">
               <%= link_to "編集する", edit_oshi_path(character), class: "px-4 py-3 text-ink hover:bg-accent-soft" %>
-              <%= link_to "削除する", confirm_delete_oshi_path(character), class: "border-t border-line px-4 py-3 text-danger hover:bg-danger-bg" %>
+              <%= link_to "消去する", confirm_delete_oshi_path(character), class: "border-t border-line px-4 py-3 text-danger hover:bg-danger-bg" %>
             </div>
           </details>
         </li>

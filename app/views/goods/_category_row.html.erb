@@ -1,8 +1,8 @@
-<%# カテゴリの追加・削除のシートの中の1行(名前と削除ボタン) %>
+<%# カテゴリの追加・消去のシートの中の1行(名前と消去ボタン) %>
 <li id="<%= dom_id(category) %>" class="flex items-center justify-between gap-3 py-2.5">
   <span class="min-w-0 truncate text-[15px] text-ink"><%= category.name %></span>
-  <%# 削除は DELETE /categories/:id。消す前に確認を出す(グッズは残して、カテゴリだけ「なし」になる) %>
-  <%= button_to "削除", category_path(category), method: :delete,
+  <%# 消去は DELETE /categories/:id。消す前に確認を出す(グッズは残して、カテゴリだけ「なし」になる) %>
+  <%= button_to "消去", category_path(category), method: :delete,
         form: { data: { turbo_confirm: "「#{category.name}」を消去します。\nこのカテゴリのグッズは残り、カテゴリだけ「なし」になります。" } },
         class: "h-9 shrink-0 cursor-pointer rounded-lg border border-danger bg-white px-3 text-[13px] font-bold text-danger" %>
 </li>
