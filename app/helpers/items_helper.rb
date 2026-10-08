@@ -1,4 +1,12 @@
 module ItemsHelper
+  # グッズの状態(enum の名前)を、画面に出す日本語にする
+  STATUS_LABELS = { "wanted" => "ほしい物", "reserved" => "予約中", "owned" => "所持" }.freeze
+
+  # 例:status_label(item) → 「予約中」
+  def status_label(item)
+    STATUS_LABELS[item.status]
+  end
+
   # 発売の時期を、画面に出す文字にする(例:「10月上旬予定」「発売 未定」)
   def release_label(item)
     return "発売 未定" if item.release_month.blank?

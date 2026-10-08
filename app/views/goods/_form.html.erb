@@ -14,9 +14,8 @@
           同じ名前のグッズがあります
         </p>
         <ul class="list-disc space-y-0.5 pl-5">
-          <% status_labels = { "wanted" => "ほしい物", "reserved" => "予約中", "owned" => "所持" } %>
           <% @duplicate_items.each do |item| %>
-            <li><%= item.name %>(<%= item.character.name %>・<%= status_labels[item.status] %>)</li>
+            <li><%= item.name %>(<%= item.character.name %>・<%= status_label(item) %>)</li>
           <% end %>
         </ul>
         <p class="text-ink-soft">布教用・保存用など、わざと増やすときは、そのまま登録できます。</p>
@@ -153,7 +152,8 @@
     <fieldset class="flex flex-col gap-1.5">
       <legend class="text-[13px] font-bold text-ink">いまの状態</legend>
       <div class="grid grid-cols-3 gap-1 rounded-xl bg-accent-soft/60 p-1">
-        <% [ [ "wanted", "ほしい物" ], [ "reserved", "予約中" ], [ "owned", "所持" ] ].each do |value, label| %>
+        <%# 状態の名前と日本語は、ItemsHelper の STATUS_LABELS(1か所)から %>
+        <% ItemsHelper::STATUS_LABELS.each do |value, label| %>
           <label class="flex h-10 cursor-pointer items-center justify-center rounded-lg text-[13px] text-ink has-checked:bg-white has-checked:font-bold has-checked:text-accent-strong">
             <%= f.radio_button :status, value, class: "sr-only" %>
             <%= label %>
