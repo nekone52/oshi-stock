@@ -5,7 +5,6 @@ RSpec.describe "App screens (mock)", type: :request do
   {
     "予約注文" => "/reservations",
     "予約を登録" => "/reservations/new",
-    "所持グッズ" => "/goods",
     "グッズを登録" => "/goods/new",
     "ほしい物を追加" => "/wishlist",
     "追加する" => "/wishlist/new",

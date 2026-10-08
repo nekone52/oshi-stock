@@ -84,10 +84,12 @@
     <!-- ほしい物リスト(横にスクロールするカード) -->
     <section class="pt-2">
       <%= render "top/section_header", title: "ほしい物リスト", count: @wanted_items.size, note: "まだ買っていないもの",
-                 border: "border-chara-a", badge: "bg-chara-a-soft text-chara-a" %>
+                 border: "border-chara-a", badge: "bg-chara-a-soft text-chara-a",
+                 more_path: goods_path({ status: "wanted", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-a text-chara-a" %>
       <% if @wanted_items.any? %>
         <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
-          <% @wanted_items.each do |item| %>
+          <%# ホームには、新しい順に4つまで(5つ目からは「すべて見る →」で) %>
+          <% @wanted_items.limit(4).each do |item| %>
             <%# カードを押すと、そのグッズの詳細(グッズのカード)へ %>
             <%= link_to good_path(item), class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
               <%= render "top/item_thumb", item: item, css: "h-20" %>
@@ -110,10 +112,12 @@
     <!-- 予約注文中(1行ずつのリスト) -->
     <section class="pt-6">
       <%= render "top/section_header", title: "予約注文中", count: @reserved_items.size, note: "注文済み・支払いや到着を待っているもの",
-                 border: "border-unpaid", badge: "bg-unpaid-bg text-unpaid" %>
+                 border: "border-unpaid", badge: "bg-unpaid-bg text-unpaid",
+                 more_path: goods_path({ status: "reserved", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-unpaid text-unpaid" %>
       <% if @reserved_items.any? %>
         <div class="flex flex-col gap-2.5">
-          <% @reserved_items.each do |item| %>
+          <%# ホームには、未払い・期限の近い順に4つまで %>
+          <% @reserved_items.limit(4).each do |item| %>
             <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
               <%= link_to good_path(item), class: "flex min-w-0 flex-1 items-center gap-3" do %>
                 <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl" %>
@@ -160,10 +164,12 @@
     <!-- 所持グッズ(2列のカード) -->
     <section class="pt-6">
       <%= render "top/section_header", title: "所持グッズ", count: @owned_items.size, note: "手元にあるもの",
-                 border: "border-chara-b", badge: "bg-chara-b-soft text-chara-b" %>
+                 border: "border-chara-b", badge: "bg-chara-b-soft text-chara-b",
+                 more_path: goods_path({ status: "owned", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-b text-chara-b" %>
       <% if @owned_items.any? %>
         <div class="grid grid-cols-2 gap-3">
-          <% @owned_items.each do |item| %>
+          <%# ホームには、新しい順に4つまで %>
+          <% @owned_items.limit(4).each do |item| %>
             <%= link_to good_path(item), class: "overflow-hidden rounded-2xl bg-white shadow-sm" do %>
               <div class="relative">
                 <%= render "top/item_thumb", item: item, css: "aspect-[1.15]" %>
