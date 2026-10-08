@@ -1,0 +1,91 @@
+<%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
+<% content_for :interactive, true %>
+<% color = @item.character.display_color %>
+
+<div class="mx-auto max-w-[430px] px-4 pb-32">
+
+  <!-- ヘッダー(戻るとタイトル) -->
+  <header class="flex items-center gap-1 pt-4 pb-2">
+    <%= link_to root_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+      <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+    <% end %>
+    <h1 class="font-display text-xl font-bold text-ink">グッズの詳細</h1>
+  </header>
+
+  <!-- グッズのカード(推しの名刺のように、グッズのプロフィール) -->
+  <article class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
+    <!-- 商品画像(画像がないときは、推しの色の背景にカメラの絵)と、状態のバッジ -->
+    <div class="relative">
+      <%= render "top/item_thumb", item: @item, css: "aspect-square" %>
+      <% status_label = { "wanted" => "ほしい物", "reserved" => "予約中", "owned" => "所持" }[@item.status] %>
+      <span class="absolute top-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-bold text-ink shadow-sm"><%= status_label %></span>
+    </div>
+
+    <!-- 名前・推し・カテゴリ -->
+    <div class="flex flex-col gap-1.5 border-b border-line px-4 py-4">
+      <h2 class="font-display text-xl font-bold break-words text-ink"><%= @item.name %></h2>
+      <div class="flex flex-wrap items-center gap-2 text-[13px] text-ink-soft">
+        <span class="flex items-center gap-1"><span style="background-color: <%= color %>" class="h-2.5 w-2.5 rounded-full"></span><%= @item.character.name %></span>
+        <% if @item.category %>
+          <span class="rounded-full border border-line bg-bg px-2 py-0.5 text-[11px]"><%= @item.category.name %></span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 買ったときの記録(詳細を開いたときだけ出す。入っていない項目は「未入力」) -->
+    <dl class="divide-y divide-line px-4 text-[14px]">
+      <div class="flex justify-between gap-4 py-3">
+        <dt class="shrink-0 text-ink-soft">購入先</dt>
+        <dd class="text-right font-medium break-words text-ink"><%= @item.shop_name.presence || "未入力" %></dd>
+      </div>
+      <div class="flex justify-between gap-4 py-3">
+        <dt class="shrink-0 text-ink-soft">金額</dt>
+        <dd class="text-right font-medium text-ink">
+          <% if @item.price %>
+            <%# 単価 × 個数 = 合計(合計は保存せず、ここで計算する) %>
+            ¥<%= number_with_delimiter(@item.price) %> × <%= @item.quantity %>個 = <span class="font-bold">¥<%= number_with_delimiter(@item.price * @item.quantity) %></span>
+          <% else %>
+            未入力(<%= @item.quantity %>個)
+          <% end %>
+        </dd>
+      </div>
+      <div class="flex justify-between gap-4 py-3">
+        <dt class="shrink-0 text-ink-soft">発売</dt>
+        <dd class="text-right font-medium text-ink">
+          <%= @item.release_month ? "#{@item.release_month.year}年#{@item.release_month.month}月 #{@item.release_period}" : "未定" %>
+        </dd>
+      </div>
+      <div class="flex justify-between gap-4 py-3">
+        <dt class="shrink-0 text-ink-soft">支払い</dt>
+        <dd class="flex flex-col items-end gap-1 text-right">
+          <% if @item.paid %>
+            <span class="rounded-full bg-paid-bg px-2.5 py-0.5 text-xs font-bold text-paid">支払い済み</span>
+          <% else %>
+            <span class="rounded-full bg-unpaid-bg px-2.5 py-0.5 text-xs font-bold text-unpaid">未払い</span>
+            <%# 未払いのときだけ、支払い期限を出す(7日以内は目立たせる) %>
+            <span class="text-xs <%= payment_due_soon?(@item) ? "font-bold text-unpaid" : "text-ink-soft" %>"><%= payment_deadline_label(@item) %></span>
+          <% end %>
+        </dd>
+      </div>
+      <% if @item.url.present? %>
+        <div class="flex justify-between gap-4 py-3">
+          <dt class="shrink-0 text-ink-soft">商品ページ</dt>
+          <%# ほかのサイトを開くので、新しいタブで開く(noopener で、開いた先からこの画面をさわれないようにする) %>
+          <dd class="text-right"><%= link_to "ひらく", @item.url, target: "_blank", rel: "noopener noreferrer", class: "font-bold text-accent-strong underline" %></dd>
+        </div>
+      <% end %>
+      <% if @item.memo.present? %>
+        <div class="flex flex-col gap-1 py-3">
+          <dt class="text-ink-soft">メモ</dt>
+          <dd class="whitespace-pre-line break-words text-ink"><%= @item.memo %></dd>
+        </div>
+      <% end %>
+    </dl>
+  </article>
+
+  <!-- 編集ボタン(下のメニューと重ならないように、カードのすぐ下に置く) -->
+  <%= link_to "編集する", edit_good_path(@item), class: "mt-4 flex w-full items-center justify-center rounded-2xl bg-accent py-3.5 font-display text-base font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
+</div>
+
+<%# 下のメニュー(グッズを選んでいる状態) %>
+<%= render "shared/bottom_nav", active: :goods %>

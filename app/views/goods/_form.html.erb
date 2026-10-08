@@ -111,8 +111,8 @@
           <%= render "goods/category_chip", category: category, checked: @item.category_id == category.id %>
         <% end %>
       </div>
-      <!-- カテゴリの追加・削除(シートを開く。シートはフォームの外の goods/_category_dialog.html.erb) -->
-      <button type="button" data-controller="dialog-opener" data-dialog-opener-id-value="category_dialog" data-action="dialog-opener#open" class="flex h-9 cursor-pointer items-center self-start rounded-full border border-dashed border-accent bg-white px-3.5 text-[13px] font-bold text-accent-strong">＋ 追加・削除</button>
+      <!-- カテゴリの追加・消去(シートを開く。シートはフォームの外の goods/_category_dialog.html.erb) -->
+      <button type="button" data-controller="dialog-opener" data-dialog-opener-id-value="category_dialog" data-action="dialog-opener#open" class="flex h-9 cursor-pointer items-center self-start rounded-full border border-dashed border-accent bg-white px-3.5 text-[13px] font-bold text-accent-strong">＋ 追加・消去</button>
     </fieldset>
 
     <!-- 単価・個数(入力すると、下の合計が自動で変わる) -->
@@ -188,12 +188,12 @@
 <% end %>
 
 <% if @item.persisted? %>
-  <%# 削除のボタン(編集のときだけ出す。DELETE /goods/:id → goods#destroy) %>
+  <%# 消去のボタン(編集のときだけ出す。DELETE /goods/:id → goods#destroy) %>
   <%# button_to はボタンごとにフォームを作るので、グッズのフォームの外に置く(フォームの中にフォームは入れられない) %>
   <%# 消す前に、確認ダイアログを出す(turbo_confirm。見た目は confirm_dialog.js とレイアウトの confirm_dialog) %>
-  <!-- 削除(編集のときだけ出す) -->
+  <!-- 消去(編集のときだけ出す) -->
   <div class="mt-4">
-    <%= button_to "このグッズを削除する", good_path(@item), method: :delete,
+    <%= button_to "このグッズを消去する", good_path(@item), method: :delete,
           form: { data: { turbo_confirm: "「#{@item.name_was}」を消去します。\nこの操作は取り消せません。" } },
           class: "h-12 w-full cursor-pointer rounded-xl border border-danger bg-white text-sm font-bold text-danger" %>
   </div>

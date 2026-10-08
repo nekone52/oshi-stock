@@ -3,6 +3,12 @@ class GoodsController < ApplicationController
   def index
   end
 
+  # グッズの詳細(グッズのカード。購入先・金額・発売・支払いなど、買ったときの記録を見る)
+  def show
+    # 自分のグッズの中からだけ探す(ほかの人のグッズは見つからず 404)
+    @item = Current.user.items.find(params[:id])
+  end
+
   # グッズを登録の画面を開く(入力フォーム用)
   def new
     # フォームを組み立てるための、空のグッズ(個数は1、状態は「ほしい」が最初から入る)
@@ -20,8 +26,8 @@ class GoodsController < ApplicationController
     @item.category = Current.user.categories.find_by(id: params.dig(:item, :category_id))
 
     if @item.save
-      # 保存に成功:グッズ一覧へ移動し、完了メッセージを表示
-      redirect_to goods_path, notice: "グッズを登録しました"
+      # 保存に成功:登録したグッズの詳細へ移動し、完了メッセージを表示
+      redirect_to good_path(@item), notice: "グッズを登録しました"
     else
       # 保存に失敗(名前が空・推しを選んでいないなど):入力画面を再表示し、エラーメッセージを画面に残す
       set_form_choices
@@ -48,8 +54,8 @@ class GoodsController < ApplicationController
 
     # ④ 保存して、成功・失敗で分ける
     if @item.save
-      # 更新に成功:グッズ一覧へ移動し、完了メッセージを表示
-      redirect_to goods_path, notice: "グッズを更新しました"
+      # 更新に成功:そのグッズの詳細へ戻り、完了メッセージを表示
+      redirect_to good_path(@item), notice: "グッズを更新しました"
     else
       # 更新に失敗(名前が空など):編集画面を再表示し、エラーメッセージを画面に残す
       set_form_choices
@@ -57,14 +63,14 @@ class GoodsController < ApplicationController
     end
   end
 
-  # 編集画面の「このグッズを削除する」を押したときの削除処理(確認はアプリの確認ダイアログ。confirm_dialog.js)
+  # 編集画面の「このグッズを消去する」を押したときの消去処理(確認はアプリの確認ダイアログ。confirm_dialog.js)
   def destroy
     # 自分のグッズの中からだけ探す(ほかの人のグッズは見つからず 404)
     @item = Current.user.items.find(params[:id])
     @item.destroy
-    # 削除のあとは、グッズ一覧へ移動し、完了メッセージを表示
+    # 消去のあとは、ホームへ移動し、完了メッセージを表示
     # status: :see_other(303)は「次は GET で見に行ってね」の合図(DELETE のまま一覧へ行かないように)
-    redirect_to goods_path, status: :see_other, notice: "グッズを消しました"
+    redirect_to root_path, status: :see_other, notice: "グッズを消去しました"
   end
 
   # ホームの「届いた」ボタン:所持に変える(支払い済みかどうかは、そのまま残す)

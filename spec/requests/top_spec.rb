@@ -62,6 +62,13 @@ RSpec.describe "ホーム画面", type: :request do
         expect(response.body).not_to include("ほかの人のグッズ")
       end
 
+      it "グッズのカードを押すと、そのグッズの詳細へ行ける" do
+        get root_path
+        Item.joins(:character).where(characters: { user_id: user.id }).find_each do |item|
+          expect(response.body).to include(good_path(item))
+        end
+      end
+
       it "予約注文中に「支払った」「届いた」のボタンがある" do
         reserved_item = Item.find_by!(name: "ヒナタのアクスタ")
         get root_path

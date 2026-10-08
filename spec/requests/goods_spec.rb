@@ -31,6 +31,41 @@ RSpec.describe "グッズ", type: :request do
     end
   end
 
+  describe "GET /goods/:id(グッズの詳細)" do
+    let(:character) { create(:character, user: user, name: "ヒナタ") }
+    let(:item) do
+      create(:item, character: character, name: "夏祭りアクスタ", shop_name: "公式ショップ", price: 1650, quantity: 2,
+                    category: user.categories.find_by!(name: "アクスタ"), status: :owned, paid: false,
+                    release_month: Date.new(2026, 10, 1), release_period: "上旬", memo: "特典付き",
+                    url: "https://example.com/goods/1")
+    end
+
+    it "ログインしていないと、ログイン画面へ移る" do
+      get good_path(item)
+      expect(response).to redirect_to(new_session_path)
+    end
+
+    it "自分のグッズなら、買ったときの記録が見られる" do
+      sign_in_as(user)
+      get good_path(item)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("夏祭りアクスタ", "ヒナタ", "アクスタ", "公式ショップ", "¥1,650 × 2個", "¥3,300",
+                                       "2026年10月 上旬", "未払い", "特典付き", "所持")
+      expect(response.body).to include(edit_good_path(item))
+      # 商品ページは、新しいタブで安全に開く
+      expect(response.body).to include('href="https://example.com/goods/1"', 'rel="noopener noreferrer"')
+    end
+
+    it "ほかのユーザーのグッズは、見つからない(404)" do
+      other_item = create(:item, character: create(:character, user: create(:user)))
+
+      sign_in_as(user)
+      get good_path(other_item)
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "POST /goods" do
     let(:character) { create(:character, user: user) }
     let(:category) { user.categories.find_by!(name: "アクスタ") }
@@ -43,16 +78,16 @@ RSpec.describe "グッズ", type: :request do
     context "入力が正しいとき" do
       before { sign_in_as(user) }
 
-      it "選んだ推しのグッズとして保存し、グッズ一覧へ移る" do
+      it "選んだ推しのグッズとして保存し、そのグッズの詳細へ移る" do
         params = { item: { name: "ヒナタのアクスタ", character_id: character.id, category_id: category.id,
                            url: "https://example.com/goods/1", shop_name: "公式ショップ", price: "1650", quantity: "2",
                            status: "reserved", paid: "1", release_month: "2026-10-01", release_period: "上旬",
                            payment_deadline: "2026-10-20", memo: "特典付き",
                            image: fixture_file_upload("icon.png", "image/png") } }
         expect { post goods_path, params: params }.to change(character.items, :count).by(1)
-        expect(response).to redirect_to(goods_path)
 
         item = character.items.last
+        expect(response).to redirect_to(good_path(item))
         expect(item.name).to eq("ヒナタのアクスタ")
         expect(item.category).to eq(category)
         expect(item.price).to eq(1650)
@@ -146,11 +181,11 @@ RSpec.describe "グッズ", type: :request do
     context "入力が正しいとき" do
       before { sign_in_as(user) }
 
-      it "名前・推し・カテゴリ・単価を書きかえて、グッズ一覧へ移る" do
+      it "名前・推し・カテゴリ・単価を書きかえて、そのグッズの詳細へ戻る" do
         category = user.categories.find_by!(name: "缶バッジ")
         params = { item: { name: "アオイの缶バッジ", character_id: other_character.id, category_id: category.id, price: "550" } }
         patch good_path(item), params: params
-        expect(response).to redirect_to(goods_path)
+        expect(response).to redirect_to(good_path(item))
 
         item.reload
         expect(item.name).to eq("アオイの缶バッジ")
@@ -202,10 +237,10 @@ RSpec.describe "グッズ", type: :request do
   describe "DELETE /goods/:id" do
     let!(:item) { create(:item, character: create(:character, user: user), name: "ヒナタのアクスタ") }
 
-    it "編集画面に、確認ダイアログ付きの削除ボタンがある" do
+    it "編集画面に、確認ダイアログ付きの消去ボタンがある" do
       sign_in_as(user)
       get edit_good_path(item)
-      expect(response.body).to include("このグッズを削除する", "data-turbo-confirm", 'name="_method" value="delete"')
+      expect(response.body).to include("このグッズを消去する", "data-turbo-confirm", 'name="_method" value="delete"')
     end
 
     it "ログインしていないと、消さずにログイン画面へ移る" do
@@ -213,14 +248,14 @@ RSpec.describe "グッズ", type: :request do
       expect(response).to redirect_to(new_session_path)
     end
 
-    it "自分のグッズを削除して、グッズ一覧へ移る(303)" do
+    it "自分のグッズを消去して、ホームへ移る(303)" do
       sign_in_as(user)
       expect { delete good_path(item) }.to change(Item, :count).by(-1)
       expect(response).to have_http_status(:see_other)
-      expect(response).to redirect_to(goods_path)
+      expect(response).to redirect_to(root_path)
 
       follow_redirect!
-      expect(response.body).to include("グッズを消しました")
+      expect(response.body).to include("グッズを消去しました")
     end
 
     it "ほかのユーザーのグッズは、削除できない(404)" do
