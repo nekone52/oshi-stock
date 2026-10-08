@@ -1,3 +1,8 @@
+<%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
+<% content_for :interactive, true %>
+<%# 今の絞り込み(状態・推し・検索・カテゴリ)。タブやチップのリンクで引きつぐ %>
+<% filters = { status: @status, character_id: @selected_character&.id, q: @query.presence, category_id: @selected_category&.id } %>
+
 <div class="mx-auto max-w-[430px] px-4 pb-28">
 
   <!-- ヘッダー(見出しと追加ボタン) -->
@@ -6,54 +11,83 @@
     <%= link_to "＋ グッズを登録", new_good_path, class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
   </header>
 
-  <!-- 所持グッズ / ほしい物の切り替え -->
-  <div class="grid grid-cols-2 gap-1 rounded-xl bg-accent-soft/60 p-1">
-    <%= link_to "所持グッズ", goods_path, aria: { current: "page" }, class: "flex h-10 items-center justify-center rounded-lg bg-white text-sm font-bold text-accent-strong" %>
-    <%= link_to "ほしい物", wishlist_path, class: "flex h-10 items-center justify-center rounded-lg text-sm text-ink" %>
-  </div>
-
-  <!-- 検索欄 -->
-  <div class="relative mt-3">
-    <label for="goods-search" class="sr-only">所持グッズを検索</label>
-    <svg class="pointer-events-none absolute top-1/2 left-3.5 h-[18px] w-[18px] -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
-    <input id="goods-search" type="search" placeholder="グッズ名・推しで検索" class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-base text-ink placeholder:text-ink-faint">
-  </div>
-
-  <!-- カテゴリの絞り込み(横にスクロール) -->
-  <nav aria-label="カテゴリで絞り込み" class="-mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">すべて 42</button>
-    <button type="button" aria-pressed="true" class="h-9 shrink-0 rounded-full bg-ink px-3.5 text-[13px] font-bold text-white">アクスタ 9</button>
-    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">缶バッジ 18</button>
-    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">ぬいぐるみ 4</button>
-    <button type="button" aria-pressed="false" class="h-9 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">ブロマイド 11</button>
+  <!-- 状態の切り替え(すべて / ほしい物 / 予約中 / 所持)。GET /goods?status=... -->
+  <nav aria-label="状態で絞り込み" class="grid grid-cols-4 gap-1 rounded-xl bg-accent-soft/60 p-1">
+    <% [ [ nil, "すべて" ], *ItemsHelper::STATUS_LABELS.to_a ].each do |status, label| %>
+      <% current = @status == status %>
+      <%= link_to label, goods_path(filters.merge(status: status, category_id: nil).compact), aria: { current: (current ? "page" : nil) },
+            class: "flex h-10 items-center justify-center rounded-lg text-sm #{current ? 'bg-white font-bold text-accent-strong' : 'text-ink'}" %>
+    <% end %>
   </nav>
 
-  <div class="mt-3 flex items-center justify-between">
-    <!-- 件数(ホームで推しを選んで来たときは、その推しの名前が入る) -->
-    <span class="text-[13px] text-ink-soft">すべての推し · アクスタ · 9件</span>
-    <span class="text-[13px] text-ink-soft">並び替え：新しい順</span>
-  </div>
+  <!-- 検索欄(グッズ名で探す。今の状態・推しは引きつぐ) -->
+  <%= form_with url: goods_path, method: :get, class: "relative mt-3" do |f| %>
+    <%= hidden_field_tag :status, @status if @status %>
+    <%= hidden_field_tag :character_id, @selected_character.id if @selected_character %>
+    <svg class="pointer-events-none absolute top-1/2 left-3.5 h-[18px] w-[18px] -translate-y-1/2 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+    <%= f.search_field :q, value: @query, placeholder: "グッズ名で検索", aria: { label: "グッズ名で検索" }, class: "h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
+  <% end %>
 
-  <!-- 所持グッズのカード(2列) -->
-  <div class="mt-2 grid grid-cols-2 gap-3">
-    <% [
-      { name: "アクリルスタンド", category: "アクスタ", chara: "アオイ", qty: 2, tone: "bg-chara-b-soft text-chara-b" },
-      { name: "誕生日アクスタ 2026", category: "アクスタ", chara: "ヒナタ", qty: 1, tone: "bg-chara-a-soft text-chara-a" },
-      { name: "ミニアクスタ", category: "アクスタ", chara: "リン", qty: 3, tone: "bg-chara-c-soft text-chara-c" },
-      { name: "コラボカフェ アクスタ", category: "アクスタ", chara: "ヒナタ", qty: 1, tone: "bg-chara-a-soft text-chara-a" }
-    ].each do |goods| %>
-      <%= link_to "#", class: "flex flex-col overflow-hidden rounded-2xl border border-line bg-white" do %>
-        <div class="flex h-24 items-center justify-center <%= goods[:tone] %>">
-          <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
-        </div>
-        <div class="flex flex-col gap-1 p-2.5">
-          <span class="self-start rounded bg-line px-1.5 py-px text-[11px] font-bold text-ink-soft"><%= goods[:category] %></span>
-          <span class="line-clamp-2 text-sm font-bold text-ink"><%= goods[:name] %></span>
-          <span class="flex justify-between text-xs text-ink-soft"><span><%= goods[:chara] %></span><span>×<%= goods[:qty] %></span></span>
-        </div>
-      <% end %>
+  <!-- カテゴリの絞り込み(横にスクロール。件数は、今しぼっているグッズの中の数) -->
+  <nav aria-label="カテゴリで絞り込み" class="-mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <% total = @category_counts.values.sum %>
+    <%= link_to "すべて #{total}", goods_path(filters.merge(category_id: nil).compact), aria: { current: (@selected_category ? nil : "true") },
+          class: "flex h-9 shrink-0 items-center rounded-full px-3.5 text-[13px] #{@selected_category ? 'border border-line bg-white text-ink' : 'bg-ink font-bold text-white'}" %>
+    <% @categories.each do |category| %>
+      <% count = @category_counts[category.id].to_i %>
+      <%# 1つもないカテゴリは出さない(チップが増えすぎないように) %>
+      <% next if count.zero? && category != @selected_category %>
+      <% selected = category == @selected_category %>
+      <%= link_to "#{category.name} #{count}", goods_path(filters.merge(category_id: category.id).compact), aria: { current: (selected ? "true" : nil) },
+            class: "flex h-9 shrink-0 items-center rounded-full px-3.5 text-[13px] #{selected ? 'bg-ink font-bold text-white' : 'border border-line bg-white text-ink'}" %>
+    <% end %>
+  </nav>
+
+  <!-- 今の絞り込みの説明と件数(推しで絞り込んでいたら、その推しの名前と、絞り込みをやめるリンク) -->
+  <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-[13px] text-ink-soft">
+    <span>
+      <%= @selected_character ? @selected_character.name : "すべての推し" %>
+      <% if @selected_category %> · <%= @selected_category.name %><% end %>
+      · <%= @items.size %>件
+    </span>
+    <% if @selected_character || @query.present? %>
+      <%= link_to "絞り込みをやめる", goods_path(status: @status), class: "font-bold text-accent-strong underline" %>
     <% end %>
   </div>
+
+  <% if @items.any? %>
+    <!-- グッズのカード(2列。押すと、そのグッズの詳細へ) -->
+    <div class="mt-2 grid grid-cols-2 gap-3">
+      <% @items.each do |item| %>
+        <%= link_to good_path(item), class: "flex flex-col overflow-hidden rounded-2xl border border-line bg-white" do %>
+          <div class="relative">
+            <%= render "top/item_thumb", item: item, css: "h-24" %>
+            <%# 「すべて」のときは、状態のバッジを出す %>
+            <% unless @status %>
+              <span class="absolute top-2 left-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm"><%= status_label(item) %></span>
+            <% end %>
+            <%# 支払っていない予約中・所持には「未払い」 %>
+            <% if !item.paid && !item.wanted? %>
+              <span class="absolute right-2 bottom-2 rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
+            <% end %>
+          </div>
+          <div class="flex flex-col gap-1 p-2.5">
+            <% if item.category %>
+              <span class="self-start rounded bg-line px-1.5 py-px text-[11px] font-bold text-ink-soft"><%= item.category.name %></span>
+            <% end %>
+            <span class="line-clamp-2 text-sm font-bold text-ink"><%= item.name %></span>
+            <span class="flex justify-between gap-2 text-xs text-ink-soft">
+              <span class="flex min-w-0 items-center gap-1"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 shrink-0 rounded-full"></span><span class="truncate"><%= item.character.name %></span></span>
+              <span class="shrink-0">×<%= item.quantity %></span>
+            </span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="mt-2 rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
+  <% end %>
 </div>
 
+<%# 下のメニュー(グッズを選んでいる状態) %>
 <%= render "shared/bottom_nav", active: :goods %>

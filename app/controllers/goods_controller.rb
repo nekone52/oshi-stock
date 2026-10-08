@@ -2,8 +2,28 @@ class GoodsController < ApplicationController
   # 1つのグッズに対するアクションは、最初に「自分のグッズの中から」探しておく(ほかの人のグッズは見つからず 404)
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid ]
 
-  # グッズの一覧(まだモック)
+  # グッズの一覧(ホームの「すべて見る →」から来る。状態・推し・カテゴリ・検索でしぼれる)
   def index
+    # ① 自分のグッズを、新しい順に取ってくる
+    @items = Current.user.items.includes(:character, :category, image_attachment: :blob).order(created_at: :desc)
+    # ② URL の status(wanted・reserved・owned)で、しぼる(決まっていない値は無視する)
+    @status = params[:status] if Item.statuses.key?(params[:status])
+    @items = @items.where(status: @status) if @status.present?
+    # 予約中は、ホームと同じく未払いを先に、支払い期限の近い順に並べる
+    @items = @items.unpaid_first if @status == "reserved"
+
+    # 推しの絞り込み(ホームで推しを選んでいたら、それを引きつぐ。自分の推しの中からだけ探す)
+    @selected_character = Current.user.characters.find_by(id: params[:character_id]) if params[:character_id].present?
+    @items = @items.where(character: @selected_character) if @selected_character
+    # 検索(グッズ名にその言葉をふくむもの)
+    @query = params[:q].to_s.strip
+    @items = @items.where("items.name ILIKE ?", "%#{Item.sanitize_sql_like(@query)}%") if @query.present?
+
+    # カテゴリのチップ(今しぼっているグッズの中で、カテゴリごとの件数)。チップを押すと、そのカテゴリだけになる
+    @category_counts = @items.reorder(nil).group(:category_id).count
+    @categories = Current.user.categories.order(:created_at)
+    @selected_category = @categories.find_by(id: params[:category_id]) if params[:category_id].present?
+    @items = @items.where(category: @selected_category) if @selected_category
   end
 
   # グッズの詳細(グッズのカード。購入先・金額・発売・支払いなど、買ったときの記録を見る)
