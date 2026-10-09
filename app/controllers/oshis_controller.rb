@@ -1,6 +1,7 @@
 class OshisController < ApplicationController
   # 1人の推しに対するアクションは、最初に「自分の推しの中から」探しておく(ほかの人の推しは見つからず 404)
-  before_action :set_character, only: [ :edit, :update, :confirm_delete, :destroy ]
+  # 【自分の言葉】詳細画面を開く前にも、ログイン中のユーザーの推しの中から探すようにした。だから、ほかの人の推しは見られない
+  before_action :set_character, only: [ :show, :edit, :update, :confirm_delete, :destroy ]
 
   # 推しキャラの一覧(ログイン中ユーザーの推しだけを、登録した順に並べる)
   def index
