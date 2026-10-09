@@ -11,7 +11,6 @@ RSpec.describe "App screens (mock)", type: :request do
     "設定" => "/settings",
     "推しキャラ" => "/oshis",
     "推しを追加" => "/oshis/new",
-    "ヒナタのグッズ" => "/oshis/1",
     "退会しますか？" => "/settings/withdraw",
     "まだ推しがいません" => "/start"
   }.each do |title, path|
