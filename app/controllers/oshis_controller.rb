@@ -8,7 +8,11 @@ class OshisController < ApplicationController
     @characters = my_characters
   end
 
+  # 推しキャラの詳細(推しは before_action の set_character で探してある)
+  # 上の数の箱に出す、状態ごとのグッズの数と、所持の合計金額を用意する
   def show
+    @item_counts = @character.item_counts
+    @owned_total = @character.owned_total
   end
 
   # 推し追加の画面を開く（入力フォーム用）

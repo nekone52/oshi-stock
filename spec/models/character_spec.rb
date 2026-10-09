@@ -73,4 +73,26 @@ RSpec.describe Character, type: :model do
       expect(build(:character, color: "").display_color).to eq(Character::DEFAULT_COLOR)
     end
   end
+
+  describe "#item_counts と #owned_total" do
+    let(:character) { create(:character) }
+
+    it "グッズがないときは、数は空で、合計は 0" do
+      expect(character.item_counts).to eq({})
+      expect(character.owned_total).to eq(0)
+    end
+
+    it "状態ごとに数え、所持のグッズだけ 単価 × 個数 をたす" do
+      create(:item, character: character, status: :wanted, price: 550)
+      create(:item, character: character, status: :reserved, price: 1650)
+      create(:item, character: character, status: :owned, price: 550, quantity: 3)
+      create(:item, character: character, status: :owned, price: 5500)
+      create(:item, character: character, status: :owned, price: nil)
+      # ほかの推しのグッズは数えない
+      create(:item, status: :owned, price: 9999)
+
+      expect(character.item_counts).to eq({ "wanted" => 1, "reserved" => 1, "owned" => 3 })
+      expect(character.owned_total).to eq(7150)
+    end
+  end
 end

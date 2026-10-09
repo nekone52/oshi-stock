@@ -18,6 +18,16 @@ RSpec.describe "推しキャラの詳細", type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it "上の数の箱に、状態ごとの数と所持の合計金額が出る" do
+      create(:item, character: character, status: :reserved, price: 1650)
+      create(:item, character: character, status: :owned, price: 550, quantity: 3)
+      create(:item, character: character, status: :owned, price: 5500)
+
+      sign_in_as(user)
+      get oshi_path(character)
+      expect(response.body).to include("¥7,150")
+    end
+
     it "ほかのユーザーの推しは、見つからない(404)" do
       other_character = create(:character, user: create(:user))
 
