@@ -5,7 +5,7 @@ RSpec.describe "推しキャラの編集", type: :request do
   let(:user) { create(:user) }
 
   describe "GET /oshis/:id/edit" do
-    let(:character) { create(:character, user: user, name: "ヒナタ", color: "#112233") }
+    let(:character) { create(:character, user: user, name: "ヒナタ", color: "#2F5DAA") }
 
     it "ログインしていないと、ログイン画面へ移る" do
       get edit_oshi_path(character)
@@ -18,7 +18,7 @@ RSpec.describe "推しキャラの編集", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("推しを編集")
       expect(response.body).to include('value="ヒナタ"')
-      expect(response.body).to include('value="#112233"')
+      expect(response.body).to include('value="#2F5DAA"')
     end
 
     it "ほかのユーザーの推しは、見つからない(404)" do
@@ -31,7 +31,7 @@ RSpec.describe "推しキャラの編集", type: :request do
   end
 
   describe "PATCH /oshis/:id" do
-    let(:character) { create(:character, user: user, name: "ヒナタ", color: "#112233") }
+    let(:character) { create(:character, user: user, name: "ヒナタ", color: "#2F5DAA") }
 
     it "ログインしていないと、書きかえずにログイン画面へ移る" do
       patch oshi_path(character), params: { character: { name: "アオイ" } }

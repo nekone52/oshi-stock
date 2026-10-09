@@ -11,6 +11,16 @@ RSpec.describe "推しキャラの登録", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("推しを追加")
     end
+
+    it "推しの色(おすすめ)の24色が、名前つきで並んでいる" do
+      sign_in_as(user)
+      get new_oshi_path
+
+      ThemeHelper::THEME_SWATCHES.each do |name, color|
+        expect(response.body).to include(%(data-color="#{color}"), name)
+      end
+      expect(response.body.scan('data-oshi-preview-target="swatch"').size).to eq(24)
+    end
   end
 
   describe "POST /oshis" do
@@ -23,13 +33,13 @@ RSpec.describe "推しキャラの登録", type: :request do
       before { sign_in_as(user) }
 
       it "ログイン中のユーザーの推しとして保存し、一覧へ移る" do
-        params = { character: { name: "ヒナタ", color: "#112233", icon: fixture_file_upload("icon.png", "image/png") } }
+        params = { character: { name: "ヒナタ", color: "#2F5DAA", icon: fixture_file_upload("icon.png", "image/png") } }
         expect { post oshis_path, params: params }.to change(user.characters, :count).by(1)
         expect(response).to redirect_to(oshis_path)
 
         character = user.characters.last
         expect(character.name).to eq("ヒナタ")
-        expect(character.color).to eq("#112233")
+        expect(character.color).to eq("#2F5DAA")
         expect(character.icon).to be_attached
 
         follow_redirect!

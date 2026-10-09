@@ -15,6 +15,10 @@ class Character < ApplicationRecord
     color.presence || DEFAULT_COLOR
   end
 
+  # 【推しの色のお掃除係】明るすぎ・暗すぎ・ギラギラの色は、保存する前に落ち着いた色に直す(app/models/oshi_color.rb)
+  # 【自分の言葉】モデルがデータを管理しているから、保存する前に色を整えるのもモデルに書く
+  normalizes :color, with: ->(color) { OshiColor.soften(color) }
+
   validates :name, presence: true, length: { maximum: 50 }
   # 色は「#」+ 16進数6桁(例:#E8577A)だけ。画面の style に入れるので、それ以外の文字を入れさせない
   validates :color, format: { with: /\A#\h{6}\z/ }, allow_blank: true

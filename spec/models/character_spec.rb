@@ -36,6 +36,10 @@ RSpec.describe Character, type: :model do
       expect(character.errors[:color]).to include("は不正な値です")
     end
 
+    it "明るすぎる色(まっ黄色)は、保存する前に落ち着いた色に直る" do
+      expect(build(:character, color: "#FFFF00").color).to eq("#B8B521")
+    end
+
     describe "アイコン画像" do
       it "PNG の画像なら有効" do
         character = build(:character)
@@ -62,7 +66,7 @@ RSpec.describe Character, type: :model do
 
   describe "#display_color" do
     it "色があれば、その色を返す" do
-      expect(build(:character, color: "#112233").display_color).to eq("#112233")
+      expect(build(:character, color: "#2F5DAA").display_color).to eq("#2F5DAA")
     end
 
     it "色が空なら、アプリのピンクを返す" do

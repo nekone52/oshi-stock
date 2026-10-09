@@ -18,12 +18,14 @@
       <% @characters.each do |character| %>
         <% color = character.display_color %>
         <li class="relative">
-          <%= link_to oshi_path(character), style: "background-image: linear-gradient(to bottom right, color-mix(in srgb, #{color} 20%, white), white)", class: "flex aspect-[91/55] overflow-hidden rounded-2xl border border-line shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.98]" do %>
-            <!-- 左:推しの画像(画像がないときは、推しの色のグラデーションと頭文字) -->
+          <%# カード全体は、上から1/4までを推しの色100%、そこから下へ45%までうすくなるグラデーションでぬり、ふちも推しの色(60%)にする(青と水色の推しも見分けられるように) %>
+          <%= link_to oshi_path(character), style: "background-image: linear-gradient(to bottom, #{color} 0%, #{color} 25%, color-mix(in srgb, #{color} 45%, white) 100%); border: 1.5px solid color-mix(in srgb, #{color} 60%, white)", class: "flex aspect-[91/55] overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.98]" do %>
+            <!-- 左:推しの画像(画像がないときは、白→推しの色50%のグラデーションと、推しの色の頭文字) -->
             <% if character.icon.attached? %>
               <%= image_tag character.icon.variant(:display), alt: character.name, class: "w-[44%] shrink-0 object-cover" %>
             <% else %>
-              <div style="background-image: linear-gradient(to bottom right, color-mix(in srgb, <%= color %> 20%, white), <%= color %>)" class="relative flex w-[44%] shrink-0 items-center justify-center font-display text-6xl font-bold text-white">
+              <%# 頭文字は推しの色に、こい文字色(#2B1E2A)を20%まぜて、うすい背景でも読めるようにする %>
+              <div style="background-image: linear-gradient(to bottom right, white, color-mix(in srgb, <%= color %> 50%, white)); color: color-mix(in srgb, <%= color %> 80%, #2B1E2A)" class="relative flex w-[44%] shrink-0 items-center justify-center font-display text-6xl font-bold">
                 <!-- うっすら水玉の模様 -->
                 <span class="absolute inset-0 bg-[radial-gradient(rgb(255_255_255/0.22)_1.5px,transparent_1.5px)] bg-[length:14px_14px]" aria-hidden="true"></span>
                 <span class="relative"><%= character.name.first %></span>
@@ -31,17 +33,17 @@
             <% end %>
             <!-- 右:名前・合計・グッズの数 -->
             <div class="flex min-w-0 flex-1 flex-col justify-end gap-3 p-3.5">
-              <div class="flex flex-col gap-0.5">
-                <span class="truncate pr-8 font-display text-[28px] leading-tight font-black text-ink"><%= character.name %></span>
-                <!-- 名前の下の短い線(推しの色) -->
-                <span style="background-color: <%= color %>" class="mb-1 h-1 w-10 rounded-full"></span>
-                <%# グッズ機能ができるまでは、合計と数は 0 を出す %>
-                <span class="inline-flex items-baseline gap-1.5 self-start rounded-full border border-line bg-white/80 px-3 py-1 text-xs text-ink-soft">所持グッズ合計 <span class="text-base font-bold text-ink">¥0</span></span>
+              <%# 名前の下の線をなくしたので、名前と合計のあいだは gap-2 であける %>
+              <div class="flex flex-col gap-2">
+                <%# 名前のうしろを白くぼかして、上の濃い推しの色の上でも読めるようにする %>
+                <span style="text-shadow: 0 0 6px white, 0 0 12px white, 0 0 18px rgb(255 255 255 / 0.8)" class="truncate pr-8 font-display text-[28px] leading-tight font-black text-ink"><%= character.name %></span>
+                <%# グッズ機能ができるまでは、合計と数は 0 を出す。文字は背景が濃くても読めるように、こい色(text-ink)にする %>
+                <span class="inline-flex items-baseline gap-1.5 self-start rounded-full border border-line bg-white/80 px-3 py-1 text-xs text-ink">所持グッズ合計 <span class="text-base font-bold text-ink">¥0</span></span>
               </div>
-              <!-- グッズの数(チップ風。詳細画面で一覧が見られる) -->
+              <!-- グッズの数(チップ風。合計の丸とおそろいで、白を少し透かす。詳細画面で一覧が見られる) -->
               <div class="grid grid-cols-3 gap-1.5">
                 <% [ "ほしい", "予約中", "所持" ].each do |label| %>
-                  <span class="flex flex-col items-center rounded-lg border border-line bg-white py-1">
+                  <span class="flex flex-col items-center rounded-lg border border-line bg-white/80 py-1">
                     <span class="text-xs text-ink-soft"><%= label %></span><span class="text-lg leading-tight font-bold text-ink">0</span>
                   </span>
                 <% end %>

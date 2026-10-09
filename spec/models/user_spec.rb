@@ -111,6 +111,10 @@ RSpec.describe User, type: :model do
         expect(build(:user, theme_color: value)).not_to be_valid, "#{value} が通ってしまった"
       end
     end
+
+    it "真っ青は、目がチカチカしないように、保存する前に落ち着いた色に直る" do
+      expect(build(:user, theme_color: "#0000FF").theme_color).to eq("#3333CC")
+    end
   end
 
   describe "最初のカテゴリ" do
