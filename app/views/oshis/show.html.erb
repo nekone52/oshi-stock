@@ -5,8 +5,9 @@
     <%= link_to oshis_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
       <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
     <% end %>
-    <h1 class="flex-1 font-display text-xl font-bold text-ink">ヒナタ</h1>
-    <%= link_to "編集", edit_oshi_path(1), class: "flex h-9 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
+    <h1 class="flex-1 font-display text-xl font-bold text-ink"><%= @character.name %></h1>
+    <%# 【自分の言葉】そのキャラの編集画面へ行く %>
+    <%= link_to "編集", edit_oshi_path(@character), class: "flex h-9 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
   </header>
 
   <!-- 推しの画像(大きく)と合計 -->
@@ -21,7 +22,7 @@
     </div>
   </section>
 
-  <h2 class="mt-6 mb-2 font-display text-lg font-bold text-ink">ヒナタのグッズ</h2>
+  <h2 class="mt-6 mb-2 font-display text-lg font-bold text-ink"><%= @character.name %>のグッズ</h2>
 
   <!-- 状態ごとのグッズ一覧 -->
   <% [
