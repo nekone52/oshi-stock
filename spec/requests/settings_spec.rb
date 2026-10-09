@@ -5,7 +5,7 @@ RSpec.describe "テーマの色の保存", type: :request do
   let(:user) { create(:user) }
 
   describe "GET /settings" do
-    it "推しの色(おすすめ)の9色が、名前つきで並んでいる" do
+    it "推しの色(おすすめ)の24色が、名前つきで並んでいる" do
       sign_in_as(user)
       get settings_path
 
@@ -13,7 +13,7 @@ RSpec.describe "テーマの色の保存", type: :request do
       ThemeHelper::THEME_SWATCHES.each do |name, color|
         expect(response.body).to include(%(data-color="#{color}"), name)
       end
-      expect(response.body.scan('data-theme-picker-target="swatch"').size).to eq(9)
+      expect(response.body.scan('data-theme-picker-target="swatch"').size).to eq(24)
     end
 
     it "今のテーマの色が、カラーピッカーに入っている" do

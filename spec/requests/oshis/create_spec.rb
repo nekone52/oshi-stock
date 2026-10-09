@@ -11,6 +11,16 @@ RSpec.describe "推しキャラの登録", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("推しを追加")
     end
+
+    it "推しの色(おすすめ)の24色が、名前つきで並んでいる" do
+      sign_in_as(user)
+      get new_oshi_path
+
+      ThemeHelper::THEME_SWATCHES.each do |name, color|
+        expect(response.body).to include(%(data-color="#{color}"), name)
+      end
+      expect(response.body.scan('data-oshi-preview-target="swatch"').size).to eq(24)
+    end
   end
 
   describe "POST /oshis" do
