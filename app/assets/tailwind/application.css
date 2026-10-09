@@ -11,6 +11,8 @@
   --color-accent: #E8577A;
   --color-accent-strong: #D43F63;
   --color-accent-soft: #FBE1E7;
+  /* アクセント色の上に置く文字の色(text-on-accent)。最初は白。明るいテーマの色を選んだ人だけ、黒に入れかわる */
+  --color-on-accent: #FFFFFF;
   --color-paid: #2E8A6C;
   --color-paid-bg: #DFF1E7;
   --color-unpaid: #A9741C;
