@@ -18,6 +18,16 @@ class SettingsController < ApplicationController
   def withdraw
   end
 
+  # 【退会する】DELETE /settings/withdraw
+  def destroy
+    user = Current.user
+    # 先にログアウトする(ブラウザの鍵も消す)。あとにすると、ログインの記録がユーザーと一緒に消えてしまう
+    terminate_session
+    # 【自分の言葉】destroy は未練なしに割り切る(推し・グッズ・カテゴリ・画像も、まとめて全部消す)
+    user.destroy
+    redirect_to new_session_path, notice: "退会しました。ご利用ありがとうございました"
+  end
+
   private
 
   # 送られてきたデータの中からユーザー情報(:user)を取り出し、テーマの色(:theme_color)だけを許可する
