@@ -42,6 +42,8 @@ Rails.application.routes.draw do
   get "wishlist/new", to: "wishlist#new", as: :new_wishlist
   get "settings", to: "settings#show", as: :settings
   get "settings/withdraw", to: "settings#withdraw", as: :withdraw
+  # 退会する(アカウントを消す)。消すので delete。データを変える操作なので get は使わない
+  delete "settings/withdraw", to: "settings#destroy"
   # 設定画面で選んだテーマの色を保存する(書きかえなので patch)
   patch "settings", to: "settings#update"
 end
