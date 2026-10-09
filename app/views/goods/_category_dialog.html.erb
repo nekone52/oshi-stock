@@ -17,7 +17,7 @@
         <%= f.label :name, "カテゴリ名", class: "text-[13px] font-bold text-ink" %>
         <div class="flex gap-2">
           <%= f.text_field :name, required: true, maxlength: 20, placeholder: "例：うちわ", class: "h-12 min-w-0 flex-1 rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
-          <%= f.submit "追加する", class: "h-12 shrink-0 cursor-pointer rounded-xl bg-accent px-4 text-sm font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
+          <%= f.submit "追加する", class: "h-12 shrink-0 cursor-pointer rounded-xl bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
         </div>
         <!-- 追加できなかったときのお知らせ(同じ名前がある・空など。Turbo Stream で中身を入れる) -->
         <div id="category_errors"></div>

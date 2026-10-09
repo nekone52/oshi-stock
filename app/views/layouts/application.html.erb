@@ -24,7 +24,9 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-bg font-body text-ink antialiased">
+  <%# 【テーマの色】ログインしている人が選んだ色で、ボタンやリンクの色を入れかえる(theme_helper.rb の theme_style) %>
+  <%# <html> ではなく <body> に置く。Turbo は画面を切りかえるとき <body> だけを入れかえるので、保存した色がすぐ反映される %>
+  <body class="bg-bg font-body text-ink antialiased" style="<%= theme_style %>">
     <!-- お知らせ(登録しました・回数が多すぎます など。数秒で読める位置に出して、3秒で消す。flash_controller.js) -->
     <%# マスコット(女の子・男の子のどちらかをランダム)が、吹き出しでしゃべる形 %>
     <%# 吹き出しが出るときに、光の線が左から右へキラッと走る(animate-shine。application.css で定義) %>

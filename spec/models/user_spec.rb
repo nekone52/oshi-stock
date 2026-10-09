@@ -91,6 +91,28 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "テーマの色(theme_color)" do
+    it "何も選ばなければ、最初のピンク(#E8577A)が入る" do
+      expect(User.new.theme_color).to eq("#E8577A")
+    end
+
+    it "「#」+ 16進数6けた なら有効(小文字でもよい)" do
+      expect(build(:user, theme_color: "#4e6fa3")).to be_valid
+    end
+
+    it "空なら無効" do
+      user = build(:user, theme_color: "")
+      expect(user).not_to be_valid
+      expect(user.errors[:theme_color]).to include("を入力してください")
+    end
+
+    it "色の形でなければ無効(画面の style に入るので、ほかの文字を入れさせない)" do
+      [ "red", "#12345", "#1234567", "#GGGGGG", "#E8577A; color: red" ].each do |value|
+        expect(build(:user, theme_color: value)).not_to be_valid, "#{value} が通ってしまった"
+      end
+    end
+  end
+
   describe "最初のカテゴリ" do
     it "ユーザーを作ると、最初の5種類のカテゴリが自動でできる" do
       user = create(:user)
