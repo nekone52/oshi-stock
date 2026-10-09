@@ -1,4 +1,4 @@
-<%# ログアウトを本物にしたので、この画面は押せるようにする(ほかの項目はまだ見た目だけ) %>
+<%# ログアウトとテーマの色を本物にしたので、この画面は押せるようにする(ほかの項目はまだ見た目だけ) %>
 <% content_for :interactive, true %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-28">
@@ -25,9 +25,22 @@
   <!-- テーマの色(カラーピッカーで自由に選ぶ) -->
   <section aria-labelledby="theme-heading" class="mt-6 flex flex-col gap-2">
     <h2 id="theme-heading" class="border-l-4 border-chara-c pl-2.5 font-display text-base font-bold text-ink">テーマの色</h2>
-    <div class="flex flex-col gap-3 rounded-2xl border border-line bg-white p-4">
+    <%# 【封筒】ログインしている本人(Current.user)のデータとして、PATCH /settings(settings#update)に送る %>
+    <%# Current.user は保存ずみのユーザーなので、送り方は自動で PATCH(書きかえ)になる %>
+    <%= form_with model: Current.user, url: settings_path, class: "flex flex-col gap-3 rounded-2xl border border-line bg-white p-4" do |f| %>
+      <!-- 入力ミスのお知らせ(保存できなかったときだけ出す) -->
+      <% if Current.user.errors.any? %>
+        <div role="alert" class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">
+          <ul class="list-disc space-y-0.5 pl-4">
+            <% Current.user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
       <div class="flex items-center gap-3">
-        <input id="theme-color" type="color" value="#E8577A" aria-label="テーマの色" class="h-12 w-14 shrink-0 cursor-pointer rounded-xl border border-line bg-white p-1">
+        <%# 【手紙】テーマの色(users テーブルの theme_color の列) %>
+        <%= f.color_field :theme_color, aria: { label: "テーマの色" }, class: "h-12 w-14 shrink-0 cursor-pointer rounded-xl border border-line bg-white p-1" %>
         <!-- 選んだ色のプレビュー(グラデーション) -->
         <div class="h-12 flex-1 rounded-xl bg-gradient-to-r from-accent via-accent-soft to-white"></div>
       </div>
@@ -36,7 +49,9 @@
         <span class="shrink-0 whitespace-nowrap rounded-full bg-accent px-4 py-2 text-sm font-bold text-white">ボタンの見え方</span>
         <span class="text-xs text-ink-soft">文字の色は自動で読みやすい色になります</span>
       </div>
-    </div>
+      <%# 【ポスト】押すと、選んだ色を保存する(推しのフォームの保存ボタンとそろえた見た目) %>
+      <%= f.submit "保存する", class: "w-full cursor-pointer rounded-2xl bg-accent py-3 font-display text-base font-bold text-white transition hover:bg-accent-strong active:scale-95" %>
+    <% end %>
   </section>
 
   <!-- その他 -->
