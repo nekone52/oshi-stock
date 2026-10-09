@@ -60,6 +60,63 @@ RSpec.describe "テーマの色の保存", type: :request do
     end
   end
 
+  describe "退会" do
+    describe "GET /settings/withdraw" do
+      it "確認画面に、退会する(DELETE /settings/withdraw)ボタンがある" do
+        sign_in_as(user)
+        get withdraw_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("退会しますか？")
+        expect(response.body).to include('action="/settings/withdraw"', 'name="_method" value="delete"')
+      end
+    end
+
+    describe "DELETE /settings/withdraw" do
+      it "ログインしていないと、ログイン画面へ移る(だれも消えない)" do
+        user
+        expect { delete withdraw_path }.not_to change(User, :count)
+        expect(response).to redirect_to(new_session_path)
+      end
+
+      it "退会すると、ユーザーと、推し・グッズ・カテゴリ・ログインの記録・画像がまとめて消える" do
+        character = create(:character, user: user)
+        character.icon.attach(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
+        create(:item, character: character)
+        sign_in_as(user)
+
+        expect { delete withdraw_path }
+          .to change(User, :count).by(-1)
+          .and change(Character, :count).by(-1)
+          .and change(Item, :count).by(-1)
+          .and change(Category, :count).by(-5) # 最初の5つのカテゴリ
+          .and change(Session, :count).by(-1)
+          .and change(ActiveStorage::Attachment, :count).by(-1)
+      end
+
+      it "退会したら、ログイン画面に戻ってお知らせが出て、そのあとはログアウトの状態になる" do
+        sign_in_as(user)
+        delete withdraw_path
+
+        expect(response).to redirect_to(new_session_path)
+        expect(flash[:notice]).to eq("退会しました。ご利用ありがとうございました")
+
+        # ホームを開こうとしても、ログイン画面へ移る(ログインの鍵も消えている)
+        get root_path
+        expect(response).to redirect_to(new_session_path)
+      end
+
+      it "ほかの人のアカウントとデータは消えない" do
+        other = create(:user)
+        create(:character, user: other)
+        sign_in_as(user)
+
+        expect { delete withdraw_path }.not_to change { other.characters.count }
+        expect(User.exists?(other.id)).to be(true)
+      end
+    end
+  end
+
   describe "アプリ全体への反映" do
     it "保存した色が、ほかの画面(ホーム)でも、ボタンの色の入れ物に入っている" do
       user.update!(theme_color: "#4E6FA3")
