@@ -3,6 +3,11 @@
 module ThemeHelper
   # 最初のピンク(この色のときは、application.css の色をそのまま使う)
   DEFAULT_THEME_COLOR = "#E8577A".freeze
+  # 設定画面の「推しの色(おすすめ)」に並べる9色。推しのメンバーカラーを、ベージュの背景になじむように、くすませたもの
+  THEME_SWATCHES = [
+    [ "ピンク", "#E8577A" ], [ "赤", "#C4545A" ], [ "オレンジ", "#D9884E" ], [ "黄", "#D9B44A" ], [ "緑", "#6E9B6B" ],
+    [ "水色", "#7FB3C8" ], [ "青", "#4E6FA3" ], [ "紫", "#8A6FB8" ], [ "チャコール", "#4A4A55" ]
+  ].freeze
   WHITE = [ 255, 255, 255 ].freeze
   INK = [ 43, 30, 42 ].freeze # 文字の黒(--color-ink)
 
