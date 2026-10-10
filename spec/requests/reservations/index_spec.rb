@@ -165,5 +165,31 @@ RSpec.describe "予約の一覧", type: :request do
         expect(response.body).to include("ヒナタの缶バッジ", "アオイのぬい")
       end
     end
+
+    # 推しの色の枠(#85)。期限が近いことは、枠の色のかわりに札で知らせる
+    describe "推しの色の枠と「⚠ 期限が近い」の札" do
+      let(:character) { create(:character, user: user) }
+
+      before { sign_in_as(user) }
+
+      it "カードの枠が推しの色になる" do
+        create(:item, character: character, status: :reserved)
+        get reservations_path
+        expect(response.body).to include("border: 2px solid #{character.display_color}")
+      end
+
+      it "未払いで、支払い期限が7日以内なら、札が出る" do
+        create(:item, character: character, status: :reserved, paid: false, payment_deadline: Date.current + 3)
+        get reservations_path
+        expect(response.body).to include("⚠ 期限が近い")
+      end
+
+      it "期限がまだ先のときや、支払い済みのときは、札を出さない" do
+        create(:item, character: character, status: :reserved, paid: false, payment_deadline: Date.current + 20)
+        create(:item, character: character, status: :reserved, paid: true, payment_deadline: Date.current + 3)
+        get reservations_path
+        expect(response.body).not_to include("⚠ 期限が近い")
+      end
+    end
   end
 end

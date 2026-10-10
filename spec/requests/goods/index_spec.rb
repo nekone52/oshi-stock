@@ -57,5 +57,10 @@ RSpec.describe "グッズの一覧", type: :request do
       expect(response.body).to include("アオイのぬい")
       expect(response.body).not_to include("ヒナタのアクスタ")
     end
+
+    it "カードの枠が、そのグッズの推しの色になる(#85)" do
+      get goods_path
+      expect(response.body).to include("border: 2px solid #{hinata.display_color}", "border: 2px solid #{aoi.display_color}")
+    end
   end
 end
