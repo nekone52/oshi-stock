@@ -83,9 +83,6 @@
     </dl>
   </article>
 
-  <!-- 編集ボタン(下のメニューと重ならないように、カードのすぐ下に置く) -->
+  <!-- 編集ボタン(カードのすぐ下に置く) -->
   <%= link_to "編集する", edit_good_path(@item), class: "mt-4 flex w-full items-center justify-center rounded-2xl bg-accent py-3.5 font-display text-base font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
 </div>
-
-<%# 下のメニュー(グッズを選んでいる状態) %>
-<%= render "shared/bottom_nav", active: :goods %>
