@@ -116,5 +116,33 @@ RSpec.describe "予約の一覧", type: :request do
       get reservations_path
       expect(response.body).not_to include("発売日待ち")
     end
+
+    # ホームで選んだ推しを引きつぐ(?character_id=番号)
+    context "推しの番号がついているとき" do
+      let(:hinata) { create(:character, user: user, name: "ヒナタ") }
+      let(:aoi) { create(:character, user: user, name: "アオイ") }
+
+      before do
+        create(:item, character: hinata, status: :reserved, name: "ヒナタの缶バッジ", price: 1000)
+        create(:item, character: aoi, status: :reserved, name: "アオイのぬい", price: 2000)
+        sign_in_as(user)
+      end
+
+      it "その推しの予約だけが出て、上の箱は全員分のまま" do
+        get reservations_path(character_id: hinata.id)
+        body = response.body
+
+        expect(body).to include("ヒナタの缶バッジ")
+        expect(body).not_to include("アオイのぬい")
+        expect(body).to include("¥3,000", "予約 2件")
+      end
+
+      it "ほかの人の推しの番号だと、しぼらずに全員分を出す" do
+        other_character = create(:character, user: create(:user))
+        get reservations_path(character_id: other_character.id)
+
+        expect(response.body).to include("ヒナタの缶バッジ", "アオイのぬい")
+      end
+    end
   end
 end

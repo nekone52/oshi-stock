@@ -8,10 +8,18 @@ class ReservationsController < ApplicationController
     @reserved_items = Current.user.items.reserved.or(Current.user.items.owned.where(paid: false))
                                   .includes(:character, image_attachment: :blob).unpaid_first
     # 上の「これから支払う金額」の箱(計算はモデルのまとめ係 user.rb。ホームと同じ数字になる)
+    # 箱の数字は、推しでしぼっても変えない(ホームと同じ)。なので「予約 〇件」は、しぼる前に数えておく
+    @reserved_count = @reserved_items.size
     # 【自分の言葉】ユーザーがこれから支払う金額の合計
     @unpaid_total   = Current.user.unpaid_total
     @unpaid_count   = Current.user.unpaid_items.count   # ログイン中の人の、未払いのグッズを数える
     @due_soon_count = Current.user.due_soon_count       # ログイン中の人の、期限7日以内の数(モデルで数えてある)
+    # ホームで選んだ推しを引きつぐ(?character_id=番号)。グッズ一覧と同じ形
+    # 自分の推しの中から探すので、ほかの人の推しの番号を入れても見つからない(全員分のまま)
+    @selected_character = Current.user.characters.find_by(id: params[:character_id]) if params[:character_id].present?
+    # 予約のグッズ(お皿)から、その推しのものだけにしぼる。推しは条件なので where のかっこの中
+    # 【自分の言葉】予約したグッズを、選択したキャラクターに絞る
+    @reserved_items = @reserved_items.where(character: @selected_character) if @selected_character
     # 発売月ごとの箱に仕分ける(予約画面でしか使わない並べ方なので、モデルではなくここで)
     # 【自分の言葉】予約している一覧から、発売月ごとにグループ化する
     items_by_month = @reserved_items.group_by(&:release_month)

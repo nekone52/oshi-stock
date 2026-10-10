@@ -20,7 +20,7 @@
     <span class="text-[13px] text-ink-soft">これから支払う金額</span>
     <span class="font-display text-[32px] leading-none font-bold">¥<%= number_with_delimiter(@unpaid_total) %></span>
     <div class="flex flex-wrap gap-2">
-      <span class="rounded-lg bg-bg px-2.5 py-1 text-[13px] text-ink">予約 <%= @reserved_items.size %>件</span>
+      <span class="rounded-lg bg-bg px-2.5 py-1 text-[13px] text-ink">予約 <%= @reserved_count %>件</span>
       <span class="rounded-lg bg-bg px-2.5 py-1 text-[13px] text-ink">未払い <%= @unpaid_count %>件</span>
       <% if @due_soon_count.positive? %>
         <span class="rounded-lg bg-unpaid-bg px-2.5 py-1 text-[13px] font-bold text-unpaid">期限7日以内 <%= @due_soon_count %>件</span>
