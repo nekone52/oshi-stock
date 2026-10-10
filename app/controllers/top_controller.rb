@@ -24,10 +24,10 @@ class TopController < ApplicationController
     @owned_items    = @items.owned       # 所持
 
     # これから支払う金額のまとめ(支払っていない、予約中・所持のグッズ。絞り込み・検索に関係なく全部の推しで数える)
-    unpaid_items = Current.user.items.where(paid: false).where.not(status: :wanted)
-    @unpaid_total = unpaid_items.sum("COALESCE(items.price, 0) * items.quantity")
-    @unpaid_count = unpaid_items.count
-    @due_soon_count = unpaid_items.where(payment_deadline: Date.current..7.days.from_now.to_date).count
+    # 計算はモデルのまとめ係(user.rb)。予約の画面でも同じものを使う
+    @unpaid_total   = Current.user.unpaid_total
+    @unpaid_count   = Current.user.unpaid_items.count
+    @due_soon_count = Current.user.due_soon_count
   end
 
   # 「まだ推しがいません」の画面(推しがいないときは、ホームからもこの画面を出す)

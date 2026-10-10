@@ -1,63 +1,65 @@
-<%# 【予約カード1枚分(モック・見た目だけ)】発売月の中と、発売日待ちの箱の中で同じものを使う %>
-<%# item:例のデータ1件 / colors:推しの色のクラス名 %>
-<% soon = item[:state] == :unpaid && item[:due] && item[:due] <= 7 %>
-<%# 支払い期限が7日以内のものは、枠の色を変えて目立たせる %>
+<%# 【予約カード1枚分】発売月の中と、発売日待ちの箱の中で同じものを使う %>
+<%# item:グッズ1件(本物のデータ) %>
+<% soon = !item.paid && payment_due_soon?(item) %>
+<%# 未払いで、支払い期限が7日以内(または、すぎている)ものは、枠の色を変えて目立たせる %>
 <li class="flex flex-col gap-2.5 rounded-2xl bg-white p-3 <%= soon ? "border-[1.5px] border-unpaid" : "border border-line" %>">
   <div class="flex items-start gap-3">
-    <!-- 商品画像(画像がないときは、推しの色の四角) -->
-    <div class="grid h-16 w-16 shrink-0 place-items-center rounded-2xl <%= colors[item[:chara]][:thumb] %>">
-      <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg>
-    </div>
+    <!-- 商品画像(画像がないときは、推しの色の四角。ホームと同じ部品) -->
+    <%= render "top/item_thumb", item: item, css: "h-16 w-16 shrink-0 rounded-2xl" %>
     <div class="flex min-w-0 flex-1 flex-col gap-1">
       <!-- 状態のバッジと支払い期限 -->
       <div class="flex items-center justify-between gap-2">
-        <% case item[:state] %>
-        <% when :paid %>
+        <% if item.paid %>
           <span class="rounded-md bg-paid-bg px-2 py-0.5 text-[11px] font-bold text-paid">支払済</span>
           <span class="text-[13px] text-ink-soft">届くのを待っています</span>
-        <% when :arrived %>
-          <span class="rounded-md bg-unpaid-bg px-2 py-0.5 text-[11px] font-bold text-unpaid">届いた・未払い</span>
-          <span class="text-[13px] text-ink-soft">支払期限 あと<%= item[:due] %>日</span>
         <% else %>
-          <span class="rounded-md bg-unpaid-bg px-2 py-0.5 text-[11px] font-bold text-unpaid">未払い</span>
-          <span class="text-[13px] <%= soon ? "font-bold text-unpaid" : "text-ink-soft" %>"><%= item[:due] ? "支払期限 あと#{item[:due]}日" : "支払期限 未定" %></span>
+          <%# 予約に出るのは「予約中」か「届いたけど未払い」なので、届いているかどうかでバッジの文字を変える %>
+          <span class="rounded-md bg-unpaid-bg px-2 py-0.5 text-[11px] font-bold text-unpaid"><%= item.owned? ? "届いた・未払い" : "未払い" %></span>
+          <span class="text-[13px] <%= soon ? "font-bold text-unpaid" : "text-ink-soft" %>"><%= payment_deadline_label(item) %></span>
         <% end %>
       </div>
-      <span class="text-[15px] font-bold break-words text-ink"><%= item[:name] %></span>
-      <!-- 推しと、買ったお店 -->
+      <%# 【自分の言葉】item[:name] はモックのパチモン、item.name はマイグレーションで作った項目から読む本物 %>
+      <span class="text-[15px] font-bold break-words text-ink"><%= item.name %></span>
+      <!-- 推しと、買ったお店(お店が空なら推しだけ) -->
       <span class="flex min-w-0 items-center gap-1 text-[13px] text-ink-soft">
-        <span class="h-2.5 w-2.5 shrink-0 rounded-full <%= colors[item[:chara]][:dot] %>"></span>
-        <span class="truncate"><%= item[:oshi] %> · <%= item[:shop] %></span>
+        <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background-color: <%= item.character.display_color %>"></span>
+        <span class="truncate"><%= [ item.character.name, item.shop_name.presence ].compact.join(" · ") %></span>
       </span>
       <!-- 発売の時期(切れないように小さいタグ)と金額 -->
       <div class="flex items-center justify-between gap-2">
         <span class="inline-flex items-center gap-1 rounded-md bg-bg px-2 py-0.5 text-xs font-bold whitespace-nowrap text-ink">
           <svg class="h-3.5 w-3.5 text-ink-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5h17v15h-17zM3.5 10h17M8 3v4M16 3v4"/></svg>
-          <%= item[:release] %>
+          <%= release_label(item) %>
         </span>
-        <span class="text-base font-bold whitespace-nowrap <%= item[:state] == :paid ? "text-ink-soft" : "text-ink" %>">
-          <%= item[:price] %><% if item[:qty] > 1 %><span class="text-[11px] font-normal text-ink-soft">(×<%= item[:qty] %>)</span><% end %>
-        </span>
+        <%# 金額は 単価 × 個数(単価が空なら出さない)。2個以上のときは個数もそえる %>
+        <% if item.price %>
+          <span class="text-base font-bold whitespace-nowrap tabular-nums <%= item.paid ? "text-ink-soft" : "text-ink" %>">
+            ¥<%= number_with_delimiter(item.price * item.quantity) %><% if item.quantity > 1 %><span class="text-[11px] font-normal text-ink-soft">(×<%= item.quantity %>)</span><% end %>
+          </span>
+        <% end %>
       </div>
     </div>
   </div>
   <!-- メモ(書いてあるときだけ出す) -->
-  <% if item[:memo] %>
-    <p class="rounded-lg bg-bg px-2.5 py-1.5 text-[13px] text-ink"><%= item[:memo] %></p>
+  <% if item.memo.present? %>
+    <p class="rounded-lg bg-bg px-2.5 py-1.5 text-[13px] text-ink"><%= item.memo %></p>
   <% end %>
   <!-- ワンタップの切り替え。2つとも白地に色の枠で同じ強さにして、色とアイコンで見分ける(押しまちがい防止) -->
-  <div class="grid <%= item[:state] == :arrived ? "grid-cols-1" : "grid-cols-2" %> gap-2">
-    <% if item[:state] == :paid %>
-      <button type="button" aria-pressed="true" class="h-10 rounded-xl bg-paid-bg text-[13px] font-bold text-paid">✓ 支払い済み</button>
+  <%# 支払った:押すたびに 支払い済み ⇔ 未払い を切り替える(PATCH /goods/:id/toggle_paid。ホームと同じ道。押したあとは予約画面に戻る) %>
+  <%# 届いた:所持グッズに移す(PATCH /goods/:id/receive)。もう届いているものには出さない %>
+  <div class="grid <%= item.owned? ? "grid-cols-1" : "grid-cols-2" %> gap-2">
+    <%# 【自分の言葉】特定のグッズを、支払い済みに書き換えるボタン %>
+    <% if item.paid %>
+      <%= button_to toggle_paid_good_path(item), method: :patch, aria: { pressed: "true" }, form_class: "contents", class: "h-10 w-full cursor-pointer rounded-xl bg-paid-bg text-[13px] font-bold text-paid" do %>✓ 支払い済み<% end %>
     <% else %>
-      <button type="button" class="inline-flex h-10 items-center justify-center gap-1 rounded-xl border-[1.5px] border-paid bg-white text-[13px] font-bold text-paid">
+      <%= button_to toggle_paid_good_path(item), method: :patch, aria: { pressed: "false" }, form_class: "contents", class: "inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1 rounded-xl border-[1.5px] border-paid bg-white text-[13px] font-bold text-paid" do %>
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l6 8 6-8M12 12v8M7.5 13h9M7.5 16.5h9"/></svg>支払った
-      </button>
+      <% end %>
     <% end %>
-    <% unless item[:state] == :arrived %>
-      <button type="button" class="inline-flex h-10 items-center justify-center gap-1 rounded-xl border-[1.5px] border-accent bg-white text-[13px] font-bold text-accent-strong">
+    <% unless item.owned? %>
+      <%= button_to receive_good_path(item), method: :patch, form_class: "contents", class: "inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1 rounded-xl border-[1.5px] border-accent bg-white text-[13px] font-bold text-accent-strong" do %>
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg>届いた
-      </button>
+      <% end %>
     <% end %>
   </div>
 </li>

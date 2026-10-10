@@ -34,6 +34,9 @@ class GoodsController < ApplicationController
   def new
     # フォームを組み立てるための、空のグッズ(個数は1、状態は「ほしい」が最初から入る)
     @item = Item.new
+    # 予約画面の「＋ 予約を登録」から来たときは、URL の status(?status=reserved)で状態を選んでおく
+    # 🛡️ URL は書きかえられるので、決まった3つ(wanted・reserved・owned)のどれかのときだけ使う(一覧の index と同じ)
+    @item.status = params[:status] if Item.statuses.key?(params[:status])
     set_form_choices
   end
 

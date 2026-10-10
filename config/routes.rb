@@ -21,8 +21,8 @@ Rails.application.routes.draw do
   get "terms", to: "pages#terms", as: :terms
   get "privacy", to: "pages#privacy", as: :privacy
 
-  # 画面モック(ロジックは後で入れる)
-  resources :reservations, only: [ :index, :new ]
+  # 予約の一覧(登録はグッズ登録のフォームを「予約中」で開く)
+  resources :reservations, only: [ :index ]
   # グッズ(新規登録・編集・削除は本物。一覧はまだモック)
   resources :goods, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     # 1つのグッズに対する道(URL に番号が入る)。ホームのワンタップの切り替えで使う
