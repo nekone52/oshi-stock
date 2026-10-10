@@ -56,6 +56,17 @@ RSpec.describe "予約の一覧", type: :request do
       expect(body.index('id="waiting"')).to be < body.index("新作アクスタ")
     end
 
+    it "カードに、推し・お店・金額(単価×個数)・状態のバッジが出る" do
+      character = create(:character, user: user, name: "ねこ太")
+      create(:item, character: character, status: :reserved, name: "ねこ太のぬい", shop_name: "アニメイト",
+                    price: 1500, quantity: 2, release_month: Date.new(2026, 10, 1))
+      create(:item, character: character, status: :owned, name: "届いたアクスタ", release_month: Date.new(2026, 10, 1))
+
+      sign_in_as(user)
+      get reservations_path
+      expect(response.body).to include("ねこ太 · アニメイト", "¥3,000", "(×2)", "未払い", "届いた・未払い")
+    end
+
     it "発売日待ちのグッズがないときは、お知らせも箱も出さない" do
       character = create(:character, user: user)
       create(:item, character: character, status: :reserved, release_month: Date.new(2026, 10, 1))

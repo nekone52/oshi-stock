@@ -4,7 +4,9 @@ class ReservationsController < ApplicationController
   def index
     # 予約 = 予約中 + 届いたけど未払いのもの(ホーム・推しキャラの詳細と同じ。支払うまで残して、払い忘れを防ぐ)
     # 【自分の言葉】ログインしているユーザーの、予約中と、所持中で未払いのアイテム。未払いは上へ
-    @reserved_items = Current.user.items.reserved.or(Current.user.items.owned.where(paid: false)).unpaid_first
+    # includes:カードに出す推しと画像も、まとめて取り出す(グッズの数だけデータベースに聞きに行かないようにする。ホームと同じ)
+    @reserved_items = Current.user.items.reserved.or(Current.user.items.owned.where(paid: false))
+                                  .includes(:character, image_attachment: :blob).unpaid_first
     # 上の「これから支払う金額」の箱(計算はモデルのまとめ係 user.rb。ホームと同じ数字になる)
     # 【自分の言葉】ユーザーがこれから支払う金額の合計
     @unpaid_total   = Current.user.unpaid_total
