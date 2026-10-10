@@ -45,20 +45,21 @@
     <p class="rounded-lg bg-bg px-2.5 py-1.5 text-[13px] text-ink"><%= item.memo %></p>
   <% end %>
   <!-- ワンタップの切り替え。2つとも白地に色の枠で同じ強さにして、色とアイコンで見分ける(押しまちがい防止) -->
-  <%# ボタンはまだ見た目だけ。次の項目で「支払った」「届いた」を本物にする %>
+  <%# 支払った:押すたびに 支払い済み ⇔ 未払い を切り替える(PATCH /goods/:id/toggle_paid。ホームと同じ道。押したあとは予約画面に戻る) %>
+  <%# 届いた:所持グッズに移す(PATCH /goods/:id/receive)。もう届いているものには出さない %>
   <div class="grid <%= item.owned? ? "grid-cols-1" : "grid-cols-2" %> gap-2">
+    <%# 【自分の言葉】特定のグッズを、支払い済みに書き換えるボタン %>
     <% if item.paid %>
-      <button type="button" aria-pressed="true" class="h-10 rounded-xl bg-paid-bg text-[13px] font-bold text-paid">✓ 支払い済み</button>
+      <%= button_to toggle_paid_good_path(item), method: :patch, aria: { pressed: "true" }, form_class: "contents", class: "h-10 w-full cursor-pointer rounded-xl bg-paid-bg text-[13px] font-bold text-paid" do %>✓ 支払い済み<% end %>
     <% else %>
-      <button type="button" class="inline-flex h-10 items-center justify-center gap-1 rounded-xl border-[1.5px] border-paid bg-white text-[13px] font-bold text-paid">
+      <%= button_to toggle_paid_good_path(item), method: :patch, aria: { pressed: "false" }, form_class: "contents", class: "inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1 rounded-xl border-[1.5px] border-paid bg-white text-[13px] font-bold text-paid" do %>
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l6 8 6-8M12 12v8M7.5 13h9M7.5 16.5h9"/></svg>支払った
-      </button>
+      <% end %>
     <% end %>
-    <%# もう届いているものには「届いた」を出さない %>
     <% unless item.owned? %>
-      <button type="button" class="inline-flex h-10 items-center justify-center gap-1 rounded-xl border-[1.5px] border-accent bg-white text-[13px] font-bold text-accent-strong">
+      <%= button_to receive_good_path(item), method: :patch, form_class: "contents", class: "inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1 rounded-xl border-[1.5px] border-accent bg-white text-[13px] font-bold text-accent-strong" do %>
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg>届いた
-      </button>
+      <% end %>
     <% end %>
   </div>
 </li>

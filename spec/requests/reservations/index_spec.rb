@@ -67,6 +67,28 @@ RSpec.describe "予約の一覧", type: :request do
       expect(response.body).to include("ねこ太 · アニメイト", "¥3,000", "(×2)", "未払い", "届いた・未払い")
     end
 
+    it "「支払った」「届いた」ボタンが、ホームと同じ道につながっている(届いたものには「届いた」を出さない)" do
+      character = create(:character, user: user)
+      reserved = create(:item, character: character, status: :reserved)
+      arrived  = create(:item, character: character, status: :owned)
+
+      sign_in_as(user)
+      get reservations_path
+      body = response.body
+      expect(body).to include(toggle_paid_good_path(reserved), receive_good_path(reserved), toggle_paid_good_path(arrived))
+      expect(body).not_to include(receive_good_path(arrived))
+    end
+
+    it "予約画面で「届いた」を押すと、所持に移って予約画面に戻る" do
+      character = create(:character, user: user)
+      item = create(:item, character: character, status: :reserved)
+
+      sign_in_as(user)
+      patch receive_good_path(item), headers: { "HTTP_REFERER" => reservations_url }
+      expect(response).to redirect_to(reservations_url)
+      expect(item.reload).to be_owned
+    end
+
     it "発売日待ちのグッズがないときは、お知らせも箱も出さない" do
       character = create(:character, user: user)
       create(:item, character: character, status: :reserved, release_month: Date.new(2026, 10, 1))
