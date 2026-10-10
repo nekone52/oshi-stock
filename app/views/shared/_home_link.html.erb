@@ -1,5 +1,7 @@
 <%# 「← ホーム」(ホーム以外の画面の、見出しの上)。下のメニューがないので、ここからホームに戻る %>
-<%# 文字は小さいけど、指で押しやすいように高さは 44px(h-11)とる %>
-<%= link_to root_path, class: "inline-flex h-11 items-center gap-1 pt-2 text-xs font-bold text-ink-soft transition hover:text-ink" do %>
+<%# 推しでしぼっている画面(予約・グッズ一覧)からは、その推しの番号をつけて戻る(ホームでも選んだまま。選んでいなければ番号なし) %>
+<%# 【自分の言葉】キャラクターidが選ばれていたら、その番号をつけてホームに戻る(ホームでその推しのまま表示) %>
+<%# 文字は 15px(小さいと気づきにくかったので大きく)。指で押しやすいように高さは 44px(h-11)とる %>
+<%= link_to root_path(character_id: @selected_character&.id), class: "inline-flex h-11 items-center gap-1.5 pt-2 text-[15px] font-bold text-ink-soft transition hover:text-ink" do %>
   <span aria-hidden="true">←</span> ホーム
 <% end %>
