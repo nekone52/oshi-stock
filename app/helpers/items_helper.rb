@@ -35,6 +35,19 @@ module ItemsHelper
     nil
   end
 
+  # グッズの戻り先(詳細の「<」・消去のあと)。下のメニューがないので、グッズの状態で帰る一覧を決める
+  # 予約中と、届いたけど未払いのもの → 予約画面(予約画面に出ているグッズと同じ)
+  # ほしい物・所持(支払い済み) → グッズ一覧の、その状態でしぼった画面
+  # 例:back_path_for(item) → "/reservations" や "/goods?status=wanted"
+  def back_path_for(item)
+    # 【自分の言葉】予約中?または(所持?かつ未払い?)→ 予約中か、届いたけど未払いのグッズなら、予約画面に戻す
+    if item.reserved? || (item.owned? && !item.paid)
+      reservations_path
+    else
+      goods_path(status: item.status)
+    end
+  end
+
   # 支払い期限が7日以内(または、すぎている)か。目立たせるために使う
   def payment_due_soon?(item)
     item.payment_deadline.present? && item.payment_deadline <= 7.days.from_now.to_date
