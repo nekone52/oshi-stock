@@ -41,5 +41,28 @@ RSpec.describe "予約の一覧", type: :request do
       expect(body.index("10月の缶バッジ")).to be < body.index("11月発売")
       expect(body.index("11月発売")).to be < body.index("11月のぬい")
     end
+
+    it "発売月が空のグッズは、月の見出しではなく、いちばん下の「発売日待ち」の箱に入る" do
+      character = create(:character, user: user)
+      create(:item, character: character, status: :reserved, name: "10月の缶バッジ", release_month: Date.new(2026, 10, 1))
+      create(:item, character: character, status: :reserved, name: "新作アクスタ", release_month: nil)
+
+      sign_in_as(user)
+      get reservations_path
+      body = response.body
+      expect(body).to include("発売日待ち")
+      # 発売日待ちの箱(id="waiting")は月の見出しより下にあって、その中に新作アクスタがいる
+      expect(body.index("10月の缶バッジ")).to be < body.index('id="waiting"')
+      expect(body.index('id="waiting"')).to be < body.index("新作アクスタ")
+    end
+
+    it "発売日待ちのグッズがないときは、お知らせも箱も出さない" do
+      character = create(:character, user: user)
+      create(:item, character: character, status: :reserved, release_month: Date.new(2026, 10, 1))
+
+      sign_in_as(user)
+      get reservations_path
+      expect(response.body).not_to include("発売日待ち")
+    end
   end
 end
