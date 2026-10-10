@@ -111,9 +111,11 @@
 
     <!-- 予約注文中(1行ずつのリスト) -->
     <section class="pt-6">
+      <%# 「予約 →」:ホームで選んだ推しを、予約画面へ引きつぐ(選んでいないときは番号なしの /reservations) %>
+      <%# 【自分の言葉】特定のキャラの予約を表示するために、予約画面へのリンクにキャラの番号をつける %>
       <%= render "top/section_header", title: "予約注文中", count: @reserved_items.size, note: "注文済み・支払いや到着を待っているもの",
                  border: "border-unpaid", badge: "bg-unpaid-bg text-unpaid",
-                 more_label: "予約", more_path: reservations_path, more_class: "border-unpaid text-unpaid" %>
+                 more_label: "予約", more_path: reservations_path(character_id: @selected_character&.id), more_class: "border-unpaid text-unpaid" %>
       <% if @reserved_items.any? %>
         <div class="flex flex-col gap-2.5">
           <%# ホームには、未払い・期限の近い順に4つまで %>

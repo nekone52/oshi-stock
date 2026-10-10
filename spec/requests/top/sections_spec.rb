@@ -39,4 +39,9 @@ RSpec.describe "ホーム画面(3つのセクション)", type: :request do
     expect(body[/予約注文中.*?所持グッズ/m]).to include("予約 <span", reservations_path)
     expect(body[/所持グッズ.*?グッズを登録/m]).to include("グッズ一覧 <span", goods_path(status: "owned"))
   end
+
+  it "推しを選んでいたら、「予約 →」にその推しの番号をつけて、予約画面へ引きつぐ" do
+    get root_path(character_id: hinata.id)
+    expect(response.body[/予約注文中.*?所持グッズ/m]).to include(reservations_path(character_id: hinata.id))
+  end
 end
