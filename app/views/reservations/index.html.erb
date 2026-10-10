@@ -4,16 +4,6 @@
 <%
   # 見た目を確かめるための例のデータ(本物のデータではない)
   # chara:推しの色(a / b / c) icon:画像がないときの絵 due:支払い期限まであと何日(nil は未定)
-  months = [
-    { label: "10月発売", now: true, meta: "2件 · ¥8,800", items: [
-      { name: "缶バッジ ランダムBOX", chara: "a", oshi: "アオイ", shop: "アニメイト", release: "10月下旬発売", price: "¥5,500", qty: 10, state: :unpaid, due: 4, memo: "特典付き。BOX買い" },
-      { name: "アクリルスタンド 制服ver.", chara: "b", oshi: "ヒナタ", shop: "アニメイト", release: "10月中旬発売", price: "¥3,300", qty: 2, state: :arrived, due: 12 }
-    ] },
-    { label: "11月発売", now: false, meta: "2件 · ¥4,400", items: [
-      { name: "ブロマイドセット A", chara: "c", oshi: "リン", shop: "公式ストア", release: "11月上旬発売", price: "¥1,100", qty: 1, state: :paid, memo: "保存用" },
-      { name: "ぬいぐるみ Sサイズ", chara: "a", oshi: "アオイ", shop: "アニメイト", release: "11月中旬発売", price: "¥3,300", qty: 1, state: :unpaid, due: 21 }
-    ] }
-  ]
   waiting = [
     { name: "アクスタ 新作(詳細まだ)", chara: "a", oshi: "アオイ", shop: "アニメイト", release: "発売日待ち", price: "¥1,980", qty: 1, state: :unpaid, due: nil }
   ]
@@ -61,20 +51,24 @@
     <span class="ml-auto text-ink-soft">見る ↓</span>
   </a>
 
-  <!-- 発売月ごとの予約(月の見出しは、スクロールしても上に残る) -->
-  <% months.each do |month| %>
+  <!-- 発売月ごとの予約(本物。箱はコントローラーで発売月ごとに仕分け済み。月の見出しは、スクロールしても上に残る) -->
+  <%# release_month = 発売月(例:2026-10-01。名前は自由で、テーブルの項目名とそろえた) / items = その月のグッズたち %>
+  <% @items_by_month.each do |release_month, items| %>
+    <% now = release_month.beginning_of_month == Date.current.beginning_of_month %><%# 今月かどうか(今月だけ色を変えて「今月」のしるしをつける) %>
     <section class="mt-2">
       <div class="sticky top-0 z-10 flex items-baseline gap-2 bg-bg px-1 pt-4 pb-2">
-        <span class="font-display text-[17px] font-bold <%= month[:now] ? "text-accent-strong" : "text-ink" %>"><%= month[:label] %></span>
-        <% if month[:now] %>
+        <%# 【自分の言葉】予約している発売日から、月の数字だけ取り出す(10月発売 など) %>
+        <span class="font-display text-[17px] font-bold <%= now ? "text-accent-strong" : "text-ink" %>"><%= release_month.month %>月発売</span>
+        <% if now %>
           <span class="self-center rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-on-accent">今月</span>
         <% end %>
-        <span class="text-[13px] text-ink-soft"><%= month[:meta] %></span>
+        <span class="text-[13px] text-ink-soft"><%= items.size %>件</span>
         <span class="h-px flex-1 self-center bg-line"></span>
       </div>
       <ul class="flex flex-col gap-2.5">
-        <% month[:items].each do |item| %>
-          <%= render "reservations/card", item: item, colors: colors %>
+        <%# 仮の表示(名前だけ)。次の項目で、本物のカード(_card)にする %>
+        <% items.each do |item| %>
+          <li class="rounded-2xl border border-line bg-white p-3 text-[15px] font-bold text-ink"><%= item.name %></li>
         <% end %>
       </ul>
     </section>

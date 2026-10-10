@@ -10,6 +10,13 @@ class ReservationsController < ApplicationController
     @unpaid_total   = Current.user.unpaid_total
     @unpaid_count   = Current.user.unpaid_items.count   # ログイン中の人の、未払いのグッズを数える
     @due_soon_count = Current.user.due_soon_count       # ログイン中の人の、期限7日以内の数(モデルで数えてある)
+    # 発売月ごとの箱に仕分ける(予約画面でしか使わない並べ方なので、モデルではなくここで)
+    # 【自分の言葉】予約している一覧から、発売月ごとにグループ化する
+    items_by_month = @reserved_items.group_by(&:release_month)
+    # 発売月が空(nil)の箱は「発売日待ち」として、べつのお皿によける(日付とくらべられないので、並べる前に)
+    @waiting_items  = items_by_month.delete(nil) || []
+    # のこりの箱を、発売月の古い順(10月 → 11月 → …)に並べる
+    @items_by_month = items_by_month.sort_by { |release_month, _items| release_month }
   end
 
   def new
