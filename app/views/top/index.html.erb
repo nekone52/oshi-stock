@@ -91,8 +91,8 @@
         <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
           <%# ホームには、新しい順に4つまで(5つ目からは「ほしい物 →」で) %>
           <% @wanted_items.limit(4).each do |item| %>
-            <%# カードを押すと、そのグッズの詳細(グッズのカード)へ %>
-            <%= link_to good_path(item), class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
+            <%# カードを押すと、そのグッズの詳細(グッズのカード)へ。枠は推しの色(#85) %>
+            <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
               <%= render "top/item_thumb", item: item, css: "h-20" %>
               <div class="p-2">
                 <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug"><%= item.name %></p>
@@ -121,7 +121,9 @@
         <div class="flex flex-col gap-2.5">
           <%# ホームには、未払い・期限の近い順に4つまで %>
           <% @reserved_items.limit(4).each do |item| %>
-            <div class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
+            <%# 枠は推しの色(#85) %>
+            <%# 【自分の言葉】item.character.display_color = このキャラクターのアイテムはこの色! %>
+            <div style="border: 2px solid <%= item.character.display_color %>" class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
               <%= link_to good_path(item), class: "flex min-w-0 flex-1 items-center gap-3" do %>
                 <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl" %>
                 <div class="min-w-0 flex-1">
@@ -173,7 +175,8 @@
         <div class="grid grid-cols-2 gap-3">
           <%# ホームには、新しい順に4つまで %>
           <% @owned_items.limit(4).each do |item| %>
-            <%= link_to good_path(item), class: "overflow-hidden rounded-2xl bg-white shadow-sm" do %>
+            <%# 枠は推しの色(#85) %>
+            <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "overflow-hidden rounded-2xl bg-white shadow-sm" do %>
               <div class="relative">
                 <%= render "top/item_thumb", item: item, css: "aspect-[1.15]" %>
                 <%# 右上:どの推しのグッズか(推しの色の丸と頭文字) %>
