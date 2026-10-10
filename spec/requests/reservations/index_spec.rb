@@ -137,11 +137,11 @@ RSpec.describe "予約の一覧", type: :request do
         expect(body).to include("¥3,000", "予約 2件")
       end
 
-      it "「〇〇で絞りこみ中」と件数と、全員分にもどる「絞り込みをやめる」が出る" do
+      it "「〇〇 で絞りこみ中」と件数と、全員分にもどる「やめる」が出る" do
         get reservations_path(character_id: hinata.id)
         body = response.body
 
-        expect(body).to include("ヒナタで絞りこみ中 · 1件", "絞り込みをやめる")
+        expect(body).to include(%(<span class="font-bold">ヒナタ</span> で絞りこみ中), "予約 1件", "絞り込みをやめる")
         expect(body).to include(%(href="#{reservations_path}"))
       end
 
