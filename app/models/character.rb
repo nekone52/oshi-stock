@@ -15,6 +15,17 @@ class Character < ApplicationRecord
     color.presence || DEFAULT_COLOR
   end
 
+  # 状態ごとのグッズの数(例:{ "wanted" => 1, "reserved" => 1, "owned" => 2 })。0件の状態は入らないので、画面では || 0 で読む
+  # group(:status).count で、データベースに1回聞くだけで3つの数がそろう
+  def item_counts
+    items.group(:status).count
+  end
+
+  # 所持グッズの合計金額(単価 × 個数 を、所持のグッズぶんたす)。単価が空のグッズは数えない
+  def owned_total
+    items.owned.sum("price * quantity")
+  end
+
   # 【推しの色のお掃除係】明るすぎ・暗すぎ・ギラギラの色は、保存する前に落ち着いた色に直す(app/models/oshi_color.rb)
   # 【自分の言葉】モデルがデータを管理しているから、保存する前に色を整えるのもモデルに書く
   normalizes :color, with: ->(color) { OshiColor.soften(color) }

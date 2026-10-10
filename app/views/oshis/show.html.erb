@@ -1,3 +1,7 @@
+<%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
+<%# 【自分の言葉】ボタンを押せるようにする %>
+<% content_for :interactive, true %>
+
 <div class="mx-auto max-w-[430px] px-4 pb-28">
 
   <!-- ヘッダー(戻る・名前・編集) -->
@@ -5,51 +9,75 @@
     <%= link_to oshis_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
       <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
     <% end %>
-    <h1 class="flex-1 font-display text-xl font-bold text-ink">ヒナタ</h1>
-    <%= link_to "編集", edit_oshi_path(1), class: "flex h-9 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
+    <h1 class="flex-1 font-display text-xl font-bold text-ink"><%= @character.name %></h1>
+    <%# 【自分の言葉】そのキャラの編集画面へ行く %>
+    <%= link_to "編集", edit_oshi_path(@character), class: "flex h-9 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
   </header>
 
   <!-- 推しの画像(大きく)と合計 -->
   <section class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
-    <div class="flex aspect-[16/9] items-center justify-center bg-gradient-to-br from-chara-a-soft to-chara-a font-display text-7xl font-bold text-white">陽</div>
+    <%# 推しの色(未登録ならアプリのピンク)。一覧の名刺カードとおそろいの見た目にする %>
+    <% color = @character.display_color %>
+    <%# 【自分の言葉】このキャラに画像がある?ある場合はこれ、ない場合は名前の1文字目 %>
+    <% if @character.icon.attached? %>
+      <%# 画像があるときは、横長の枠いっぱいに出す(はみ出たところは切れる) %>
+      <%= image_tag @character.icon.variant(:display), alt: @character.name, class: "aspect-[16/9] w-full object-cover" %>
+    <% else %>
+      <%# 画像がないときは、白→推しの色50%のグラデーションに、推しの色の頭文字(こい文字色を20%まぜて読みやすく) %>
+      <div style="background-image: linear-gradient(to bottom right, white, color-mix(in srgb, <%= color %> 50%, white)); color: color-mix(in srgb, <%= color %> 80%, #2B1E2A)" class="relative flex aspect-[16/9] items-center justify-center font-display text-7xl font-bold">
+        <!-- うっすら水玉の模様 -->
+        <span class="absolute inset-0 bg-[radial-gradient(rgb(255_255_255/0.22)_1.5px,transparent_1.5px)] bg-[length:14px_14px]" aria-hidden="true"></span>
+        <span class="relative"><%= @character.name.first %></span>
+      </div>
+    <% end %>
     <div class="grid grid-cols-4 divide-x divide-line py-3 text-center">
-      <div><p class="text-[11px] text-ink-soft">ほしい</p><p class="text-base font-bold text-ink">1</p></div>
-      <div><p class="text-[11px] text-ink-soft">予約中</p><p class="text-base font-bold text-ink">1</p></div>
-      <div><p class="text-[11px] text-ink-soft">所持</p><p class="text-base font-bold text-ink">2</p></div>
-      <div><p class="text-[11px] text-ink-soft">所持合計</p><p class="text-base font-bold text-ink">¥8,800</p></div>
+      <%# 状態ごとの数(0件の状態は @item_counts に入っていないので、|| 0 で 0 を出す) %>
+      <% [ [ "ほしい", "wanted" ], [ "予約中", "reserved" ], [ "所持", "owned" ] ].each do |label, status| %>
+        <div><p class="text-[11px] text-ink-soft"><%= label %></p><p class="text-base font-bold text-ink"><%= @item_counts[status] || 0 %></p></div>
+      <% end %>
+      <div><p class="text-[11px] text-ink-soft">所持合計</p><p class="text-base font-bold text-ink">¥<%= number_with_delimiter(@owned_total) %></p></div>
     </div>
   </section>
 
-  <h2 class="mt-6 mb-2 font-display text-lg font-bold text-ink">ヒナタのグッズ</h2>
+  <h2 class="mt-6 mb-2 font-display text-lg font-bold text-ink"><%= @character.name %>のグッズ</h2>
 
-  <!-- 状態ごとのグッズ一覧 -->
+  <!-- 状態ごとのグッズ一覧(コントローラーの show で選び出したグッズを並べる) -->
+  <%# 見出し・左の線の色・並べるグッズ の3つずつ。予約注文中には「届いたけど未払い」も入る %>
   <% [
-    [ "ほしい物", "border-chara-a", [ { name: "缶バッジ第3弾", sub: "発売 未定", price: "¥550", badge: nil } ] ],
-    [ "予約注文中", "border-unpaid", [ { name: "夏祭りアクリルスタンド", sub: "10月上旬予定", price: "¥1,650", badge: [ "未払い", "bg-unpaid-bg text-unpaid" ] } ] ],
-    [ "所持グッズ", "border-chara-b", [
-      { name: "缶バッジ vol.1", sub: "×3", price: "¥1,100", badge: [ "支払い完了", "bg-paid-bg text-paid" ] },
-      { name: "ぬい服セット", sub: "×1", price: "¥5,500", badge: [ "支払い完了", "bg-paid-bg text-paid" ] }
-    ] ]
+    [ "ほしい物", "border-chara-a", @wanted_items ],
+    [ "予約注文中", "border-unpaid", @reserved_items ],
+    [ "所持グッズ", "border-chara-b", @owned_items ]
   ].each do |title, border, items| %>
     <section class="mt-4">
       <h3 class="mb-2 border-l-4 <%= border %> pl-2.5 font-display text-base font-bold text-ink"><%= title %> <span class="text-[13px] font-normal text-ink-soft"><%= items.size %>件</span></h3>
+      <% if items.empty? %>
+        <%= render "top/empty" %>
+      <% end %>
       <ul class="flex flex-col gap-2">
         <% items.each do |item| %>
           <li>
-            <%= link_to edit_good_path(1), class: "flex items-center gap-3 rounded-2xl border border-line bg-white p-2.5" do %>
-              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-chara-a-soft text-chara-a">
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
-              </div>
+            <%# グッズを押すと、グッズの詳細へ %>
+            <%= link_to good_path(item), class: "flex items-center gap-3 rounded-2xl border border-line bg-white p-2.5" do %>
+              <%= render "top/item_thumb", item: item, css: "h-12 w-12 shrink-0 rounded-xl" %>
               <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-bold text-ink"><%= item[:name] %></p>
+                <p class="truncate text-sm font-bold text-ink"><%= item.name %></p>
                 <div class="mt-0.5 flex items-center gap-2">
-                  <% if item[:badge] %>
-                    <span class="rounded-full px-2 py-0.5 text-[11px] font-bold <%= item[:badge][1] %>"><%= item[:badge][0] %></span>
+                  <%# ほしい物には支払いのバッジを出さない。予約中・所持は、支払い済みかどうか %>
+                  <% unless item.wanted? %>
+                    <% if item.paid %>
+                      <span class="rounded-full bg-paid-bg px-2 py-0.5 text-[11px] font-bold text-paid">支払い完了</span>
+                    <% else %>
+                      <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[11px] font-bold text-unpaid"><%= item.owned? ? "届いた・未払い" : "未払い" %></span>
+                    <% end %>
                   <% end %>
-                  <span class="text-xs text-ink-soft"><%= item[:sub] %></span>
+                  <%# 所持は個数、ほしい物・予約中は発売の時期(例:10月上旬予定) %>
+                  <span class="text-xs text-ink-soft"><%= item.owned? ? "×#{item.quantity}" : release_label(item) %></span>
                 </div>
               </div>
-              <span class="shrink-0 text-sm font-bold text-ink"><%= item[:price] %></span>
+              <%# 金額は 単価 × 個数(単価が空なら出さない) %>
+              <% if item.price %>
+                <span class="shrink-0 text-sm font-bold tabular-nums text-ink">¥<%= number_with_delimiter(item.price * item.quantity) %></span>
+              <% end %>
             <% end %>
           </li>
         <% end %>
