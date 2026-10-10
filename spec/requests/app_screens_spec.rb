@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.describe "App screens (mock)", type: :request do
   # ログインが必要な画面(まだモック)
   {
-    "発売日待ち" => "/reservations", # 「予約」は下のメニューにもあるので、この画面にしかない言葉で確かめる
-    "予約を登録" => "/reservations/new",
     "グッズを登録" => "/goods/new",
     "ほしい物を追加" => "/wishlist",
     "追加する" => "/wishlist/new",

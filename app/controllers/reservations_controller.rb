@@ -20,7 +20,4 @@ class ReservationsController < ApplicationController
     # のこりの箱を、発売月の古い順(10月 → 11月 → …)に並べる
     @items_by_month = items_by_month.sort_by { |release_month, _items| release_month }
   end
-
-  def new
-  end
 end

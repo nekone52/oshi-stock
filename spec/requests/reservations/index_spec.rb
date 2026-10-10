@@ -89,6 +89,12 @@ RSpec.describe "予約の一覧", type: :request do
       expect(item.reload).to be_owned
     end
 
+    it "「＋ 予約を登録」は、グッズ登録を「予約中」で開く" do
+      sign_in_as(user)
+      get reservations_path
+      expect(response.body).to include(new_good_path(status: "reserved"))
+    end
+
     it "発売日待ちのグッズがないときは、お知らせも箱も出さない" do
       character = create(:character, user: user)
       create(:item, character: character, status: :reserved, release_month: Date.new(2026, 10, 1))

@@ -9,7 +9,8 @@
   <!-- ヘッダー(見出しと追加ボタン) -->
   <header class="flex items-center justify-between gap-3 pt-6 pb-3">
     <h1 class="font-display text-2xl font-bold text-ink">予約</h1>
-    <%= link_to "＋ 予約を登録", new_reservation_path, class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
+    <%# 本物の登録はグッズ登録のフォームを使う。?status=reserved をつけて「予約中」を選んだ状態で開く %>
+    <%= link_to "＋ 予約を登録", new_good_path(status: "reserved"), class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
   </header>
 
   <!-- これから支払う金額(本物。数字はコントローラーのお皿から。期限7日以内は、あるときだけ出す) -->
