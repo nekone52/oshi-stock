@@ -41,6 +41,22 @@ class User < ApplicationRecord
   # 空っぽ禁止(presence)。空のときは「入力してください」だけ出すため、形のチェックは allow_blank にする
   validates :theme_color, presence: true, format: { with: /\A#\h{6}\z/, allow_blank: true }
 
+  # 【これから支払う金額のまとめ係】ホームと予約の画面で使い回す(1か所直せば、両方の金額がそろう)
+  # 支払っていない、予約中・所持のグッズ(ほしい物はまだ買っていないので入れない)
+  def unpaid_items
+    items.where(paid: false).where.not(status: :wanted)
+  end
+
+  # これから支払う金額の合計(単価 × 個数)。単価が空のグッズは 0円 として数える
+  def unpaid_total
+    unpaid_items.sum("COALESCE(items.price, 0) * items.quantity")
+  end
+
+  # 支払い期限が、今日から7日以内のものの数
+  def due_soon_count
+    unpaid_items.where(payment_deadline: Date.current..7.days.from_now.to_date).count
+  end
+
   private
 
   # 最初の5種類のカテゴリを、このユーザーのカテゴリとして作る(あとから自分で増やしたり消したりできる)

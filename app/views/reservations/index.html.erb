@@ -33,14 +33,16 @@
     <%= link_to "＋ 予約を登録", new_reservation_path, class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
   </header>
 
-  <!-- これから支払う金額 -->
+  <!-- これから支払う金額(本物。数字はコントローラーのお皿から。期限7日以内は、あるときだけ出す) -->
   <section aria-label="支払いのまとめ" class="flex flex-col gap-2.5 rounded-2xl border border-line bg-white p-4 text-ink">
     <span class="text-[13px] text-ink-soft">これから支払う金額</span>
-    <span class="font-display text-[32px] leading-none font-bold">¥22,660</span>
+    <span class="font-display text-[32px] leading-none font-bold">¥<%= number_with_delimiter(@unpaid_total) %></span>
     <div class="flex flex-wrap gap-2">
-      <span class="rounded-lg bg-bg px-2.5 py-1 text-[13px] text-ink">予約 10件</span>
-      <span class="rounded-lg bg-bg px-2.5 py-1 text-[13px] text-ink">未払い 8件</span>
-      <span class="rounded-lg bg-unpaid-bg px-2.5 py-1 text-[13px] font-bold text-unpaid">期限7日以内 2件</span>
+      <span class="rounded-lg bg-bg px-2.5 py-1 text-[13px] text-ink">予約 <%= @reserved_items.size %>件</span>
+      <span class="rounded-lg bg-bg px-2.5 py-1 text-[13px] text-ink">未払い <%= @unpaid_count %>件</span>
+      <% if @due_soon_count.positive? %>
+        <span class="rounded-lg bg-unpaid-bg px-2.5 py-1 text-[13px] font-bold text-unpaid">期限7日以内 <%= @due_soon_count %>件</span>
+      <% end %>
     </div>
   </section>
 

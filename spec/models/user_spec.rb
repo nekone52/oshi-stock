@@ -117,6 +117,33 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "これから支払う金額のまとめ" do
+    let(:user) { create(:user) }
+    let(:character) { create(:character, user: user) }
+
+    before do
+      create(:item, character: character, status: :reserved, price: 1000, quantity: 2, payment_deadline: Date.current + 3)
+      create(:item, character: character, status: :owned, price: 500, payment_deadline: Date.current + 10)
+      create(:item, character: character, status: :reserved, price: nil)
+      # ここから下は数えないもの
+      create(:item, character: character, status: :reserved, price: 3000, paid: true)
+      create(:item, character: character, status: :wanted, price: 800)
+      create(:item, character: create(:character), status: :reserved, price: 9999)
+    end
+
+    it "支払っていない、予約中・所持のグッズだけを選ぶ(ほしい物・支払い済み・ほかの人のグッズは入らない)" do
+      expect(user.unpaid_items.count).to eq(3)
+    end
+
+    it "合計は 単価 × 個数 をたす(単価が空のグッズは 0円)" do
+      expect(user.unpaid_total).to eq(2500)
+    end
+
+    it "支払い期限が7日以内のものだけを数える" do
+      expect(user.due_soon_count).to eq(1)
+    end
+  end
+
   describe "最初のカテゴリ" do
     it "ユーザーを作ると、最初の5種類のカテゴリが自動でできる" do
       user = create(:user)
