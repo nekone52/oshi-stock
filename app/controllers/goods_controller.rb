@@ -36,6 +36,7 @@ class GoodsController < ApplicationController
     @item = Item.new
     # 予約画面の「＋ 予約を登録」から来たときは、URL の status(?status=reserved)で状態を選んでおく
     # 🛡️ URL は書きかえられるので、決まった3つ(wanted・reserved・owned)のどれかのときだけ使う(一覧の index と同じ)
+    # 【自分の言葉】(if のあと)URL についてきた status が、その3つの状態(wanted・reserved・owned)のどれかをきいてる
     @item.status = params[:status] if Item.statuses.key?(params[:status])
     set_form_choices
   end
