@@ -13,6 +13,13 @@ class OshisController < ApplicationController
   def show
     @item_counts = @character.item_counts
     @owned_total = @character.owned_total
+    # 下のグッズ一覧に並べる、この推しのグッズを状態ごとに選び出す(enum の wanted・owned を使う)
+    # 【自分の言葉】欲しいものアイテムは、キャラクターのアイテムの中の欲しいもの(欲しいものを選出する)
+    @wanted_items = @character.items.wanted
+    @owned_items = @character.items.owned
+    # 予約注文中 = 予約中 + 届いたけど未払いのもの(ホームと同じ。支払うまで残して、払い忘れを防ぐ)
+    # 未払いを先に、支払い期限の近い順に並べる(Item の scope :unpaid_first)
+    @reserved_items = @character.items.reserved.or(@character.items.owned.where(paid: false)).unpaid_first
   end
 
   # 推し追加の画面を開く（入力フォーム用）
