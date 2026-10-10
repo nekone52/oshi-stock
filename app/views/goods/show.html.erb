@@ -6,7 +6,9 @@
 
   <!-- ヘッダー(戻るとタイトル) -->
   <header class="flex items-center gap-1 pt-4 pb-2">
-    <%= link_to root_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+    <%# 「<」の戻り先は、グッズの状態で決める(予約中・届いたけど未払い → 予約画面、ほかはグッズ一覧。道具は items_helper.rb) %>
+    <%# お皿の @item を、道具のかっこの中に渡して「このグッズはどこに帰る?」と聞く(= でのせるのではない) %>
+    <%= link_to back_path_for(@item), aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
       <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
     <% end %>
     <h1 class="font-display text-xl font-bold text-ink">グッズの詳細</h1>
