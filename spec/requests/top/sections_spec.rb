@@ -20,7 +20,7 @@ RSpec.describe "ホーム画面(3つのセクション)", type: :request do
       end
     end
 
-  it "各セクションは4つまで出して、4つより多いときは「すべて見る」でグッズの一覧へ行ける" do
+  it "各セクションは4つまで出す" do
     5.times { |n| create(:item, character: hinata, name: "ほしい物#{n + 1}", status: :wanted) }
     get root_path
     section = response.body[/ほしい物リスト.*?予約注文中/m]
@@ -28,12 +28,15 @@ RSpec.describe "ホーム画面(3つのセクション)", type: :request do
     # 新しい順に4つ(ほしい物5〜2)。いちばん古い ほしい物1 と、最初からある ヒナタの缶バッジ は出ない
     expect(section).to include("ほしい物5", "ほしい物2")
     expect(section).not_to include("ほしい物1")
-    expect(section).to include("すべて見る", goods_path(status: "wanted"))
   end
 
-  it "4つ以下のセクションには「すべて見る」を出さない" do
+  # 下のメニューがないので、見出しの横のリンクがほかの画面への入口になる
+  it "見出しの横に、件数に関係なくいつも「ほしい物」「予約」「グッズ一覧」へのリンクを出す" do
     get root_path
-    section = response.body[/予約注文中.*?所持グッズ/m]
-    expect(section).not_to include("すべて見る")
+    body = response.body
+
+    expect(body[/ほしい物リスト.*?予約注文中/m]).to include("ほしい物 <span", goods_path(status: "wanted"))
+    expect(body[/予約注文中.*?所持グッズ/m]).to include("予約 <span", reservations_path)
+    expect(body[/所持グッズ.*?グッズを登録/m]).to include("グッズ一覧 <span", goods_path(status: "owned"))
   end
 end
