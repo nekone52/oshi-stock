@@ -1,6 +1,6 @@
 require "rails_helper"
 
-# グッズの一覧(ホームの「すべて見る →」の先)。状態・推し・カテゴリ・検索でしぼれる
+# グッズの一覧(ホームの「ほしい物 →」「グッズ一覧 →」の先)。状態・推し・カテゴリ・検索でしぼれる
 RSpec.describe "グッズの一覧", type: :request do
   let(:user) { create(:user) }
   let!(:hinata) { create(:character, user: user, name: "ヒナタ") }

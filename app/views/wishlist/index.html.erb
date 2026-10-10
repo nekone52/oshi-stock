@@ -1,7 +1,9 @@
-<div class="mx-auto max-w-[430px] px-4 pb-28">
+<div class="mx-auto max-w-[430px] px-4 pb-10">
 
   <!-- ヘッダー(見出しと追加ボタン) -->
-  <header class="flex items-center justify-between gap-3 pt-6 pb-3">
+  <%# ホームに戻る(下のメニューのかわり) %>
+  <%= render "shared/home_link" %>
+  <header class="flex items-center justify-between gap-3 pt-1 pb-3">
     <h1 class="font-display text-2xl font-bold text-ink">グッズ</h1>
     <%= link_to "＋ ほしい物を追加", new_wishlist_path, class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
   </header>
@@ -76,5 +78,3 @@
     <% end %>
   </ul>
 </div>
-
-<%= render "shared/bottom_nav", active: :goods %>

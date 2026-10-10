@@ -3,10 +3,12 @@
 <%# 今の絞り込み(状態・推し・検索・カテゴリ)。タブやチップのリンクで引きつぐ %>
 <% filters = { status: @status, character_id: @selected_character&.id, q: @query.presence, category_id: @selected_category&.id } %>
 
-<div class="mx-auto max-w-[430px] px-4 pb-28">
+<div class="mx-auto max-w-[430px] px-4 pb-10">
 
   <!-- ヘッダー(見出しと追加ボタン) -->
-  <header class="flex items-center justify-between gap-3 pt-6 pb-3">
+  <%# ホームに戻る(下のメニューのかわり) %>
+  <%= render "shared/home_link" %>
+  <header class="flex items-center justify-between gap-3 pt-1 pb-3">
     <h1 class="font-display text-2xl font-bold text-ink">グッズ</h1>
     <%= link_to "＋ グッズを登録", new_good_path, class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
   </header>
@@ -88,6 +90,3 @@
     <p class="mt-2 rounded-2xl bg-white px-4 py-3 text-[13px] text-ink-soft">まだありません</p>
   <% end %>
 </div>
-
-<%# 下のメニュー(グッズを選んでいる状態) %>
-<%= render "shared/bottom_nav", active: :goods %>

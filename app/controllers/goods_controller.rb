@@ -2,7 +2,7 @@ class GoodsController < ApplicationController
   # 1つのグッズに対するアクションは、最初に「自分のグッズの中から」探しておく(ほかの人のグッズは見つからず 404)
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid ]
 
-  # グッズの一覧(ホームの「すべて見る →」から来る。状態・推し・カテゴリ・検索でしぼれる)
+  # グッズの一覧(ホームの「ほしい物 →」「グッズ一覧 →」から来る。状態・推し・カテゴリ・検索でしぼれる)
   def index
     # ① 自分のグッズを、新しい順に取ってくる
     @items = Current.user.items.includes(:character, :category, image_attachment: :blob).order(created_at: :desc)

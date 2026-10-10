@@ -1,9 +1,11 @@
 <%# ログアウトとテーマの色を本物にしたので、この画面は押せるようにする(ほかの項目はまだ見た目だけ) %>
 <% content_for :interactive, true %>
 
-<div class="mx-auto max-w-[430px] px-4 pb-28">
+<div class="mx-auto max-w-[430px] px-4 pb-10">
 
-  <header class="pt-6 pb-3">
+  <%# ホームに戻る(下のメニューのかわり) %>
+  <%= render "shared/home_link" %>
+  <header class="pt-1 pb-3">
     <h1 class="font-display text-2xl font-bold text-ink">設定</h1>
   </header>
 
@@ -82,5 +84,3 @@
     </div>
   </section>
 </div>
-
-<%= render "shared/bottom_nav", active: :settings %>

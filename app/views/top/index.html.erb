@@ -3,7 +3,7 @@
 <%# ボタンを押してホームに戻ったとき、画面全体を読みこみ直さず、変わったところだけ書きかえる(スクロールの位置もそのまま) %>
 <% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
-  <div class="mx-auto max-w-[430px] px-4 pb-28">
+  <div class="mx-auto max-w-[430px] px-4 pb-10">
 
     <header class="sticky top-0 z-10 flex items-center justify-between bg-bg pb-2 pt-4">
       <%= image_tag "logo.png", alt: "推しストック", class: "w-[9.5rem] h-auto" %>
@@ -85,10 +85,10 @@
     <section class="pt-2">
       <%= render "top/section_header", title: "ほしい物リスト", count: @wanted_items.size, note: "まだ買っていないもの",
                  border: "border-chara-a", badge: "bg-chara-a-soft text-chara-a",
-                 more_path: goods_path({ status: "wanted", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-a text-chara-a" %>
+                 more_label: "ほしい物", more_path: goods_path({ status: "wanted", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-a text-chara-a" %>
       <% if @wanted_items.any? %>
         <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
-          <%# ホームには、新しい順に4つまで(5つ目からは「すべて見る →」で) %>
+          <%# ホームには、新しい順に4つまで(5つ目からは「ほしい物 →」で) %>
           <% @wanted_items.limit(4).each do |item| %>
             <%# カードを押すと、そのグッズの詳細(グッズのカード)へ %>
             <%= link_to good_path(item), class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
@@ -113,7 +113,7 @@
     <section class="pt-6">
       <%= render "top/section_header", title: "予約注文中", count: @reserved_items.size, note: "注文済み・支払いや到着を待っているもの",
                  border: "border-unpaid", badge: "bg-unpaid-bg text-unpaid",
-                 more_path: goods_path({ status: "reserved", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-unpaid text-unpaid" %>
+                 more_label: "予約", more_path: reservations_path, more_class: "border-unpaid text-unpaid" %>
       <% if @reserved_items.any? %>
         <div class="flex flex-col gap-2.5">
           <%# ホームには、未払い・期限の近い順に4つまで %>
@@ -165,7 +165,7 @@
     <section class="pt-6">
       <%= render "top/section_header", title: "所持グッズ", count: @owned_items.size, note: "手元にあるもの",
                  border: "border-chara-b", badge: "bg-chara-b-soft text-chara-b",
-                 more_path: goods_path({ status: "owned", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-b text-chara-b" %>
+                 more_label: "グッズ一覧", more_path: goods_path({ status: "owned", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-b text-chara-b" %>
       <% if @owned_items.any? %>
         <div class="grid grid-cols-2 gap-3">
           <%# ホームには、新しい順に4つまで %>
@@ -197,6 +197,3 @@
     </footer>
 
   </div>
-
-<%# 下のメニュー(ホームを選んでいる状態) %>
-<%= render "shared/bottom_nav", active: :home %>
