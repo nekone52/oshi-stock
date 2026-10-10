@@ -27,5 +27,25 @@ RSpec.describe "グッズを登録の画面", type: :request do
       expect(response).to have_http_status(:ok)
       expect(checked_status(response.body)).to eq("wanted")
     end
+
+    # 「<」の戻り先(?status= つきで来たときだけ、その状態の一覧へ。ついていなければホーム)
+    def back_href(body)
+      body[/<a aria-label="戻る"[^>]*href="([^"]*)"/, 1]
+    end
+
+    it "予約画面から(?status=reserved)開くと、「<」は予約画面へ" do
+      get new_good_path(status: "reserved")
+      expect(back_href(response.body)).to eq(reservations_path)
+    end
+
+    it "ふつうに開くと、「<」はホームへ" do
+      get new_good_path
+      expect(back_href(response.body)).to eq(root_path)
+    end
+
+    it "決まっていない status(?status=hack)のときも、「<」はホームへ" do
+      get new_good_path(status: "hack")
+      expect(back_href(response.body)).to eq(root_path)
+    end
   end
 end

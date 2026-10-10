@@ -3,7 +3,10 @@
 <% soon = !item.paid && payment_due_soon?(item) %>
 <%# 未払いで、支払い期限が7日以内(または、すぎている)ものは、枠の色を変えて目立たせる %>
 <li class="flex flex-col gap-2.5 rounded-2xl bg-white p-3 <%= soon ? "border-[1.5px] border-unpaid" : "border border-line" %>">
-  <div class="flex items-start gap-3">
+  <%# 上の部分(画像・名前・金額)を押すと、グッズの詳細へ(ホームのカードと同じ。詳細の「編集する」から編集できる) %>
+  <%# 詳細の「<」で予約画面に戻れる(#88)。「支払った」「届いた」ボタンはリンクの外に置いて、押しまちがえないようにする %>
+  <%# ホームと同じく、グッズ1件分の名前は item なので、行き先も同じ good_path(item) %>
+  <%= link_to good_path(item), class: "flex items-start gap-3" do %>
     <!-- 商品画像(画像がないときは、推しの色の四角。ホームと同じ部品) -->
     <%= render "top/item_thumb", item: item, css: "h-16 w-16 shrink-0 rounded-2xl" %>
     <div class="flex min-w-0 flex-1 flex-col gap-1">
@@ -39,7 +42,7 @@
         <% end %>
       </div>
     </div>
-  </div>
+  <% end %>
   <!-- メモ(書いてあるときだけ出す) -->
   <% if item.memo.present? %>
     <p class="rounded-lg bg-bg px-2.5 py-1.5 text-[13px] text-ink"><%= item.memo %></p>

@@ -46,5 +46,22 @@ RSpec.describe "グッズの詳細", type: :request do
       get good_path(other_item)
       expect(response).to have_http_status(:not_found)
     end
+
+    # 「<」の戻り先は、グッズの状態で決める(くわしい分け方は spec/helpers/items_helper_spec.rb)
+    it "「<」で、予約中のグッズは予約画面へ戻る" do
+      reserved_item = create(:item, character: character, status: :reserved)
+
+      sign_in_as(user)
+      get good_path(reserved_item)
+      expect(response.body).to include(%(<a aria-label="戻る" class="flex h-11 w-11 items-center justify-center text-ink" href="#{reservations_path}"))
+    end
+
+    it "「<」で、ほしい物はグッズ一覧(ほしい物)へ戻る" do
+      wanted_item = create(:item, character: character, status: :wanted)
+
+      sign_in_as(user)
+      get good_path(wanted_item)
+      expect(response.body).to include(%(<a aria-label="戻る" class="flex h-11 w-11 items-center justify-center text-ink" href="#{goods_path(status: 'wanted')}"))
+    end
   end
 end

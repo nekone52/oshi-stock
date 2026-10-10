@@ -95,6 +95,14 @@ RSpec.describe "予約の一覧", type: :request do
       expect(response.body).to include(new_good_path(status: "reserved"))
     end
 
+    it "カードを押すと、そのグッズの詳細へ行ける(そこから編集できる)" do
+      item = create(:item, character: create(:character, user: user), status: :reserved)
+
+      sign_in_as(user)
+      get reservations_path
+      expect(response.body).to include(%(href="#{good_path(item)}"))
+    end
+
     it "月の見出しに、その月の件数と金額(単価×個数。支払済も入れる)が出る" do
       character = create(:character, user: user)
       october = Date.new(2026, 10, 1)
