@@ -19,5 +19,8 @@ class ReservationsController < ApplicationController
     @waiting_items  = items_by_month.delete(nil) || []
     # のこりの箱を、発売月の古い順(10月 → 11月 → …)に並べる
     @items_by_month = items_by_month.sort_by { |release_month, _items| release_month }
+    # 月ごとの金額(見出しの横の「¥8,800」)。その月のグッズ全部の 単価 × 個数 を足す(支払済も入れる。単価が空なら0円)
+    # 予約画面でしか使わないので、仕分けと同じくここで
+    @month_totals = @items_by_month.to_h.transform_values { |items| items.sum { |item| item.price.to_i * item.quantity } }
   end
 end

@@ -95,6 +95,19 @@ RSpec.describe "予約の一覧", type: :request do
       expect(response.body).to include(new_good_path(status: "reserved"))
     end
 
+    it "月の見出しに、その月の件数と金額(単価×個数。支払済も入れる)が出る" do
+      character = create(:character, user: user)
+      october = Date.new(2026, 10, 1)
+      create(:item, character: character, status: :reserved, price: 5500, quantity: 1, release_month: october)
+      create(:item, character: character, status: :reserved, price: 1650, quantity: 2, release_month: october, paid: true)
+      create(:item, character: character, status: :reserved, price: nil, release_month: october)
+      create(:item, character: character, status: :reserved, price: 1000, release_month: Date.new(2026, 11, 1))
+
+      sign_in_as(user)
+      get reservations_path
+      expect(response.body).to include("3件 · ¥8,800", "1件 · ¥1,000")
+    end
+
     it "発売日待ちのグッズがないときは、お知らせも箱も出さない" do
       character = create(:character, user: user)
       create(:item, character: character, status: :reserved, release_month: Date.new(2026, 10, 1))

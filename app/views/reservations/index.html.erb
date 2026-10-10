@@ -56,7 +56,8 @@
         <% if now %>
           <span class="self-center rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-on-accent">今月</span>
         <% end %>
-        <span class="text-[13px] text-ink-soft"><%= items.size %>件</span>
+        <%# 件数と、その月の金額(コントローラーの @month_totals から) %>
+        <span class="text-[13px] text-ink-soft"><%= items.size %>件 · ¥<%= number_with_delimiter(@month_totals[release_month]) %></span>
         <span class="h-px flex-1 self-center bg-line"></span>
       </div>
       <ul class="flex flex-col gap-2.5">
