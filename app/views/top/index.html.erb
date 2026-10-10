@@ -55,7 +55,7 @@
           <span style="background-color: color-mix(in srgb, <%= color %> 20%, white); color: <%= color %>; <%= "box-shadow: 0 0 0 4px color-mix(in srgb, #{color} 35%, transparent)" if selected %>" class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full font-display text-lg font-bold">
             <% if character.icon.attached? %>
               <%# アイコンは縦長(名刺の形)なので、真ん中を丸く切って見せる(切り抜きの丸いガイドと同じ場所) %>
-              <%= image_tag character.icon.variant(:display), alt: "", class: "h-full w-full object-cover" %>
+              <%= image_tag character.icon.variant(:display), alt: "", draggable: false, class: "h-full w-full object-cover select-none [-webkit-touch-callout:none]" %>
             <% else %>
               <%= character.name.first %>
             <% end %>
