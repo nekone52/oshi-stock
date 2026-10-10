@@ -36,6 +36,16 @@
     <button type="button" aria-pressed="false" class="h-10 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">届いた・未払い</button>
   </nav>
 
+  <%# ホームで選んだ推しでしぼっているときだけ、推しの名前と件数と「やめる」を出す(グッズ一覧と同じ形) %>
+  <%# 【自分の言葉】(if のあと)選んだ推しがあるときだけ出す。@reserved_items は予約したアイテムなのでちがう %>
+  <% if @selected_character %>
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-[13px] text-ink-soft">
+      <span><%= @selected_character.name %>で絞りこみ中 · <%= @reserved_items.size %>件</span>
+      <%# やめると、番号なしの /reservations(全員分)にもどる %>
+      <%= link_to "絞り込みをやめる", reservations_path, class: "font-bold text-accent-strong underline" %>
+    </div>
+  <% end %>
+
   <%# 発売日待ち(発売月が空のグッズ)は、コントローラーで @waiting_items によけてある。1件もないときは、お知らせも箱も出さない %>
   <%# 【自分の言葉】発売日待ちのグッズが1つでもあったら、表示する %>
   <% if @waiting_items.any? %>

@@ -137,6 +137,19 @@ RSpec.describe "予約の一覧", type: :request do
         expect(body).to include("¥3,000", "予約 2件")
       end
 
+      it "「〇〇で絞りこみ中」と件数と、全員分にもどる「絞り込みをやめる」が出る" do
+        get reservations_path(character_id: hinata.id)
+        body = response.body
+
+        expect(body).to include("ヒナタで絞りこみ中 · 1件", "絞り込みをやめる")
+        expect(body).to include(%(href="#{reservations_path}"))
+      end
+
+      it "推しを選んでいないときは、絞りこみ中の帯を出さない" do
+        get reservations_path
+        expect(response.body).not_to include("絞りこみ中", "絞り込みをやめる")
+      end
+
       it "ほかの人の推しの番号だと、しぼらずに全員分を出す" do
         other_character = create(:character, user: create(:user))
         get reservations_path(character_id: other_character.id)
