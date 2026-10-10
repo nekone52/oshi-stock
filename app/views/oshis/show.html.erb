@@ -12,7 +12,20 @@
 
   <!-- 推しの画像(大きく)と合計 -->
   <section class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
-    <div class="flex aspect-[16/9] items-center justify-center bg-gradient-to-br from-chara-a-soft to-chara-a font-display text-7xl font-bold text-white">陽</div>
+    <%# 推しの色(未登録ならアプリのピンク)。一覧の名刺カードとおそろいの見た目にする %>
+    <% color = @character.display_color %>
+    <%# 【自分の言葉】このキャラに画像がある?ある場合はこれ、ない場合は名前の1文字目 %>
+    <% if @character.icon.attached? %>
+      <%# 画像があるときは、横長の枠いっぱいに出す(はみ出たところは切れる) %>
+      <%= image_tag @character.icon.variant(:display), alt: @character.name, class: "aspect-[16/9] w-full object-cover" %>
+    <% else %>
+      <%# 画像がないときは、白→推しの色50%のグラデーションに、推しの色の頭文字(こい文字色を20%まぜて読みやすく) %>
+      <div style="background-image: linear-gradient(to bottom right, white, color-mix(in srgb, <%= color %> 50%, white)); color: color-mix(in srgb, <%= color %> 80%, #2B1E2A)" class="relative flex aspect-[16/9] items-center justify-center font-display text-7xl font-bold">
+        <!-- うっすら水玉の模様 -->
+        <span class="absolute inset-0 bg-[radial-gradient(rgb(255_255_255/0.22)_1.5px,transparent_1.5px)] bg-[length:14px_14px]" aria-hidden="true"></span>
+        <span class="relative"><%= @character.name.first %></span>
+      </div>
+    <% end %>
     <div class="grid grid-cols-4 divide-x divide-line py-3 text-center">
       <%# 状態ごとの数(0件の状態は @item_counts に入っていないので、|| 0 で 0 を出す) %>
       <% [ [ "ほしい", "wanted" ], [ "予約中", "reserved" ], [ "所持", "owned" ] ].each do |label, status| %>
