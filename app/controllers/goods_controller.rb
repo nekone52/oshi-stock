@@ -91,9 +91,12 @@ class GoodsController < ApplicationController
   # 編集画面の「このグッズを消去する」を押したときの消去処理(確認はアプリの確認ダイアログ。confirm_dialog.js)
   def destroy
     @item.destroy
-    # 消去のあとは、ホームへ移動し、完了メッセージを表示
+    # 消去のあとは、グッズの状態で決めた一覧へ移動し、完了メッセージを表示(詳細の「<」と同じ道具。items_helper.rb)
+    # 消したあとでも、@item のお皿には消す前の中身(状態など)がのっているので、道具に見せて戻り先を聞ける
+    # コントローラーから道具箱(ヘルパー)を使うときは、前に helpers. をつける
     # status: :see_other(303)は「次は GET で見に行ってね」の合図(DELETE のまま一覧へ行かないように)
-    redirect_to root_path, status: :see_other, notice: "グッズを消去しました"
+    # 【自分の言葉】消したあと、このグッズ(の状態)をみて、前の画面(一覧)に戻る
+    redirect_to helpers.back_path_for(@item), status: :see_other, notice: "グッズを消去しました"
   end
 
   # ホームの「届いた」ボタン:所持に変える(支払い済みかどうかは、そのまま残す)
