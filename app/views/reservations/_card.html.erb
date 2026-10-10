@@ -1,8 +1,9 @@
 <%# 【予約カード1枚分】発売月の中と、発売日待ちの箱の中で同じものを使う %>
 <%# item:グッズ1件(本物のデータ) %>
 <% soon = !item.paid && payment_due_soon?(item) %>
-<%# 未払いで、支払い期限が7日以内(または、すぎている)ものは、枠の色を変えて目立たせる %>
-<li class="flex flex-col gap-2.5 rounded-2xl bg-white p-3 <%= soon ? "border-[1.5px] border-unpaid" : "border border-line" %>">
+<%# 未払いで、支払い期限が7日以内(または、すぎている)ものは、下の「⚠ 期限が近い」の札で目立たせる %>
+<%# 枠はいつも推しの色(#85。ホームやグッズ一覧と同じ) %>
+<li style="border: 2px solid <%= item.character.display_color %>" class="flex flex-col gap-2.5 rounded-2xl bg-white p-3">
   <%# 上の部分(画像・名前・金額)を押すと、グッズの詳細へ(ホームのカードと同じ。詳細の「編集する」から編集できる) %>
   <%# 詳細の「<」で予約画面に戻れる(#88)。「支払った」「届いた」ボタンはリンクの外に置いて、押しまちがえないようにする %>
   <%# ホームと同じく、グッズ1件分の名前は item なので、行き先も同じ good_path(item) %>
@@ -28,6 +29,11 @@
         <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background-color: <%= item.character.display_color %>"></span>
         <span class="truncate"><%= [ item.character.name, item.shop_name.presence ].compact.join(" · ") %></span>
       </span>
+      <%# 枠の色を推しの色にしたので、期限が近いことは枠のかわりに札で知らせる(#85) %>
+      <%# soon = 「まだ払っていない、かつ、期限が7日以内?」の答えを入れた箱。「はい」のときだけ札を出す %>
+      <% if soon %>
+        <span class="w-fit rounded-md bg-unpaid-bg px-2 py-0.5 text-xs font-bold text-unpaid">⚠ 期限が近い</span>
+      <% end %>
       <!-- 発売の時期(切れないように小さいタグ)と金額 -->
       <div class="flex items-center justify-between gap-2">
         <span class="inline-flex items-center gap-1 rounded-md bg-bg px-2 py-0.5 text-xs font-bold whitespace-nowrap text-ink">
