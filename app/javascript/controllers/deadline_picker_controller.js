@@ -57,7 +57,7 @@ export default class extends Controller {
     this.pick({ params: { date: this.iso(new Date(today.getFullYear(), today.getMonth() + 1, 0)) } })
   }
 
-  // 「期限なしにする」:空にする(保存すると、支払期限なしになる)
+  // 「✕ 期限なし」:空にする(保存すると、支払期限なしになる)
   clear() {
     this.pick({ params: { date: "" } })
   }
@@ -121,6 +121,7 @@ export default class extends Controller {
         data-action="deadline-picker#pick" data-deadline-picker-date-param="${this.iso(date)}">${d}</button>`
     }
 
+    // よく使う期限の丸いボタン。「✕ 期限なし」も同じ形の仲間にする(小さい下線の文字だと、ボタンだと気づきにくかったため)
     const chip = "h-10 cursor-pointer rounded-full border border-line bg-white px-3.5 text-sm text-ink"
     const arrow = "grid h-11 w-11 cursor-pointer place-items-center rounded-full border border-line bg-white text-lg text-ink"
     this.panelTarget.innerHTML = `
@@ -131,17 +132,17 @@ export default class extends Controller {
           <button type="button" class="${arrow}" aria-label="次の月" data-action="deadline-picker#move" data-deadline-picker-months-param="1">&gt;</button>
         </div>
         <div class="grid grid-cols-7 gap-1">${weekdays}${blanks}${days}</div>
-        <div class="flex flex-wrap gap-2.5 text-xs text-ink-soft">
-          <span class="inline-flex items-center gap-1"><i class="h-3.5 w-3.5 rounded-full ring-2 ring-accent ring-inset"></i>今日</span>
-          <span class="inline-flex items-center gap-1"><i class="h-3.5 w-3.5 rounded-full bg-unpaid-bg"></i>7日以内</span>
-          <span class="inline-flex items-center gap-1"><i class="h-3.5 w-3.5 rounded-full bg-accent"></i>えらんだ日</span>
+        <div class="flex flex-wrap gap-3 text-[13px] text-ink-soft">
+          <span class="inline-flex items-center gap-1.5"><i class="h-4 w-4 rounded-full ring-2 ring-accent ring-inset"></i>今日</span>
+          <span class="inline-flex items-center gap-1.5"><i class="h-4 w-4 rounded-full bg-unpaid-bg"></i>7日以内</span>
+          <span class="inline-flex items-center gap-1.5"><i class="h-4 w-4 rounded-full bg-accent"></i>えらんだ日</span>
         </div>
         <div class="flex flex-wrap gap-1.5">
           <button type="button" class="${chip}" data-action="deadline-picker#addDays" data-deadline-picker-days-param="7">1週間後</button>
           <button type="button" class="${chip}" data-action="deadline-picker#addDays" data-deadline-picker-days-param="14">2週間後</button>
           <button type="button" class="${chip}" data-action="deadline-picker#endOfMonth">今月末</button>
+          <button type="button" class="${chip} text-ink-soft" data-action="deadline-picker#clear">✕ 期限なし</button>
         </div>
-        <button type="button" class="w-fit cursor-pointer py-1.5 text-[13px] text-ink-soft underline" data-action="deadline-picker#clear">期限なしにする</button>
       </div>`
   }
 
