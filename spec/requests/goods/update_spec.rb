@@ -21,6 +21,20 @@ RSpec.describe "グッズの編集", type: :request do
       expect(response.body).to include('name="_method" value="patch"')
     end
 
+    it "支払期限と発売月は、大きいボタンの係と、保存ずみの値が入った見えない入力で出る(#94)" do
+      item.update!(payment_deadline: Date.new(2026, 10, 14), release_month: Date.new(2026, 11, 1))
+      sign_in_as(user)
+      get edit_good_path(item)
+
+      body = response.body
+      expect(body).to include('data-controller="deadline-picker"', 'data-controller="month-picker"')
+      # 属性の並び順に関係なく、その入力のタグを1つ取り出してから、中身を確かめる
+      deadline_input = body[/<input[^>]*name="item\[payment_deadline\]"[^>]*>/]
+      month_input = body[/<input[^>]*name="item\[release_month\]"[^>]*>/]
+      expect(deadline_input).to include('type="hidden"', 'value="2026-10-14"')
+      expect(month_input).to include('type="hidden"', 'value="2026-11-01"')
+    end
+
     it "ほかのユーザーのグッズは、見つからない(404)" do
       other_item = create(:item, character: create(:character, user: create(:user)))
 
