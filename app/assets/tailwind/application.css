@@ -16,6 +16,7 @@
   --color-paid: #2E8A6C;
   --color-paid-bg: #DFF1E7;
   /* 「届いた」ボタンの色。推しの色(テーマ)を変えてもピンクのまま(theme_picker が書きかえない名前にしている) */
+  /* 【自分の言葉】色の指定!(テーマに関係なく、届いたはいつもピンク) */
   --color-received: #E8577A;
   --color-received-strong: #D43F63;
   --color-unpaid: #A9741C;
