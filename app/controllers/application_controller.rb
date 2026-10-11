@@ -13,4 +13,9 @@ class ApplicationController < ActionController::Base
   # 【JSの変更検知】
   # JavaScript（importmap）を更新したとき、ブラウザ側の古いキャッシュを自動で無効化する
   stale_when_importmap_changes
+
+  # 【お祝いのお知らせ】
+  # Rails が最初から知っているお知らせの種類は notice と alert だけなので、celebrate(お祝い)も使えるように教える(#92)
+  # これで redirect_to のときに celebrate: "〜" と書ける。「支払った」「届いた」のときに使い、マスコットがぽよんと出る
+  add_flash_types :celebrate
 end

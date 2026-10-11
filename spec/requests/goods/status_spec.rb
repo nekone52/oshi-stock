@@ -23,6 +23,15 @@ RSpec.describe "グッズの届いた・支払った", type: :request do
       expect(item.paid).to be(false)
     end
 
+    it "お祝いのお知らせ(celebrate)になり、マスコットがぽよんと出る(#92)" do
+      sign_in_as(user)
+      patch receive_good_path(item)
+      expect(flash[:celebrate]).to eq("「#{item.name}」を所持グッズに移しました")
+
+      follow_redirect!
+      expect(response.body).to include("mascot_", "motion-safe:animate-poyon")
+    end
+
     it "ほかのユーザーのグッズは、変えられない(404)" do
       other_item = create(:item, character: create(:character, user: create(:user)), status: :reserved)
 
@@ -44,6 +53,27 @@ RSpec.describe "グッズの届いた・支払った", type: :request do
 
       patch toggle_paid_good_path(item)
       expect(item.reload.paid).to be(false)
+    end
+
+    it "支払い済みにしたときだけ、お祝いのお知らせ(celebrate)になる(#92)" do
+      sign_in_as(user)
+
+      patch toggle_paid_good_path(item)
+      expect(flash[:celebrate]).to eq("支払い済みにしました")
+      follow_redirect!
+      expect(response.body).to include("mascot_", "motion-safe:animate-poyon")
+    end
+
+    it "未払いに戻したときは、ふつうのお知らせ(notice)。マスコットもぽよんも出ない(#92)" do
+      item.update!(paid: true)
+      sign_in_as(user)
+
+      patch toggle_paid_good_path(item)
+      expect(flash[:notice]).to eq("未払いに戻しました")
+      expect(flash[:celebrate]).to be_nil
+      follow_redirect!
+      expect(response.body).to include("未払いに戻しました")
+      expect(response.body).not_to include("mascot_", "motion-safe:animate-poyon")
     end
 
     it "押した画面(絞り込み中のホーム)に戻る" do
