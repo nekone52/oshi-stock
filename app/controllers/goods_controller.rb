@@ -104,7 +104,8 @@ class GoodsController < ApplicationController
     # enum のおかげで、「所持に変えて保存」が1行で書ける
     @item.owned!
     # 押した画面(ホーム)に戻る。推しで絞り込んでいても、そのまま戻れる
-    redirect_back_or_to root_path, notice: "「#{@item.name}」を所持グッズに移しました"
+    # 届いたのはうれしい瞬間なので、お祝いのお知らせ(celebrate)にする。マスコットがぽよんと出る(#92)
+    redirect_back_or_to root_path, celebrate: "「#{@item.name}」を所持グッズに移しました"
   end
 
   # ホームの「支払った」ボタン:押すたびに、支払い済み ⇔ 未払い を切り替える
@@ -112,7 +113,12 @@ class GoodsController < ApplicationController
     # toggle!(:paid):Rails が用意している「true ⇔ false を反対にして保存する」メソッド
     # (前は @item.update(paid: !@item.paid) と書いていた。中身は同じ)
     @item.toggle!(:paid)
-    redirect_back_or_to root_path, notice: (@item.paid ? "支払い済みにしました" : "未払いに戻しました")
+    # 支払い済みにしたときだけお祝い(celebrate)でぽよん。未払いに戻したときは、ふつうのお知らせ(notice)のまま(#92)
+    if @item.paid
+      redirect_back_or_to root_path, celebrate: "支払い済みにしました"
+    else
+      redirect_back_or_to root_path, notice: "未払いに戻しました"
+    end
   end
 
   private
