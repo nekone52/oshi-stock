@@ -162,18 +162,35 @@
       </div>
     </fieldset>
 
-    <!-- 発売月(年月だけ)・補足(上旬などのあいまいな書き方) -->
-    <div class="grid grid-cols-2 gap-2.5">
-      <div class="flex flex-col gap-1.5">
-        <%= f.label :release_month, "発売月", class: "text-[13px] font-bold text-ink" %>
-        <%# 1年前から2年先までの月を選べる。日は1日で保存する(ER図のメモどおり) %>
-        <% months = (-12..24).map { |n| Date.current.beginning_of_month.advance(months: n) } %>
-        <%= f.select :release_month, months.map { |m| [ m.strftime("%Y年%-m月"), m ] }, { include_blank: "未定" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
-      </div>
-      <div class="flex flex-col gap-1.5">
-        <%= f.label :release_period, "補足", class: "text-[13px] font-bold text-ink" %>
-        <%= f.text_field :release_period, placeholder: "例：上旬", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
-      </div>
+    <!-- 発売月(年月だけ) -->
+    <%# 長いリストから探すのは見づらいので、押すとその場で「< 2026年 >」と12か月のボタンがひらく形にする(#94) %>
+    <%# 本物の値は、見えない入力(hidden_field)に「2026-11-01」の形で入れて送る。日は1日で保存する(ER図のメモどおり) %>
+    <%# 名札 month-picker = month_picker_controller.js(ファイル名は _、HTML の名札は -) %>
+    <div class="flex flex-col gap-1.5" data-controller="month-picker">
+      <span id="release_month_label" class="text-[13px] font-bold text-ink">発売月</span>
+      <%= f.hidden_field :release_month, data: { month_picker_target: "input" } %>
+      <button type="button" aria-labelledby="release_month_label" aria-expanded="false" aria-controls="release_month_panel"
+              data-month-picker-target="button" data-action="month-picker#toggle"
+              class="flex min-h-16 w-full cursor-pointer items-center gap-3 rounded-2xl border-[1.5px] border-line bg-white px-3.5 py-2 text-left aria-expanded:border-accent">
+        <!-- 小さいカレンダーの絵(上に年、下に月) -->
+        <span class="flex h-[42px] w-[42px] shrink-0 flex-col overflow-hidden rounded-[10px] border-[1.5px] border-accent text-center" aria-hidden="true">
+          <b class="bg-accent text-[10px] leading-[14px] text-white" data-month-picker-target="calTop">—</b>
+          <span class="grid flex-1 place-items-center font-display text-base text-accent-strong" data-month-picker-target="calBottom">?</span>
+        </span>
+        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+          <strong class="font-display text-[19px] text-ink" data-month-picker-target="text">未定</strong>
+          <small class="text-[13px] text-ink-soft">押すと月のボタンがひらきます</small>
+        </span>
+        <span class="text-lg text-ink-faint" aria-hidden="true">⌄</span>
+      </button>
+      <%# 月のボタンは、押したときに month_picker_controller.js がここに作る %>
+      <div id="release_month_panel" data-month-picker-target="panel" hidden></div>
+    </div>
+
+    <!-- 発売の補足(上旬などのあいまいな書き方) -->
+    <div class="flex flex-col gap-1.5">
+      <%= f.label :release_period, "発売の補足", class: "text-[13px] font-bold text-ink" %>
+      <%= f.text_field :release_period, placeholder: "例：上旬", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
     <!-- 支払い済みかどうか -->
@@ -183,10 +200,29 @@
     </label>
 
     <!-- 支払期限(空欄でもOK) -->
-    <div class="flex flex-col gap-1.5">
-      <%= f.label :payment_deadline, "支払期限", class: "text-[13px] font-bold text-ink" %>
-      <%= f.date_field :payment_deadline, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
-      <span class="text-xs text-ink-soft">未定なら空欄でOK</span>
+    <%# 数字だけ(2026/10/14)で小さくて見づらいので、日本語の大きいボタン+推しストックの色の大きいカレンダーにする(#94) %>
+    <%# 押すとその場でカレンダーがひらいて、日にちを押すと閉じる。本物の値は、見えない入力(hidden_field)に「2026-10-14」の形で入れて送る %>
+    <%# 名札 deadline-picker = deadline_picker_controller.js(ファイル名は _、HTML の名札は -) %>
+    <div class="flex flex-col gap-1.5" data-controller="deadline-picker">
+      <span id="payment_deadline_label" class="text-[13px] font-bold text-ink">支払期限</span>
+      <%= f.hidden_field :payment_deadline, data: { deadline_picker_target: "input" } %>
+      <button type="button" aria-labelledby="payment_deadline_label" aria-expanded="false" aria-controls="payment_deadline_panel"
+              data-deadline-picker-target="button" data-action="deadline-picker#toggle"
+              class="flex min-h-16 w-full cursor-pointer items-center gap-3 rounded-2xl border-[1.5px] border-line bg-white px-3.5 py-2 text-left aria-expanded:border-accent">
+        <!-- 小さいカレンダーの絵(上に月、下に日) -->
+        <span class="flex h-[42px] w-[42px] shrink-0 flex-col overflow-hidden rounded-[10px] border-[1.5px] border-accent text-center" aria-hidden="true">
+          <b class="bg-accent text-[10px] leading-[14px] text-white" data-deadline-picker-target="calMonth">—</b>
+          <span class="grid flex-1 place-items-center font-display text-lg text-accent-strong" data-deadline-picker-target="calDay">?</span>
+        </span>
+        <!-- 日本語の日付と、あと何日 -->
+        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+          <strong class="font-display text-[19px] text-ink" data-deadline-picker-target="text">期限なし</strong>
+          <small class="text-[13px] text-ink-soft" data-deadline-picker-target="left">押すとカレンダーがひらきます</small>
+        </span>
+        <span class="text-lg text-ink-faint" aria-hidden="true">⌄</span>
+      </button>
+      <%# カレンダーは、押したときに deadline_picker_controller.js がここに作る %>
+      <div id="payment_deadline_panel" data-deadline-picker-target="panel" hidden></div>
     </div>
 
     <!-- メモ -->
