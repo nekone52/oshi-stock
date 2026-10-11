@@ -67,15 +67,15 @@
 
     <!-- 名前(必須) -->
     <div class="flex flex-col gap-1.5">
-      <%= f.label :name, class: "text-[13px] font-bold text-ink" do %>
-        名前 <span class="text-accent-strong">*</span>
+      <%= f.label :name, class: "flex items-center gap-1.5 text-[15px] font-bold text-ink" do %>
+        名前 <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span>
       <% end %>
       <%= f.text_field :name, required: true, maxlength: 50, placeholder: "例：ヒナタ", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
     <!-- 推しの色(24色の丸から選ぶか、カラーピッカーで自由に選ぶ。選んだ色はグラデーションで見せる) -->
     <div class="flex flex-col gap-1.5">
-      <%= f.label :color, "推しの色", class: "text-[13px] font-bold text-ink" %>
+      <%= f.label :color, "推しの色", class: "text-[15px] font-bold text-ink" %>
       <%# 丸を押すと、その色が下のカラーピッカーに入る(oshi_preview_controller.js の pick) %>
       <%= render "shared/color_swatches", controller: "oshi-preview" %>
       <div class="flex items-center gap-3">

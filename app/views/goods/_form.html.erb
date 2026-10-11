@@ -40,7 +40,7 @@
     <%= tag.div class: "flex flex-col gap-4", data: { controller: "image-cropper", image_cropper_aspect_value: 1, image_cropper_width_value: 800, image_cropper_height_value: 800 } do %>
       <!-- 商品画像(枠を押すと、画像を選ぶ画面が開く) -->
       <label class="flex cursor-pointer flex-col gap-1.5">
-        <span class="text-[13px] font-bold text-ink">商品画像</span>
+        <span class="text-[15px] font-bold text-ink">商品画像</span>
         <div class="flex h-40 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border-2 border-dashed border-line bg-white text-ink-soft">
           <%# 保存ずみの商品画像があれば表示する(保存に失敗した新しい画像は、まだ表示できないため保存ずみだけ) %>
           <% saved_image = @item.image.attached? && @item.image.blob.persisted? %>
@@ -82,28 +82,28 @@
     <!-- 商品ページのURL -->
     <%# URL から商品の情報を読み込む機能(モックの「読み込む」ボタン)は、別のイシューで作る %>
     <div class="flex flex-col gap-1.5">
-      <%= f.label :url, "商品ページのURL", class: "text-[13px] font-bold text-ink" %>
+      <%= f.label :url, "商品ページのURL", class: "text-[15px] font-bold text-ink" %>
       <%= f.url_field :url, placeholder: "https://", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
     <!-- 購入先 -->
     <div class="flex flex-col gap-1.5">
-      <%= f.label :shop_name, "購入先", class: "text-[13px] font-bold text-ink" %>
+      <%= f.label :shop_name, "購入先", class: "text-[15px] font-bold text-ink" %>
       <%= f.text_field :shop_name, placeholder: "例：アニメイト通販、公式ショップ", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
     <!-- グッズ名(必須) -->
     <div class="flex flex-col gap-1.5">
-      <%= f.label :name, class: "text-[13px] font-bold text-ink" do %>
-        グッズ名 <span class="text-accent-strong">*</span>
+      <%= f.label :name, class: "flex items-center gap-1.5 text-[15px] font-bold text-ink" do %>
+        グッズ名 <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span>
       <% end %>
       <%= f.text_field :name, required: true, maxlength: 50, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
     </div>
 
     <!-- 推しキャラ(必須。ログイン中ユーザーの推しだけを選べる) -->
     <div class="flex flex-col gap-1.5">
-      <%= f.label :character_id, class: "text-[13px] font-bold text-ink" do %>
-        推しキャラ <span class="text-accent-strong">*</span>
+      <%= f.label :character_id, class: "flex items-center gap-1.5 text-[15px] font-bold text-ink" do %>
+        推しキャラ <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span>
       <% end %>
       <% if @characters.any? %>
         <%= f.collection_select :character_id, @characters, :id, :name, { include_blank: "選んでください" }, required: true, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
@@ -118,7 +118,7 @@
     <!-- カテゴリ(チップで選ぶ。ログイン中ユーザーのカテゴリだけ) -->
     <%# 見た目はチップ、中身はラジオボタン(1つだけ選べる)。選ばれたチップは has-checked で色が変わる %>
     <fieldset class="flex flex-col gap-1.5">
-      <legend class="text-[13px] font-bold text-ink">カテゴリ</legend>
+      <legend class="text-[15px] font-bold text-ink">カテゴリ</legend>
       <%# id="category_chips":カテゴリを追加したとき、Turbo Stream でこの中にチップを足す %>
       <div id="category_chips" class="flex flex-wrap gap-2">
         <%# 「なし」:カテゴリは空でもOK %>
@@ -137,11 +137,11 @@
     <!-- 単価・個数(入力すると、下の合計が自動で変わる) -->
     <div class="grid grid-cols-2 gap-2.5">
       <div class="flex flex-col gap-1.5">
-        <%= f.label :price, "単価（円）", class: "text-[13px] font-bold text-ink" %>
+        <%= f.label :price, "単価（円）", class: "text-[15px] font-bold text-ink" %>
         <%= f.number_field :price, min: 0, step: 1, inputmode: "numeric", placeholder: "例：1650", data: { item_form_target: "price", action: "input->item-form#updateTotal" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
       </div>
       <div class="flex flex-col gap-1.5">
-        <%= f.label :quantity, "個数", class: "text-[13px] font-bold text-ink" %>
+        <%= f.label :quantity, "個数", class: "text-[15px] font-bold text-ink" %>
         <%# 最初から 1 が入っている(テーブルの初期値) %>
         <%= f.number_field :quantity, min: 1, step: 1, required: true, inputmode: "numeric", data: { item_form_target: "quantity", action: "input->item-form#updateTotal" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
       </div>
@@ -150,7 +150,7 @@
     <!-- 所持ステータス(ほしい物 / 予約中 / 所持) -->
     <%# 見た目は切りかえボタン、中身はラジオボタン。最初は「ほしい物」(テーブルの初期値) %>
     <fieldset class="flex flex-col gap-1.5">
-      <legend class="text-[13px] font-bold text-ink">いまの状態</legend>
+      <legend class="text-[15px] font-bold text-ink">いまの状態</legend>
       <div class="grid grid-cols-3 gap-1 rounded-xl bg-accent-soft/60 p-1">
         <%# 状態の名前と日本語は、ItemsHelper の STATUS_LABELS(1か所)から %>
         <% ItemsHelper::STATUS_LABELS.each do |value, label| %>
@@ -167,7 +167,7 @@
     <%# 本物の値は、見えない入力(hidden_field)に「2026-11-01」の形で入れて送る。日は1日で保存する(ER図のメモどおり) %>
     <%# 名札 month-picker = month_picker_controller.js(ファイル名は _、HTML の名札は -) %>
     <div class="flex flex-col gap-1.5" data-controller="month-picker">
-      <span id="release_month_label" class="text-[13px] font-bold text-ink">発売月</span>
+      <span id="release_month_label" class="text-[15px] font-bold text-ink">発売月</span>
       <%= f.hidden_field :release_month, data: { month_picker_target: "input" } %>
       <button type="button" aria-labelledby="release_month_label" aria-expanded="false" aria-controls="release_month_panel"
               data-month-picker-target="button" data-action="month-picker#toggle"
@@ -189,7 +189,7 @@
 
     <!-- 発売の補足(上旬などのあいまいな書き方) -->
     <div class="flex flex-col gap-1.5">
-      <%= f.label :release_period, "発売の補足", class: "text-[13px] font-bold text-ink" %>
+      <%= f.label :release_period, "発売の補足", class: "text-[15px] font-bold text-ink" %>
       <%= f.text_field :release_period, placeholder: "例：上旬", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
@@ -204,7 +204,7 @@
     <%# 押すとその場でカレンダーがひらいて、日にちを押すと閉じる。本物の値は、見えない入力(hidden_field)に「2026-10-14」の形で入れて送る %>
     <%# 名札 deadline-picker = deadline_picker_controller.js(ファイル名は _、HTML の名札は -) %>
     <div class="flex flex-col gap-1.5" data-controller="deadline-picker">
-      <span id="payment_deadline_label" class="text-[13px] font-bold text-ink">支払期限</span>
+      <span id="payment_deadline_label" class="text-[15px] font-bold text-ink">支払期限</span>
       <%= f.hidden_field :payment_deadline, data: { deadline_picker_target: "input" } %>
       <button type="button" aria-labelledby="payment_deadline_label" aria-expanded="false" aria-controls="payment_deadline_panel"
               data-deadline-picker-target="button" data-action="deadline-picker#toggle"
@@ -227,7 +227,7 @@
 
     <!-- メモ -->
     <div class="flex flex-col gap-1.5">
-      <%= f.label :memo, "メモ", class: "text-[13px] font-bold text-ink" %>
+      <%= f.label :memo, "メモ", class: "text-[15px] font-bold text-ink" %>
       <%= f.text_area :memo, rows: 3, placeholder: "例：送料+660円、保存用、特典付き", class: "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
