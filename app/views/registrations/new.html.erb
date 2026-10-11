@@ -34,12 +34,12 @@
           <% end %>
 
           <label class="flex flex-col gap-1">
-            <span class="text-xs text-ink-soft">メールアドレス</span>
+            <span class="flex items-center gap-1.5 text-[15px] font-bold text-ink">メールアドレス <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span></span>
             <%= f.email_field :email_address, required: true, autocomplete: "email", placeholder: "example@mail.com", class: "rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
           </label>
 
           <label class="flex flex-col gap-1">
-            <span class="text-xs text-ink-soft">パスワード(8文字以上)</span>
+            <span class="flex items-center gap-1.5 text-[15px] font-bold text-ink">パスワード(8文字以上) <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span></span>
             <!-- 目のアイコンを押すと、伏せ字と文字を切り替える(password_visibility_controller.js) -->
             <div class="relative" data-controller="password-visibility">
               <%= f.password_field :password, required: true, minlength: 8, autocomplete: "new-password", placeholder: "••••••••", data: { password_visibility_target: "input" }, class: "w-full pr-11 rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
@@ -48,7 +48,7 @@
           </label>
 
           <label class="flex flex-col gap-1">
-            <span class="text-xs text-ink-soft">パスワード(確認)</span>
+            <span class="flex items-center gap-1.5 text-[15px] font-bold text-ink">パスワード(確認) <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span></span>
             <!-- 目のアイコンを押すと、伏せ字と文字を切り替える(password_visibility_controller.js) -->
             <div class="relative" data-controller="password-visibility">
               <%= f.password_field :password_confirmation, required: true, minlength: 8, autocomplete: "new-password", placeholder: "••••••••", data: { password_visibility_target: "input" }, class: "w-full pr-11 rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
