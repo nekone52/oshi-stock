@@ -31,8 +31,8 @@ Rails.application.routes.draw do
       patch :toggle_paid   # 支払った  PATCH /goods/:id/toggle_paid
     end
   end
-  # 推しキャラ(一覧・詳細・登録・編集・削除機能への案内)
-  resources :oshis, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
+  # 推しキャラ(一覧・登録・編集・削除機能への案内)
+  resources :oshis, only: [ :index, :new, :create, :edit, :update, :destroy ] do
     get :confirm_delete, on: :member
   end
   # カテゴリ(グッズの画面のシートから、追加と削除だけ)
