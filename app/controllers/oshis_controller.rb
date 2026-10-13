@@ -1,25 +1,11 @@
 class OshisController < ApplicationController
   # 1人の推しに対するアクションは、最初に「自分の推しの中から」探しておく(ほかの人の推しは見つからず 404)
-  # 【自分の言葉】詳細画面を開く前にも、ログイン中のユーザーの推しの中から探すようにした。だから、ほかの人の推しは見られない
-  before_action :set_character, only: [ :show, :edit, :update, :confirm_delete, :destroy ]
+  # 【自分の言葉】編集・消去の前にも、ログイン中のユーザーの推しの中から探すようにした。だから、ほかの人の推しは見られない
+  before_action :set_character, only: [ :edit, :update, :confirm_delete, :destroy ]
 
   # 推しキャラの一覧(ログイン中ユーザーの推しだけを、登録した順に並べる)
   def index
     @characters = my_characters
-  end
-
-  # 推しキャラの詳細(推しは before_action の set_character で探してある)
-  # 上の数の箱に出す、状態ごとのグッズの数と、所持の合計金額を用意する
-  def show
-    @item_counts = @character.item_counts
-    @owned_total = @character.owned_total
-    # 下のグッズ一覧に並べる、この推しのグッズを状態ごとに選び出す(enum の wanted・owned を使う)
-    # 【自分の言葉】欲しいものアイテムは、キャラクターのアイテムの中の欲しいもの(欲しいものを選出する)
-    @wanted_items = @character.items.wanted
-    @owned_items = @character.items.owned
-    # 予約注文中 = 予約中 + 届いたけど未払いのもの(ホームと同じ。支払うまで残して、払い忘れを防ぐ)
-    # 未払いを先に、支払い期限の近い順に並べる(Item の scope :unpaid_first)
-    @reserved_items = @character.items.reserved.or(@character.items.owned.where(paid: false)).unpaid_first
   end
 
   # 推し追加の画面を開く（入力フォーム用）
