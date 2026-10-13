@@ -23,7 +23,7 @@ Rails.application.routes.draw do
 
   # 予約の一覧(登録はグッズ登録のフォームを「予約中」で開く)
   resources :reservations, only: [ :index ]
-  # グッズ(新規登録・編集・削除は本物。一覧はまだモック)
+  # グッズ(一覧・詳細・登録・編集・削除機能への案内)
   resources :goods, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     # 1つのグッズに対する道(URL に番号が入る)。ホームのワンタップの切り替えで使う
     member do
@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       patch :toggle_paid   # 支払った  PATCH /goods/:id/toggle_paid
     end
   end
-  # 推しキャラ(一覧・登録・編集・削除は本物。詳細はまだモック)
+  # 推しキャラ(一覧・詳細・登録・編集・削除機能への案内)
   resources :oshis, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
     get :confirm_delete, on: :member
   end
