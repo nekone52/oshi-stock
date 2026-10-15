@@ -29,11 +29,15 @@
   </section>
 
   <!-- 絞り込み -->
+  <%# 押すと、同じ予約画面に付せん(?filter=〇〇)を貼って、ひらき直す。「すべて」は付せんなし %>
+  <%# reservations_path(filter: "unpaid") と書くと、Rails が /reservations?filter=unpaid に変えてくれる %>
+  <%# 推しでしぼっているときは、推しの付せん(character_id)も一緒に貼って、推しのしぼりこみを消さない %>
+  <%# 【自分の言葉】キャラクターidは、特定のキャラで絞る(選んでいる推しを、ボタンを押しても消さない) %>
   <nav aria-label="絞り込み" class="mt-3 flex gap-2 overflow-x-auto">
-    <button type="button" aria-pressed="true" class="h-10 shrink-0 rounded-full bg-ink px-4 text-[13px] font-bold text-white">すべて</button>
-    <button type="button" aria-pressed="false" class="h-10 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">未払い</button>
-    <button type="button" aria-pressed="false" class="h-10 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">支払済</button>
-    <button type="button" aria-pressed="false" class="h-10 shrink-0 rounded-full border border-line bg-white px-3.5 text-[13px] text-ink">届いた・未払い</button>
+    <%= link_to "すべて", reservations_path(character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full bg-ink px-4 text-[13px] font-bold text-white" %>
+    <%= link_to "未払い", reservations_path(filter: "unpaid", character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
+    <%= link_to "支払済", reservations_path(filter: "paid", character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
+    <%= link_to "届いた・未払い", reservations_path(filter: "arrived", character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
   </nav>
 
   <%# ホームで選んだ推しでしぼっているときだけ、推しの名前と件数と「やめる」を出す %>
