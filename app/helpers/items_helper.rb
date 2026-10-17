@@ -35,6 +35,16 @@ module ItemsHelper
     nil
   end
 
+  # 商品ページのリンクに出す文字(お店の住所だけ。例:animate-onlineshop.jp)
+  # URL を部品に分解して host(お店の住所)を取り出し、どのお店にもつく「www.」は取る
+  # 安全な URL(safe_item_url)のときだけ使う
+  # 【自分の言葉】URL からお店の住所を取り出して、www とってね
+  def item_url_label(item)
+    URI.parse(item.url.to_s).host.to_s.delete_prefix("www.")
+  rescue URI::InvalidURIError
+    ""
+  end
+
   # グッズの戻り先(詳細の「<」・消去のあと)。下のメニューがないので、グッズの状態で帰る一覧を決める
   # 予約中と、届いたけど未払いのもの → 予約画面(予約画面に出ているグッズと同じ)
   # ほしい物・所持(支払い済み) → グッズ一覧の、その状態でしぼった画面
