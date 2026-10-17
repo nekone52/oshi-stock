@@ -89,4 +89,8 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # テストのカバレッジ(テストがコードの何%を通ったか)を測る。#29
+  # require: false … Rails が起きるときには読みこまず、spec/rails_helper.rb のいちばん上で読みこむ
+  gem "simplecov", require: false
 end
