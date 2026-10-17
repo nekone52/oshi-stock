@@ -28,22 +28,23 @@ RSpec.describe "推しキャラの一覧", type: :request do
     end
 
     # 名刺の数(見本の 0 のままになっていたのを本物にした)
-    it "名刺に、その推しの「ほしい・予約中・所持」の数と、所持グッズの合計金額が出る" do
+    it "名刺に、その推しの「ほしい・予約中・所持」の件数と、持っているグッズの個数が出る" do
       character = create(:character, user: user, name: "ヒナタ")
       create(:item, character: character, status: :wanted)
       create_list(:item, 2, character: character, status: :reserved)
       create(:item, character: character, status: :owned, price: 1650, quantity: 2)
       # ほかの人のグッズは数えない
-      create(:item, character: create(:character, user: create(:user)), status: :owned, price: 9999)
+      create(:item, character: create(:character, user: create(:user)), status: :owned, quantity: 99)
 
       sign_in_as(user)
       get oshis_path
       body = response.body
-      expect(body).to include("¥3,300")
+      # 所持は1件だけど、2個持っているので「2個」
+      expect(body).to match(%r{所持グッズ <span[^>]*>2</span>個})
       expect(body).to match(%r{ほしい</span><span[^>]*>1</span>})
       expect(body).to match(%r{予約中</span><span[^>]*>2</span>})
       expect(body).to match(%r{所持</span><span[^>]*>1</span>})
-      expect(body).not_to include("¥9,999")
+      expect(body).not_to match(%r{所持グッズ <span[^>]*>99</span>個})
     end
 
     it "「…」メニューに、その推しの編集と削除のリンクがある" do

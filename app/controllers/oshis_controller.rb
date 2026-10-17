@@ -73,13 +73,14 @@ class OshisController < ApplicationController
     Current.user.characters.with_attached_icon.order(:created_at)
   end
 
-  # 名刺カードに出す数(推しごとの「ほしい・予約中・所持」の数と、所持グッズの合計金額)
+  # 名刺カードに出す数(推しごとの「ほしい・予約中・所持」の件数と、持っているグッズの個数)
   # 推しの数だけデータベースに聞きに行かないように、自分のグッズをまとめて2回だけ数える
   #   @status_counts:{ [推しの番号, "wanted"] => 2, … }
-  #   @owned_totals: { 推しの番号 => 7600, … }(単価が空のグッズは数えない。character.rb の owned_total と同じ)
+  #   @owned_quantities:{ 推しの番号 => 3, … }(所持のグッズの個数を足す。観賞用・保存用で2個なら2と数える)
+  # 【自分の言葉】個数だけを足すと、持っている数になる(単価 × 個数 だと金額になる)
   def set_card_numbers
     @status_counts = Current.user.items.group(:character_id, :status).count
-    @owned_totals = Current.user.items.owned.group(:character_id).sum("price * quantity")
+    @owned_quantities = Current.user.items.owned.group(:character_id).sum(:quantity)
   end
 
   # ストロングパラメーター：不正なデータ送信を防ぎ、許可した項目だけを取り出す安全フィルター
