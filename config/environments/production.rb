@@ -57,7 +57,14 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  # メールはブラウザの外から届くので、リンクの住所を教えておく(パスワード再設定のリンクが本番の画面にとぶように)
+  # 合言葉(トークン)入りのリンクなので、最初から鍵つきの https にする
+  # 【自分の言葉】メールのリンクを、推しストックの本番(https)へ行くようにする
+  config.action_mailer.default_url_options = { host: "oshi-stock.onrender.com", protocol: "https" }
+
+  # メールの配達方法(delivery_method)。Render の無料プランは SMTP がふさがれているので、HTTPS で送れる Resend を使う
+  # 【自分の言葉】配達!メールを Resend で届ける!
+  config.action_mailer.delivery_method = :resend
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
