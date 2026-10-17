@@ -40,8 +40,8 @@
               <div class="flex flex-col gap-2">
                 <%# 名前のうしろを白くぼかして、上の濃い推しの色の上でも読めるようにする %>
                 <span style="text-shadow: 0 0 6px white, 0 0 12px white, 0 0 18px rgb(255 255 255 / 0.8)" class="truncate pr-8 font-display text-[28px] leading-tight font-black text-ink"><%= character.name %></span>
-                <%# 所持グッズの合計(コントローラーの set_card_numbers で、推しごとにまとめて数えたもの)。文字は背景が濃くても読めるように、こい色(text-ink)にする %>
-                <span class="inline-flex items-baseline gap-1.5 self-start rounded-full border border-line bg-white/80 px-3 py-1 text-xs text-ink">所持グッズ合計 <span class="text-base font-bold text-ink">¥<%= number_with_delimiter(@owned_totals[character.id].to_i) %></span></span>
+                <%# 持っているグッズの個数(金額ではなく数。コントローラーの set_card_numbers で、推しごとにまとめて数えたもの)。文字は背景が濃くても読めるように、こい色(text-ink)にする %>
+                <span class="inline-flex items-baseline gap-1.5 self-start rounded-full border border-line bg-white/80 px-3 py-1 text-xs text-ink">所持グッズ <span class="text-base font-bold text-ink"><%= @owned_quantities[character.id].to_i %></span>個</span>
               </div>
               <!-- グッズの数(チップ風。合計の丸とおそろいで、白を少し透かす) -->
               <div class="grid grid-cols-3 gap-1.5">
