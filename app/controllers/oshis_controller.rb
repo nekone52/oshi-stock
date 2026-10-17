@@ -6,6 +6,7 @@ class OshisController < ApplicationController
   # 推しキャラの一覧(ログイン中ユーザーの推しだけを、登録した順に並べる)
   def index
     @characters = my_characters
+    set_card_numbers
   end
 
   # 推し追加の画面を開く（入力フォーム用）
@@ -46,8 +47,9 @@ class OshisController < ApplicationController
 
   # 消去の確認の画面を開く(消す推しは set_character で探してある)
   def confirm_delete
-    # 後ろに推しキャラ一覧を重ねて表示するので、一覧と同じ推しも用意する
+    # 後ろに推しキャラ一覧を重ねて表示するので、一覧と同じ推しと、名刺の数も用意する
     @characters = my_characters
+    set_card_numbers
   end
 
   # 確認の画面で「消去する」を押したときの消去処理
@@ -69,6 +71,15 @@ class OshisController < ApplicationController
   # with_attached_icon:アイコン画像もまとめて取り出す(推しの数だけデータベースに聞きに行かないようにする)
   def my_characters
     Current.user.characters.with_attached_icon.order(:created_at)
+  end
+
+  # 名刺カードに出す数(推しごとの「ほしい・予約中・所持」の数と、所持グッズの合計金額)
+  # 推しの数だけデータベースに聞きに行かないように、自分のグッズをまとめて2回だけ数える
+  #   @status_counts:{ [推しの番号, "wanted"] => 2, … }
+  #   @owned_totals: { 推しの番号 => 7600, … }(単価が空のグッズは数えない。character.rb の owned_total と同じ)
+  def set_card_numbers
+    @status_counts = Current.user.items.group(:character_id, :status).count
+    @owned_totals = Current.user.items.owned.group(:character_id).sum("price * quantity")
   end
 
   # ストロングパラメーター：不正なデータ送信を防ぎ、許可した項目だけを取り出す安全フィルター
