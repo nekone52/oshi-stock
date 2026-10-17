@@ -24,15 +24,17 @@ class Item < ApplicationRecord
   validates :name, presence: true, length: { maximum: 50 }
 
   # 【単価】0円以上の整数のみ（マイナス価格を防止）。未入力でも保存できるように allow_nil: true
-  validates :price, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+  # 上限は100万円まで(単価 × 個数 が、データベースで計算できる数(約21億)をこえないように。個数の上限999とセット)
+  validates :price, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1_000_000 }, allow_nil: true
 
   # 【個数】入力必須 ＆ 1個以上の整数のみ（0個やマイナス個で登録されるのを防止）
   # 空のときは presence の「入力してください」だけを出すため、数字のチェックは allow_nil: true にする
   validates :quantity, presence: true
-  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, allow_nil: true
+  # 上限は999個まで(単価の上限とセットで、合計の計算がエラーにならないように)
+  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 999 }, allow_nil: true
   # 【目標個数】1個以上の整数のみ。スイッチがオフ(目標なし)のときは空っぽでOKなので allow_nil: true
   # 【自分の言葉】一個以上の目標数だけ設定できる(0個や小数ははじく。空っぽ = 目標なしはOK)
-  validates :target_quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, allow_nil: true
+  validates :target_quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 999 }, allow_nil: true
 
   # 【画像のチェック】ファイル形式（JPEG/PNG/WebP）と ファイル容量の上限（5MB未満）。メッセージは推しキャラのアイコンとそろえる
   validates :image,
