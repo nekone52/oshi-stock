@@ -27,6 +27,25 @@ RSpec.describe "推しキャラの一覧", type: :request do
       expect(response.body).not_to include("ほかの人の推し")
     end
 
+    # 名刺の数(見本の 0 のままになっていたのを本物にした)
+    it "名刺に、その推しの「ほしい・予約中・所持」の数と、所持グッズの合計金額が出る" do
+      character = create(:character, user: user, name: "ヒナタ")
+      create(:item, character: character, status: :wanted)
+      create_list(:item, 2, character: character, status: :reserved)
+      create(:item, character: character, status: :owned, price: 1650, quantity: 2)
+      # ほかの人のグッズは数えない
+      create(:item, character: create(:character, user: create(:user)), status: :owned, price: 9999)
+
+      sign_in_as(user)
+      get oshis_path
+      body = response.body
+      expect(body).to include("¥3,300")
+      expect(body).to match(%r{ほしい</span><span[^>]*>1</span>})
+      expect(body).to match(%r{予約中</span><span[^>]*>2</span>})
+      expect(body).to match(%r{所持</span><span[^>]*>1</span>})
+      expect(body).not_to include("¥9,999")
+    end
+
     it "「…」メニューに、その推しの編集と削除のリンクがある" do
       character = create(:character, user: user)
 
