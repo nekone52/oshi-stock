@@ -29,6 +29,8 @@
         <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background-color: <%= item.character.display_color %>"></span>
         <span class="truncate"><%= [ item.character.name, item.shop_name.presence ].compact.join(" · ") %></span>
       </span>
+      <%# 目標個数の進みぐあい(目標がないときは何も出ない。#62。部品は goods/_goal_progress.html.erb) %>
+      <%= render "goods/goal_progress", item: item %>
       <%# 枠の色を推しの色にしたので、期限が近いことは枠のかわりに札で知らせる(#85) %>
       <%# soon = 「まだ払っていない、かつ、期限が7日以内?」の答えを入れた箱。「はい」のときだけ札を出す %>
       <% if soon %>

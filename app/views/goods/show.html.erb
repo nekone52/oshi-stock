@@ -50,6 +50,13 @@
           <% end %>
         </dd>
       </div>
+      <%# 目標個数(決めているときだけ出す。#62。予約画面のカードと同じ部品) %>
+      <% if @item.target_quantity.present? %>
+        <div class="flex justify-between gap-4 py-3">
+          <dt class="shrink-0 text-ink-soft">目標</dt>
+          <dd class="min-w-0 flex-1 text-right font-medium text-ink [&>span]:items-end [&>span]:justify-end"><%= render "goods/goal_progress", item: @item %></dd>
+        </div>
+      <% end %>
       <div class="flex justify-between gap-4 py-3">
         <dt class="shrink-0 text-ink-soft">発売</dt>
         <dd class="text-right font-medium text-ink">

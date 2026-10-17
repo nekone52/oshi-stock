@@ -1,0 +1,35 @@
+<%# 【目標個数の進みぐあい】#62。予約画面のカードと、グッズの詳細画面で使う %>
+<%# item:グッズ1件。目標個数が空っぽ(スイッチがオフ = 目標なし)のときは、何も出さない %>
+<%# 目標が5個まではハート、6個からはバー(たくさんでもカードからあふれないように)。達成したら緑 %>
+<% if item.target_quantity.present? %>
+  <% goal = item.target_quantity %>
+  <% got = item.secured_quantity %>
+  <% done = got >= goal %>
+  <% label = "#{got} / #{goal}個 · #{done ? "目標達成!" : "あと#{goal - got}個"}" %>
+  <% if goal <= 5 %>
+    <%# ハート:確保したぶんだけ推しの色(達成したら緑)、のこりはうすい色 %>
+    <span class="flex flex-wrap items-center gap-1.5 text-xs text-ink-soft" aria-label="目標個数 <%= label %>">
+      <span class="flex gap-0.5 text-[15px] leading-none" aria-hidden="true">
+        <% goal.times do |i| %>
+          <% if i < got %>
+            <span class="<%= "text-paid" if done %>" style="<%= "color: #{item.character.display_color}" unless done %>">♥</span>
+          <% else %>
+            <span class="text-line">♥</span>
+          <% end %>
+        <% end %>
+      </span>
+      <span class="tabular-nums <%= "font-bold text-paid" if done %>"><%= label %></span>
+    </span>
+  <% else %>
+    <%# バー:確保した数 ÷ 目標 の長さまで色をぬる(目標をこえても100%で止める) %>
+    <span class="flex flex-col gap-1" aria-label="目標個数 <%= label %>">
+      <span class="flex justify-between gap-2 text-xs text-ink-soft tabular-nums">
+        <span>確保 <%= got %> / <%= goal %>個</span>
+        <span class="<%= "font-bold text-paid" if done %>"><%= done ? "目標達成!" : "あと#{goal - got}個" %></span>
+      </span>
+      <span class="h-2 overflow-hidden rounded-full bg-line" aria-hidden="true">
+        <span class="block h-full rounded-full <%= "bg-paid" if done %>" style="width: <%= [ got * 100 / goal, 100 ].min %>%;<%= " background-color: #{item.character.display_color}" unless done %>"></span>
+      </span>
+    </span>
+  <% end %>
+<% end %>
