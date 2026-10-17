@@ -50,6 +50,22 @@ RSpec.describe Item, type: :model do
       expect(item.errors[:quantity]).to include("は1以上の値にしてください")
     end
 
+    # 目標個数(#62):空っぽ = 目標なし。決めるなら1以上の整数
+    it "目標個数は空でも、1以上の整数でも有効" do
+      expect(build(:item, target_quantity: nil)).to be_valid
+      expect(build(:item, target_quantity: 3)).to be_valid
+    end
+
+    it "目標個数が0なら無効" do
+      item = build(:item, target_quantity: 0)
+      expect(item).not_to be_valid
+      expect(item.errors[:target_quantity]).to include("は1以上の値にしてください")
+    end
+
+    it "目標個数が小数なら無効" do
+      expect(build(:item, target_quantity: 1.5)).not_to be_valid
+    end
+
     it "URL は空でも、http・https の URL でも有効" do
       expect(build(:item, url: "")).to be_valid
       expect(build(:item, url: "https://example.com/goods?id=1")).to be_valid
@@ -87,6 +103,17 @@ RSpec.describe Item, type: :model do
       character = create(:character)
       create_list(:item, 2, character: character)
       expect { character.destroy }.to change(Item, :count).by(-2)
+    end
+  end
+
+  describe "#secured_quantity(確保した数)" do
+    it "ほしい物は、まだ確保していないので0" do
+      expect(build(:item, status: :wanted, quantity: 2).secured_quantity).to eq(0)
+    end
+
+    it "予約中・所持は、個数がそのまま確保した数" do
+      expect(build(:item, status: :reserved, quantity: 2).secured_quantity).to eq(2)
+      expect(build(:item, status: :owned, quantity: 3).secured_quantity).to eq(3)
     end
   end
 

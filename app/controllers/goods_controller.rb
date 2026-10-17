@@ -145,7 +145,8 @@ class GoodsController < ApplicationController
   # ストロングパラメーター:許可した項目だけを取り出す安全フィルター
   # character_id と category_id は入れない(上の create で、自分の推し・カテゴリから探してつなげるため)
   def item_params
+    # 【自分の言葉】ここ(名簿)にないと、受付で捨てられて保存されない → だからカードにも表示されない(target_quantity を足した。#62)
     params.expect(item: [ :name, :url, :release_month, :release_period, :shop_name, :price, :quantity,
-                          :status, :paid, :payment_deadline, :memo, :image ])
+                          :status, :paid, :payment_deadline, :target_quantity, :memo, :image ])
   end
 end

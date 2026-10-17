@@ -29,6 +29,7 @@ ja:
         shop_name: 購入先
         price: 単価
         quantity: 個数
+        target_quantity: 目標個数
         status: ステータス
         paid: 支払い済み
         payment_deadline: 支払い期限

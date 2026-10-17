@@ -147,6 +147,29 @@
       </div>
     </div>
 
+    <!-- 目標個数(#62)。スイッチがオンのときだけ入力欄を出す -->
+    <%# スイッチは保存しない(name なし)。出し入れと、オフで空っぽにするのは item_form_controller.js %>
+    <%# 空っぽで保存 = 目標なし(カードにも出ない)。個数(確保した数)と比べてカードに出す %>
+    <div class="flex flex-col gap-2.5 border-t border-dashed border-line pt-3">
+      <label for="goal_switch" class="flex cursor-pointer items-center justify-between gap-3">
+        <span class="flex min-w-0 flex-col gap-0.5">
+          <span class="text-[15px] font-bold text-ink">目標個数を決める</span>
+          <span class="text-[13px] text-ink-soft">観賞用・保存用・布教用など、何個ほしいか</span>
+        </span>
+        <%# 見た目はスイッチ、中身はチェックボックス(peer で、チェックされたら色とつまみの位置を変える) %>
+        <span class="relative h-7.5 w-13 shrink-0">
+          <input type="checkbox" id="goal_switch" role="switch" class="peer sr-only" data-item-form-target="goalSwitch" data-action="change->item-form#toggleGoal">
+          <span class="absolute inset-0 rounded-full bg-line transition-colors peer-checked:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"></span>
+          <span class="absolute top-0.75 left-0.75 h-6 w-6 rounded-full bg-white shadow transition-[left] peer-checked:left-6.25"></span>
+        </span>
+      </label>
+      <div class="flex flex-col gap-1.5" data-item-form-target="goalField">
+        <%= f.label :target_quantity, "目標個数", class: "text-[15px] font-bold text-ink" %>
+        <%= f.number_field :target_quantity, min: 1, step: 1, inputmode: "numeric", placeholder: "例：3", data: { item_form_target: "goalInput" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
+        <span class="text-[13px] text-ink-soft">いまの個数(確保した数)と比べて、カードに出します</span>
+      </div>
+    </div>
+
     <!-- 所持ステータス(ほしい物 / 予約中 / 所持) -->
     <%# 見た目は切りかえボタン、中身はラジオボタン。最初は「ほしい物」(テーブルの初期値) %>
     <fieldset class="flex flex-col gap-1.5">

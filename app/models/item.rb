@@ -30,6 +30,9 @@ class Item < ApplicationRecord
   # 空のときは presence の「入力してください」だけを出すため、数字のチェックは allow_nil: true にする
   validates :quantity, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, allow_nil: true
+  # 【目標個数】1個以上の整数のみ。スイッチがオフ(目標なし)のときは空っぽでOKなので allow_nil: true
+  # 【自分の言葉】一個以上の目標数だけ設定できる(0個や小数ははじく。空っぽ = 目標なしはOK)
+  validates :target_quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, allow_nil: true
 
   # 【画像のチェック】ファイル形式（JPEG/PNG/WebP）と ファイル容量の上限（5MB未満）。メッセージは推しキャラのアイコンとそろえる
   validates :image,
@@ -39,4 +42,12 @@ class Item < ApplicationRecord
   # 【商品URL】「http://」や「https://」で始まる正しいURL形式のみ。未入力でも保存できるように allow_blank: true
   # \A(最初)と \z(最後)ではさんで、前後に余計な文字があるものは通さない
   validates :url, format: { with: /\A#{URI::DEFAULT_PARSER.make_regexp(%w[http https])}\z/ }, allow_blank: true
+
+  # 【確保した数】目標個数(target_quantity)と比べる数。#62
+  # ほしい物はまだ予約も購入もしていないので 0。予約中・所持は個数(quantity)
+  # 予約画面のカードでも詳細画面でも同じ数え方にするため、モデルの1か所にまとめる
+  # 【自分の言葉】ほしいものなら0、そうじゃなければ個数(= 確保した数)
+  def secured_quantity
+    wanted? ? 0 : quantity
+  end
 end
