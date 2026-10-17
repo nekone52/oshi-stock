@@ -1,3 +1,5 @@
+<%# 本物にした画面なので、押せるようにする(レイアウトの inert を外す) %>
+<% content_for :interactive, true %>
 <div class="mx-auto max-w-[430px] px-4 pb-16">
 
   <!-- ヘッダー(戻るとタイトル) -->
@@ -42,10 +44,14 @@
     <!-- 4 -->
     <section class="flex flex-col gap-1.5">
       <h2 class="font-display text-base font-bold">4. 外部サービスへの保存</h2>
-      <p>本サービスは、次の外部サービスを使ってデータを保存しています。</p>
+      <p>本サービスは、次の外部サービスを使ってデータを保存したり、送ったりしています。</p>
       <ul class="list-disc space-y-1 pl-5">
         <li>Render(サーバー・データベース)</li>
         <li>Amazon Web Services の S3(アップロードされた画像)</li>
+        <%# #100 で足した。パスワード再設定メールを送るときに、メールアドレスを渡している %>
+        <li>Resend(パスワード再設定メールの送信。送り先のメールアドレスを渡します)</li>
+        <%# お問い合わせフォーム。書いてもらった内容と、お返事用のメールアドレス(任意)が保存される %>
+        <li>Google フォーム(お問い合わせの受付。お問い合わせの内容と、お返事用のメールアドレスを書いた場合はそのアドレス)</li>
       </ul>
     </section>
 
@@ -69,8 +75,9 @@
 
     <!-- 問い合わせ・日付 -->
     <section class="flex flex-col gap-1.5 border-t border-line pt-4 text-[13px] text-ink-soft">
-      <p>お問い合わせ:お問い合わせフォーム(〇〇)</p>
-      <p>2026年〇月〇日 制定</p>
+      <%# お問い合わせは Google フォーム(答える人用の URL。メールアドレスは集めない設定)。ほかのサイトなので新しいタブで開く %>
+      <p>お問い合わせ:<%= link_to "お問い合わせフォーム", "https://docs.google.com/forms/d/e/1FAIpQLScgdeNIrqj7hKy3nta-PQg4Dsx1WWyWcZFMiLlxSnpCfTjWcw/viewform", target: "_blank", rel: "noopener noreferrer", class: "font-bold text-accent-strong underline" %></p>
+      <p>2026年10月18日 制定</p>
     </section>
   </article>
 </div>

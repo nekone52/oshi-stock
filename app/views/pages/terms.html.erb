@@ -1,3 +1,5 @@
+<%# 本物にした画面なので、押せるようにする(レイアウトの inert を外す) %>
+<% content_for :interactive, true %>
 <div class="mx-auto max-w-[430px] px-4 pb-16">
 
   <!-- ヘッダー(戻るとタイトル) -->
@@ -74,8 +76,9 @@
 
     <!-- 問い合わせ・日付 -->
     <section class="flex flex-col gap-1.5 border-t border-line pt-4 text-[13px] text-ink-soft">
-      <p>お問い合わせ:お問い合わせフォーム(〇〇)</p>
-      <p>2026年〇月〇日 制定</p>
+      <%# お問い合わせは Google フォーム(答える人用の URL。メールアドレスは集めない設定)。ほかのサイトなので新しいタブで開く %>
+      <p>お問い合わせ:<%= link_to "お問い合わせフォーム", "https://docs.google.com/forms/d/e/1FAIpQLScgdeNIrqj7hKy3nta-PQg4Dsx1WWyWcZFMiLlxSnpCfTjWcw/viewform", target: "_blank", rel: "noopener noreferrer", class: "font-bold text-accent-strong underline" %></p>
+      <p>2026年10月18日 制定</p>
     </section>
   </article>
 </div>
