@@ -33,11 +33,16 @@
   <%# reservations_path(filter: "unpaid") と書くと、Rails が /reservations?filter=unpaid に変えてくれる %>
   <%# 推しでしぼっているときは、推しの付せん(character_id)も一緒に貼って、推しのしぼりこみを消さない %>
   <%# 【自分の言葉】キャラクターidは、特定のキャラで絞る(選んでいる推しを、ボタンを押しても消さない) %>
+  <%# 押しているボタンだけ黒い服(選択中)、ほかは白い服。長いクラスを4回書かないように、ここで1回だけ名前をつける %>
+  <% selected_class = "inline-flex h-10 shrink-0 items-center rounded-full bg-ink px-4 text-[13px] font-bold text-white" %>
+  <% normal_class   = "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
+  <%# しつもん ? はいのとき : いいえのとき(if を1行で書く形)。いまの付せん(params[:filter])とボタンの付せんが同じなら黒 %>
+  <%# 【自分の言葉】未払いのボタンは、選んだら黒、未選択は白(ほかのボタンも同じ) %>
   <nav aria-label="絞り込み" class="mt-3 flex gap-2 overflow-x-auto">
-    <%= link_to "すべて", reservations_path(character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full bg-ink px-4 text-[13px] font-bold text-white" %>
-    <%= link_to "未払い", reservations_path(filter: "unpaid", character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
-    <%= link_to "支払済", reservations_path(filter: "paid", character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
-    <%= link_to "届いた・未払い", reservations_path(filter: "arrived", character_id: params[:character_id]), class: "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
+    <%= link_to "すべて", reservations_path(character_id: params[:character_id]), class: params[:filter].blank? ? selected_class : normal_class %>
+    <%= link_to "未払い", reservations_path(filter: "unpaid", character_id: params[:character_id]), class: params[:filter] == "unpaid" ? selected_class : normal_class %>
+    <%= link_to "支払済", reservations_path(filter: "paid", character_id: params[:character_id]), class: params[:filter] == "paid" ? selected_class : normal_class %>
+    <%= link_to "届いた・未払い", reservations_path(filter: "arrived", character_id: params[:character_id]), class: params[:filter] == "arrived" ? selected_class : normal_class %>
   </nav>
 
   <%# ホームで選んだ推しでしぼっているときだけ、推しの名前と件数と「やめる」を出す %>
