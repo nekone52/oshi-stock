@@ -30,6 +30,9 @@ class Item < ApplicationRecord
   # 空のときは presence の「入力してください」だけを出すため、数字のチェックは allow_nil: true にする
   validates :quantity, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, allow_nil: true
+  # 【目標個数】1個以上の整数のみ。スイッチがオフ(目標なし)のときは空っぽでOKなので allow_nil: true
+  # 【自分の言葉】一個以上の目標数だけ設定できる(0個や小数ははじく。空っぽ = 目標なしはOK)
+  validates :target_quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, allow_nil: true
 
   # 【画像のチェック】ファイル形式（JPEG/PNG/WebP）と ファイル容量の上限（5MB未満）。メッセージは推しキャラのアイコンとそろえる
   validates :image,
