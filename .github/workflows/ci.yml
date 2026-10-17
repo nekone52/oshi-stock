@@ -104,3 +104,13 @@ jobs:
           # REDIS_URL: redis://localhost:6379/0
         # 推しストックのテストは spec/(RSpec)にあるので、rspec を動かす(rails test だと test/ の minitest で0件だった)
         run: bin/rails db:test:prepare && bundle exec rspec
+
+      # テストのカバレッジのレポート(SimpleCov)を保存する。CI の画面の「Artifacts」から coverage をダウンロードして見られる(#29)
+      # if: always() … テストが失敗しても保存する(失敗したときこそ見たいので)
+      - name: Keep coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: ignore

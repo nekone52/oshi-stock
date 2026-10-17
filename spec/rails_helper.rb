@@ -1,3 +1,9 @@
+# 【カバレッジ】テストがアプリのコードの何%を通ったかを測る(#29。レポートは coverage/index.html)
+# アプリのコードを読みこむ前に動かす決まりなので、このファイルのいちばん上に書く
+# 'rails' … コントローラー・モデル・ヘルパーなどに分けて数えてくれる
+require "simplecov"
+SimpleCov.start "rails"
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
