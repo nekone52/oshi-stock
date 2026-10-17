@@ -30,6 +30,15 @@ RSpec.describe "グッズの詳細", type: :request do
       expect(response.body).to include('href="https://example.com/goods/1"', 'rel="noopener noreferrer"')
     end
 
+    it "商品ページのリンクには、お店の住所(www. を取ったもの)が出る" do
+      item.update!(url: "https://www.animate-onlineshop.jp/pn/goods/pd/3012345/")
+      sign_in_as(user)
+      get good_path(item)
+
+      expect(response.body).to include("animate-onlineshop.jp ↗")
+      expect(response.body).not_to include("www.animate-onlineshop.jp ↗")
+    end
+
     it "http・https 以外の URL は、リンクにしない(javascript: などを開かせない)" do
       item.update_column(:url, "javascript:alert(1)") # チェックを通らない値を、むりやり入れた場合
       sign_in_as(user)

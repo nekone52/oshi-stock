@@ -80,7 +80,8 @@
         <div class="flex justify-between gap-4 py-3">
           <dt class="shrink-0 text-ink-soft">商品ページ</dt>
           <%# ほかのサイトを開くので、新しいタブで開く(noopener で、開いた先からこの画面をさわれないようにする) %>
-          <dd class="text-right"><%= link_to "ひらく", item_url, target: "_blank", rel: "noopener noreferrer", class: "font-bold text-accent-strong underline" %></dd>
+          <%# どのお店のページか分かるように、お店の住所(例:animate-onlineshop.jp)を出す。長い住所は「…」で切る %>
+          <dd class="min-w-0 text-right"><%= link_to "#{item_url_label(@item)} ↗", item_url, target: "_blank", rel: "noopener noreferrer", class: "inline-block max-w-full truncate align-bottom font-bold text-accent-strong underline" %></dd>
         </div>
       <% end %>
       <% if @item.memo.present? %>
