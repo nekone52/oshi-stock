@@ -182,6 +182,7 @@ RSpec.describe "予約の一覧", type: :request do
         Nokogiri::HTML(response.body).at_css(%(a[href="#{href}"]))["class"]
       end
 
+      # 【自分の言葉】未払いは、届いたものも含め表示する(支払済は出さない)
       it "「未払い」は、届いたものもふくめて、まだ払っていないグッズだけが出る" do
         get reservations_path(filter: "unpaid")
         expect(response.body).to include("予約のぬい", "届いたキーホルダー")
