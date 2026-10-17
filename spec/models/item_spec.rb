@@ -66,6 +66,14 @@ RSpec.describe Item, type: :model do
       expect(build(:item, target_quantity: 1.5)).not_to be_valid
     end
 
+    # 上限(単価 × 個数 が、データベースで計算できる数をこえないように)
+    it "単価は100万円まで、個数・目標個数は999個まで" do
+      expect(build(:item, price: 1_000_000, quantity: 999, target_quantity: 999)).to be_valid
+      expect(build(:item, price: 1_000_001)).not_to be_valid
+      expect(build(:item, quantity: 1000)).not_to be_valid
+      expect(build(:item, target_quantity: 1000)).not_to be_valid
+    end
+
     it "URL は空でも、http・https の URL でも有効" do
       expect(build(:item, url: "")).to be_valid
       expect(build(:item, url: "https://example.com/goods?id=1")).to be_valid

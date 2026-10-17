@@ -138,12 +138,12 @@
     <div class="grid grid-cols-2 gap-2.5">
       <div class="flex flex-col gap-1.5">
         <%= f.label :price, "単価（円）", class: "text-[15px] font-bold text-ink" %>
-        <%= f.number_field :price, min: 0, step: 1, inputmode: "numeric", placeholder: "例：1650", data: { item_form_target: "price", action: "input->item-form#updateTotal" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
+        <%= f.number_field :price, min: 0, max: 1_000_000, step: 1, inputmode: "numeric", placeholder: "例：1650", data: { item_form_target: "price", action: "input->item-form#updateTotal" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
       </div>
       <div class="flex flex-col gap-1.5">
         <%= f.label :quantity, "個数", class: "text-[15px] font-bold text-ink" %>
         <%# 最初から 1 が入っている(テーブルの初期値) %>
-        <%= f.number_field :quantity, min: 1, step: 1, required: true, inputmode: "numeric", data: { item_form_target: "quantity", action: "input->item-form#updateTotal" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
+        <%= f.number_field :quantity, min: 1, max: 999, step: 1, required: true, inputmode: "numeric", data: { item_form_target: "quantity", action: "input->item-form#updateTotal" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
       </div>
     </div>
 
@@ -165,7 +165,7 @@
       </label>
       <div class="flex flex-col gap-1.5" data-item-form-target="goalField">
         <%= f.label :target_quantity, "目標個数", class: "text-[15px] font-bold text-ink" %>
-        <%= f.number_field :target_quantity, min: 1, step: 1, inputmode: "numeric", placeholder: "例：3", data: { item_form_target: "goalInput" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
+        <%= f.number_field :target_quantity, min: 1, max: 999, step: 1, inputmode: "numeric", placeholder: "例：3", data: { item_form_target: "goalInput" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
         <span class="text-[13px] text-ink-soft">いまの個数(確保した数)と比べて、カードに出します</span>
       </div>
     </div>
