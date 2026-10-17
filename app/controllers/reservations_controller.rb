@@ -20,6 +20,11 @@ class ReservationsController < ApplicationController
     # 予約のグッズ(お皿)から、その推しのものだけにしぼる。推しは条件なので where のかっこの中
     # 【自分の言葉】予約したグッズを、選択したキャラクターに絞る
     @reserved_items = @reserved_items.where(character: @selected_character) if @selected_character
+    # 絞り込みボタンの付せん(?filter=〇〇)を読んで、未払い・支払済・届いた未払いにしぼる。12行目で数えたあとなので、上の箱の数字は変わらない
+    # 【自分の言葉】付せんが unpaid のときだけ、予約のグッズを未払いでふるいにかける
+    @reserved_items = @reserved_items.where(paid: false) if params[:filter] == "unpaid"
+    @reserved_items = @reserved_items.where(paid: true) if params[:filter] == "paid"
+    @reserved_items = @reserved_items.owned.where(paid: false) if params[:filter] == "arrived"
     # 発売月ごとの箱に仕分ける(予約画面でしか使わない並べ方なので、モデルではなくここで)
     # 【自分の言葉】予約している一覧から、発売月ごとにグループ化する
     items_by_month = @reserved_items.group_by(&:release_month)

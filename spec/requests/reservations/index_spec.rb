@@ -166,6 +166,60 @@ RSpec.describe "予約の一覧", type: :request do
       end
     end
 
+    # 絞り込みボタンの付せん(?filter=〇〇)で、カードをしぼる(#84)
+    context "絞り込みボタンを押したとき" do
+      let(:character) { create(:character, user: user) }
+
+      before do
+        create(:item, character: character, status: :reserved, paid: false, name: "予約のぬい", price: 1000)
+        create(:item, character: character, status: :reserved, paid: true, name: "支払済のアクスタ", price: 2000)
+        create(:item, character: character, status: :owned, paid: false, name: "届いたキーホルダー", price: 500)
+        sign_in_as(user)
+      end
+
+      # 押したボタンの class を取り出す(Nokogiri は Rails に入っている、HTML を読む道具)
+      def button_class(href)
+        Nokogiri::HTML(response.body).at_css(%(a[href="#{href}"]))["class"]
+      end
+
+      # 【自分の言葉】未払いは、届いたものも含め表示する(支払済は出さない)
+      it "「未払い」は、届いたものもふくめて、まだ払っていないグッズだけが出る" do
+        get reservations_path(filter: "unpaid")
+        expect(response.body).to include("予約のぬい", "届いたキーホルダー")
+        expect(response.body).not_to include("支払済のアクスタ")
+      end
+
+      it "「支払済」は、払ったグッズだけが出る" do
+        get reservations_path(filter: "paid")
+        expect(response.body).to include("支払済のアクスタ")
+        expect(response.body).not_to include("予約のぬい", "届いたキーホルダー")
+      end
+
+      it "「届いた・未払い」は、届いたけどまだ払っていないグッズだけが出る" do
+        get reservations_path(filter: "arrived")
+        expect(response.body).to include("届いたキーホルダー")
+        expect(response.body).not_to include("予約のぬい", "支払済のアクスタ")
+      end
+
+      it "しぼっても、上の箱の数字は全部のまま" do
+        get reservations_path(filter: "paid")
+        expect(response.body).to include("¥1,500", "予約 3件", "未払い 2件")
+      end
+
+      it "押したボタンだけが黒(bg-ink)になり、ほかは白のまま" do
+        get reservations_path(filter: "unpaid")
+        expect(button_class(reservations_path(filter: "unpaid"))).to include("bg-ink")
+        expect(button_class(reservations_path)).not_to include("bg-ink")
+        expect(button_class(reservations_path(filter: "paid"))).not_to include("bg-ink")
+      end
+
+      it "付せんがないときは「すべて」が黒になる" do
+        get reservations_path
+        expect(button_class(reservations_path)).to include("bg-ink")
+        expect(button_class(reservations_path(filter: "unpaid"))).not_to include("bg-ink")
+      end
+    end
+
     # 推しの色の枠(#85)。期限が近いことは、枠の色のかわりに札で知らせる
     describe "推しの色の枠と「⚠ 期限が近い」の札" do
       let(:character) { create(:character, user: user) }
