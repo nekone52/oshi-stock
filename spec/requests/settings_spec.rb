@@ -24,6 +24,16 @@ RSpec.describe "テーマの色の保存", type: :request do
       # color_field は、ブラウザの決まりに合わせて色を小文字で出す
       expect(response.body).to include('value="#4e6fa3"')
     end
+
+    # #125:パスワードの「変更 ›」を押すと、パスワード再設定の画面に行ける
+    # リクエストスペックは押せないので、リンクの行き先(href)が再設定の画面になっているかを見る
+    # 【自分の言葉】設定画面に、新規パスワードを作るための画面へのリンクがあるかどうか!
+    it "パスワードの「変更 ›」が、パスワード再設定の画面へのリンクになっている" do
+      sign_in_as(user)
+      get settings_path
+
+      expect(response.body).to include(%(href="#{new_password_path}"))
+    end
   end
 
   describe "PATCH /settings" do
