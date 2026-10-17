@@ -77,6 +77,9 @@ gem "rails-i18n"
 # Active Storageの保存先(S3)用
 gem "aws-sdk-s3", require: false
 
+# メール送信用
+gem "resend"
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
