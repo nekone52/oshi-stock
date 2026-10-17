@@ -44,4 +44,8 @@ Rails.application.routes.draw do
   delete "settings/withdraw", to: "settings#destroy"
   # 設定画面で選んだテーマの色を保存する(書きかえなので patch)
   patch "settings", to: "settings#update"
+  # メールアドレスを変える画面を見る(#125)
+  get "settings/email", to: "settings#edit_email", as: :edit_email
+  # 新しいメールアドレスに書きかえる(書きかえなので patch。消すわけではないので delete ではない)
+  patch "settings/email", to: "settings#update_email"
 end

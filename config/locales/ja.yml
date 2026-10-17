@@ -11,6 +11,8 @@ ja:
         email_address: メールアドレス
         password: パスワード
         password_confirmation: パスワード(確認)
+        # メールアドレスを変えるときに聞く、今のパスワード(#125)
+        password_challenge: 今のパスワード
         theme_color: テーマの色
       character:
         name: 推しキャラ名
