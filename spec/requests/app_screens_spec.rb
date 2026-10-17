@@ -4,8 +4,6 @@ RSpec.describe "App screens (mock)", type: :request do
   # ログインが必要な画面(まだモック)
   {
     "グッズを登録" => "/goods/new",
-    "ほしい物を追加" => "/wishlist",
-    "追加する" => "/wishlist/new",
     "設定" => "/settings",
     "推しキャラ" => "/oshis",
     "推しを追加" => "/oshis/new",

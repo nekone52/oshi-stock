@@ -6,7 +6,7 @@ RSpec.describe "← ホーム", type: :request do
 
   before { sign_in_as(user) }
 
-  %w[/goods /oshis /reservations /settings /wishlist].each do |path|
+  %w[/goods /oshis /reservations /settings].each do |path|
     it "#{path} に「← ホーム」があって、ホームへ戻れる" do
       get path
 

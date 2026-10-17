@@ -38,8 +38,6 @@ Rails.application.routes.draw do
   # カテゴリ(グッズの画面のシートから、追加と削除だけ)
   resources :categories, only: [ :create, :destroy ]
   get "start", to: "top#start", as: :start
-  get "wishlist", to: "wishlist#index", as: :wishlist
-  get "wishlist/new", to: "wishlist#new", as: :new_wishlist
   get "settings", to: "settings#show", as: :settings
   get "settings/withdraw", to: "settings#withdraw", as: :withdraw
   # 退会する(アカウントを消す)。消すので delete。データを変える操作なので get は使わない
