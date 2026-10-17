@@ -17,10 +17,11 @@
         メールアドレス
         <span class="text-sm text-ink-soft">変更 ›</span>
       </button>
-      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+      <%# 【自分の言葉】「パスワード」「変更 ›」をまとめてリンクにして、新しいパスワードを作るための画面(再設定の画面)へ移動する。#125 %>
+      <%= link_to new_password_path, class: "flex h-14 items-center justify-between px-4 text-[15px] text-ink transition hover:bg-bg" do %>
         パスワード
         <span class="text-sm text-ink-soft">変更 ›</span>
-      </button>
+      <% end %>
     </div>
   </section>
 
