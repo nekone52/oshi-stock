@@ -83,6 +83,8 @@ gem "resend"
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  # N+1(いちいち取りに行く)を見つけて「まとめて取れるよ」と教えてくれる見張り役。#30
+  gem "bullet"
 end
 
 group :test do
