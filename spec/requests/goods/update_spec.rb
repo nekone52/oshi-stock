@@ -74,6 +74,15 @@ RSpec.describe "グッズの編集", type: :request do
         expect(response.body).to include("グッズを更新しました")
       end
 
+      # 目標個数(#62):名簿(params.expect)に入っているので保存される。スイッチをオフ(空っぽ)にすると目標なしに戻る
+      it "目標個数を保存でき、空っぽで送ると目標なしに戻る" do
+        patch good_path(item), params: { item: { target_quantity: "3", character_id: character.id } }
+        expect(item.reload.target_quantity).to eq(3)
+
+        patch good_path(item), params: { item: { target_quantity: "", character_id: character.id } }
+        expect(item.reload.target_quantity).to be_nil
+      end
+
       it "画像を選ばなければ、今の画像はそのまま残る" do
         item.image.attach(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
         patch good_path(item), params: { item: { name: "書きかえ", character_id: character.id } }

@@ -245,5 +245,36 @@ RSpec.describe "予約の一覧", type: :request do
         expect(response.body).not_to include("⚠ 期限が近い")
       end
     end
+    # 目標個数(#62):目標があるグッズだけ、カードに進みぐあいを出す(5個まではハート、6個からはバー)
+    describe "目標個数" do
+      let(:character) { create(:character, user: user) }
+
+      before { sign_in_as(user) }
+
+      it "目標が3個で1個予約していたら、「あと2個」をハートで出す" do
+        create(:item, character: character, status: :reserved, quantity: 1, target_quantity: 3)
+        get reservations_path
+        expect(response.body).to include("1 / 3個 · あと2個", "♥")
+      end
+
+      it "目標が10個なら、ハートではなくバーで出す" do
+        create(:item, character: character, status: :reserved, quantity: 4, target_quantity: 10)
+        get reservations_path
+        expect(response.body).to include("確保 4 / 10個", "あと6個")
+        expect(response.body).not_to include("♥")
+      end
+
+      it "目標の数まで確保したら「目標達成!」" do
+        create(:item, character: character, status: :reserved, quantity: 3, target_quantity: 3)
+        get reservations_path
+        expect(response.body).to include("目標達成!")
+      end
+
+      it "目標がないグッズには何も出さない" do
+        create(:item, character: character, status: :reserved, quantity: 1, target_quantity: nil)
+        get reservations_path
+        expect(response.body).not_to include("目標達成!", "あと")
+      end
+    end
   end
 end
