@@ -15,6 +15,22 @@ class SettingsController < ApplicationController
     end
   end
 
+  # 【メールアドレスを変える画面】GET /settings/email
+  def edit_email
+  end
+
+  # 【メールアドレスを書きかえる】PATCH /settings/email
+  # Current.user … ログインしている本人のメールアドレスだけを書きかえる(ほかの人のは変えられない)
+  # password_challenge … 今のパスワード。has_secure_password の仕組みで、合っていなければ保存しない
+  def update_email
+    if Current.user.update(email_params)
+      redirect_to settings_path, notice: "メールアドレスを変えました"
+    else
+      # 保存できなかった(パスワードがちがう・形がちがう・ほかの人と同じなど):画面をもう一度出して、エラーを見せる
+      render :edit_email, status: :unprocessable_content
+    end
+  end
+
   def withdraw
   end
 
@@ -33,5 +49,13 @@ class SettingsController < ApplicationController
   # 送られてきたデータの中からユーザー情報(:user)を取り出し、テーマの色(:theme_color)だけを許可する
   def theme_params
     params.expect(user: [ :theme_color ])
+  end
+
+  # 送られてきたデータの中から、新しいメールアドレス(:email_address)と今のパスワード(:password_challenge)だけを許可する
+  # 今のパスワードが送られてこないと確かめがとばされてしまうので、空っぽでも必ず確かめる(空なら「ちがう」になる)
+  def email_params
+    attributes = params.expect(user: [ :email_address, :password_challenge ])
+    attributes[:password_challenge] = attributes[:password_challenge].to_s
+    attributes
   end
 end
