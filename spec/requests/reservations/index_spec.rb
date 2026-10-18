@@ -42,6 +42,22 @@ RSpec.describe "予約の一覧", type: :request do
       expect(body.index("11月発売")).to be < body.index("11月のぬい")
     end
 
+    # Codex の指摘:2026年11月と2027年11月が、どちらも「11月発売」で見分けにくかった
+    it "ちがう年の同じ月は、見出しに年が出て見分けられる" do
+      character = create(:character, user: user)
+      create(:item, character: character, status: :reserved, name: "今年のぬい", release_month: Date.new(2026, 11, 1))
+      create(:item, character: character, status: :reserved, name: "来年のぬい", release_month: Date.new(2027, 11, 1))
+
+      sign_in_as(user)
+      get reservations_path
+      body = response.body
+      expect(body).to include("2026年</span>11月発売", "2027年</span>11月発売")
+      # 2026年 → 今年のぬい → 2027年 → 来年のぬい の順に並ぶ
+      expect(body.index("2026年</span>11月発売")).to be < body.index("今年のぬい")
+      expect(body.index("今年のぬい")).to be < body.index("2027年</span>11月発売")
+      expect(body.index("2027年</span>11月発売")).to be < body.index("来年のぬい")
+    end
+
     it "発売月が空のグッズは、月の見出しではなく、いちばん下の「発売日待ち」の箱に入る" do
       character = create(:character, user: user)
       create(:item, character: character, status: :reserved, name: "10月の缶バッジ", release_month: Date.new(2026, 10, 1))

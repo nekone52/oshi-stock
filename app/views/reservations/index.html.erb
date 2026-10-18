@@ -81,8 +81,8 @@
     <% now = release_month.beginning_of_month == Date.current.beginning_of_month %><%# 今月かどうか(今月だけ色を変えて「今月」のしるしをつける) %>
     <section class="mt-2">
       <div class="sticky top-0 z-10 flex items-baseline gap-2 bg-bg px-1 pt-4 pb-2">
-        <%# 【自分の言葉】予約している発売日から、月の数字だけ取り出す(10月発売 など) %>
-        <span class="font-display text-[17px] font-bold <%= now ? "text-accent-strong" : "text-ink" %>"><%= release_month.month %>月発売</span>
+        <%# 【自分の言葉】予約している発売日から、年を自動で入力する。月の数字も取り出す(2027年11月発売 など)。来年の予約と見分けるため %>
+        <span class="font-display text-[17px] font-bold <%= now ? "text-accent-strong" : "text-ink" %>"><span class="text-xs text-ink-soft"><%= release_month.year %>年</span><%= release_month.month %>月発売</span>
         <% if now %>
           <span class="self-center rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-on-accent">今月</span>
         <% end %>
