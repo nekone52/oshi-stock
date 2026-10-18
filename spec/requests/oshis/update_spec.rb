@@ -78,6 +78,17 @@ RSpec.describe "推しキャラの編集", type: :request do
         expect(response.body).to include("アイコン画像は JPEG, PNG, WebP 形式にしてください")
         expect(character.reload.name).to eq("ヒナタ")
       end
+
+      it "新しいアイコンを選んでエラーになっても、直して送ると新しいアイコンに変わる(引換券で引きつぐ)" do
+        patch oshi_path(character), params: { character: { name: "", icon: fixture_file_upload("icon.png", "image/png") } }
+        expect(response).to have_http_status(:unprocessable_content)
+        kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
+        expect(kept_image).to be_present
+        expect(character.reload.icon).not_to be_attached # エラーのときは、まだ保存しない
+
+        patch oshi_path(character), params: { character: { name: "ヒナタ" }, kept_image: kept_image }
+        expect(character.reload.icon).to be_attached
+      end
     end
 
     it "ほかのユーザーの推しは、書きかえられない(404)" do

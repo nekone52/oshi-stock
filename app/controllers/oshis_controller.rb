@@ -1,4 +1,7 @@
 class OshisController < ApplicationController
+  # 選んだアイコンを、エラーなどのあとも引きつぐ部品(concerns/keeps_chosen_image.rb。グッズの商品画像と同じ)
+  include KeepsChosenImage
+
   # 1人の推しに対するアクションは、最初に「自分の推しの中から」探しておく(ほかの人の推しは見つからず 404)
   # 【自分の言葉】編集・消去の前にも、ログイン中のユーザーの推しの中から探すようにした。だから、ほかの人の推しは見られない
   before_action :set_character, only: [ :edit, :update, :confirm_delete, :destroy ]
@@ -19,6 +22,7 @@ class OshisController < ApplicationController
   def create
     # フォームから送られた安全な値（名前・色）を受け取り、ログイン中ユーザーの推しとして組み立てる
     @character = Current.user.characters.build(character_params)
+    use_kept_image(@character, :icon)
 
     # データベースへの保存を試みる（バリデーションチェック）
     if @character.save
@@ -26,6 +30,7 @@ class OshisController < ApplicationController
       redirect_to oshis_path, notice: "推しを登録しました！"
     else
       # 保存に失敗（名前が空など）：入力画面を再表示し、エラーメッセージを画面に残す
+      keep_chosen_image(@character, :icon)
       render :new, status: :unprocessable_content
     end
   end
@@ -36,11 +41,15 @@ class OshisController < ApplicationController
 
   # 「保存する」ボタンを押したときの更新処理
   def update
-    if @character.update(character_params)
+    # 送られてきた中身を入れる(まだ保存しない。引換券のアイコンをつけてから保存するため)
+    @character.assign_attributes(character_params)
+    use_kept_image(@character, :icon)
+    if @character.save
       # 更新に成功:推し一覧画面へ移動し、完了メッセージを表示
       redirect_to oshis_path, notice: "推しを更新しました"
     else
       # 更新に失敗(名前が空など):編集画面を再表示し、エラーメッセージを画面に残す
+      keep_chosen_image(@character, :icon)
       render :edit, status: :unprocessable_content
     end
   end

@@ -19,11 +19,13 @@
     <%# 切り抜く形は名刺と同じ縦長(8:11)。保存する大きさは 480×660px %>
     <%= tag.div class: "flex flex-col gap-5", data: { controller: "image-cropper", image_cropper_aspect_value: 8.0 / 11, image_cropper_width_value: 480, image_cropper_height_value: 660 } do %>
       <!-- アイコン画像(枠を押すと、画像を選ぶ画面が開く。編集のときは、今のアイコンを表示) -->
-      <%# 保存ずみのアイコンだけを表示する(保存に失敗した新しい画像は、まだ表示できないため) %>
+      <%# 保存ずみのアイコンか、棚にしまっておいたアイコンを表示する(しまえなかった新しい画像は、まだ表示できないため) %>
       <% saved_icon = @character.icon.attached? && @character.icon.blob.persisted? %>
       <label class="flex cursor-pointer flex-col items-center gap-2 pt-2">
         <div style="background-color: color-mix(in srgb, <%= @character.display_color %> 20%, white)" class="flex h-[132px] w-24 items-center justify-center overflow-hidden rounded-xl">
           <% if saved_icon %>
+            <%# 選んだアイコンを棚にしまったときは、引換券を入れておく(もう一度送ったときに、このアイコンを使う。concerns/keeps_chosen_image.rb) %>
+            <%= hidden_field_tag :kept_image, @kept_image if @kept_image %>
             <!-- 今のアイコン(画像を選びなおすと隠れる) -->
             <%= image_tag @character.icon.variant(:display), alt: "今のアイコン画像", data: { image_cropper_target: "image" }, class: "h-full w-full object-cover" %>
           <% else %>
