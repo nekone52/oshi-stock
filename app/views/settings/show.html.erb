@@ -13,10 +13,11 @@
   <section aria-labelledby="account-heading" class="flex flex-col gap-2">
     <h2 id="account-heading" class="border-l-4 border-accent pl-2.5 font-display text-base font-bold text-ink">アカウント</h2>
     <div class="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
-      <button type="button" class="flex h-14 items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg">
+      <%# メールアドレスを変える画面へ(パスワードと同じ、中身ごとリンクの形)。#125 %>
+      <%= link_to edit_email_path, class: "flex h-14 items-center justify-between px-4 text-[15px] text-ink transition hover:bg-bg" do %>
         メールアドレス
         <span class="text-sm text-ink-soft">変更 ›</span>
-      </button>
+      <% end %>
       <%# 【自分の言葉】「パスワード」「変更 ›」をまとめてリンクにして、新しいパスワードを作るための画面(再設定の画面)へ移動する。#125 %>
       <%= link_to new_password_path, class: "flex h-14 items-center justify-between px-4 text-[15px] text-ink transition hover:bg-bg" do %>
         パスワード
