@@ -87,6 +87,19 @@ RSpec.describe "グッズの登録", type: :request do
         params = { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.gif", "image/gif") } }
         expect { post goods_path, params: params }.not_to change(Item, :count)
         expect(response.body).to include("商品画像は JPEG, PNG, WebP 形式にしてください")
+        # 形式がだめな画像は、棚にしまわない(引換券も出さない)
+        expect(response.body).not_to include('name="kept_image"')
+      end
+
+      it "名前が空のエラーのあとも、選んだ画像は引きつがれる" do
+        post goods_path, params: { item: { name: "", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        expect(response).to have_http_status(:unprocessable_content)
+        kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
+        expect(kept_image).to be_present
+
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image }
+        expect { post goods_path, params: params }.to change(Item, :count).by(1)
+        expect(Item.last.image).to be_attached
       end
     end
 
@@ -110,6 +123,27 @@ RSpec.describe "グッズの登録", type: :request do
         params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, confirm_duplicate: "1" }
         expect { post goods_path, params: params }.to change(Item, :count).by(1)
         expect(response).to redirect_to(good_path(Item.last))
+      end
+
+      # Codex の指摘:画像を選んで警告が出たあと「それでも登録する」を押すと、画像なしで登録されていた
+      it "画像を選んで警告が出ても、「それでも登録する」で画像つきで保存される(引換券で引きつぐ)" do
+        post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        expect(response).to have_http_status(:unprocessable_content)
+        # 警告の画面のフォームに、しまった画像の引換券(kept_image)が入っている
+        kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
+        expect(kept_image).to be_present
+
+        # 2回目は画像を選ばずに、引換券だけで送る(ブラウザは画像の欄を空っぽにするため)
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image, confirm_duplicate: "1" }
+        expect { post goods_path, params: params }.to change(Item, :count).by(1)
+        expect(Item.last.image).to be_attached
+        expect(Item.last.image.filename.to_s).to eq("icon.png")
+      end
+
+      it "書きかえた引換券では、画像はつかない(ほかの人の画像は取り出せない)" do
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: "kakikaeta-hikikaeken", confirm_duplicate: "1" }
+        expect { post goods_path, params: params }.to change(Item, :count).by(1)
+        expect(Item.last.image).not_to be_attached
       end
 
       it "ほかのユーザーの同じ名前のグッズは、関係ない(警告を出さない)" do

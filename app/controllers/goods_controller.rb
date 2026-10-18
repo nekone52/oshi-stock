@@ -45,12 +45,14 @@ class GoodsController < ApplicationController
   def create
     @item = Item.new(item_params)
     assign_character_and_category
+    use_kept_image
 
     # 自分のグッズに同じ名前のものがあって、かつ、まだ「それでも登録する」を押していなかったら
     # 保存せずに、警告と一緒に登録画面をもう一度出す(ダブり買いを防ぐ。布教用・保存用なら、そのまま登録できる)
     # 同じ名前のグッズ(警告の中に、推しと状態を出す)
     @duplicate_items = Current.user.items.includes(:character).where(name: @item.name)
     if @duplicate_items.exists? && params[:confirm_duplicate].blank?
+      keep_chosen_image
       set_form_choices
       render :new, status: :unprocessable_content
       return
@@ -61,6 +63,7 @@ class GoodsController < ApplicationController
       redirect_to good_path(@item), notice: "グッズを登録しました"
     else
       # 保存に失敗(名前が空・推しを選んでいないなど):入力画面を再表示し、エラーメッセージを画面に残す
+      keep_chosen_image
       set_form_choices
       render :new, status: :unprocessable_content
     end
@@ -122,6 +125,31 @@ class GoodsController < ApplicationController
   end
 
   private
+
+  # 【選んだ商品画像を、棚にしまっておく】登録画面をもう一度出す前に使う
+  # 【自分の言葉】画像を棚にしまって、封筒(フォーム)に引換券を入れる
+  # 画像を選ぶ欄は、ブラウザの決まりでサーバーから中身を入れられない。なので、届いた画像を先に Active Storage(棚)にしまい、
+  # フォームには引換券(signed_id)だけを入れておく(_form.html.erb の kept_image)。形式・大きさがだめな画像はしまわない
+  def keep_chosen_image
+    return unless @item.image.attached?
+
+    blob = @item.image.blob
+    return if blob.persisted? # 前の回でしまってある画像なら、そのまま使う
+    return unless blob.content_type.in?(%w[image/jpeg image/png image/webp]) && blob.byte_size < 5.megabytes
+
+    file = item_params[:image]
+    file.rewind
+    @item.image = ActiveStorage::Blob.create_and_upload!(io: file, filename: blob.filename, content_type: blob.content_type)
+  end
+
+  # 【しまっておいた商品画像を使う】2回目の送信で、新しい画像が選ばれていなければ、引換券(kept_image)の画像をつける
+  # find_signed は、サインが合わない(書きかえられた)引換券なら nil を返すので、ほかの人の画像は取り出せない
+  def use_kept_image
+    return if params[:kept_image].blank? || item_params[:image].present?
+
+    kept_blob = ActiveStorage::Blob.find_signed(params[:kept_image])
+    @item.image = kept_blob if kept_blob
+  end
 
   # URL の番号のグッズを、ログイン中ユーザーのグッズの中から探す(推しキャラを通して持っているグッズ)
   def set_item
