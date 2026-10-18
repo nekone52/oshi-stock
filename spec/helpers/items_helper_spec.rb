@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# グッズの戻り先(詳細の「<」・消去のあと)を、グッズの状態で決める
 RSpec.describe ItemsHelper, type: :helper do
   describe "#back_path_for" do
     it "予約中なら、予約画面" do

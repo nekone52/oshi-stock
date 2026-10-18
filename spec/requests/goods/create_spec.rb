@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# グッズの登録の画面と、登録(ダブり買いの警告もふくむ)
 RSpec.describe "グッズの登録", type: :request do
   let(:user) { create(:user) }
 
@@ -87,7 +86,6 @@ RSpec.describe "グッズの登録", type: :request do
         params = { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.gif", "image/gif") } }
         expect { post goods_path, params: params }.not_to change(Item, :count)
         expect(response.body).to include("商品画像は JPEG, PNG, WebP 形式にしてください")
-        # 形式がだめな画像は、棚にしまわない(引換券も出さない)
         expect(response.body).not_to include('name="kept_image"')
       end
 
@@ -115,7 +113,6 @@ RSpec.describe "グッズの登録", type: :request do
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include("同じ名前のグッズがあります", "所持", "それでも登録する")
-        # 入力した名前は残っている
         expect(response.body).to include('value="ヒナタのアクスタ"')
       end
 
@@ -125,15 +122,12 @@ RSpec.describe "グッズの登録", type: :request do
         expect(response).to redirect_to(good_path(Item.last))
       end
 
-      # Codex の指摘:画像を選んで警告が出たあと「それでも登録する」を押すと、画像なしで登録されていた
       it "画像を選んで警告が出ても、「それでも登録する」で画像つきで保存される(引換券で引きつぐ)" do
         post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
         expect(response).to have_http_status(:unprocessable_content)
-        # 警告の画面のフォームに、しまった画像の引換券(kept_image)が入っている
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present
 
-        # 2回目は画像を選ばずに、引換券だけで送る(ブラウザは画像の欄を空っぽにするため)
         params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image, confirm_duplicate: "1" }
         expect { post goods_path, params: params }.to change(Item, :count).by(1)
         expect(Item.last.image).to be_attached
@@ -146,7 +140,6 @@ RSpec.describe "グッズの登録", type: :request do
         expect(Item.last.image).not_to be_attached
       end
 
-      # Codex の指摘①:サインが本物でも、本人用でなければ使えないようにする
       it "ほかの人用の引換券では、画像はつかない" do
         other = create(:user)
         blob = ActiveStorage::Blob.create_and_upload!(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
@@ -167,7 +160,6 @@ RSpec.describe "グッズの登録", type: :request do
         expect(others_item.reload.image).to be_attached
       end
 
-      # travel(時間を進める道具)を使えるようにする
       include ActiveSupport::Testing::TimeHelpers
 
       it "1時間より前の引換券は、時間切れで使えない" do

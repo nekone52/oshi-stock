@@ -1,28 +1,21 @@
-<%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
 <% color = @item.character.display_color %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-10">
 
-  <!-- ヘッダー(戻るとタイトル) -->
   <header class="flex items-center gap-1 pt-4 pb-2">
-    <%# 「<」の戻り先は、グッズの状態で決める(予約中・届いたけど未払い → 予約画面、ほかはグッズ一覧。道具は items_helper.rb) %>
-    <%# お皿の @item を、道具のかっこの中に渡して「このグッズはどこに帰る?」と聞く(= でのせるのではない) %>
     <%= link_to back_path_for(@item), aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
       <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
     <% end %>
     <h1 class="font-display text-xl font-bold text-ink">グッズの詳細</h1>
   </header>
 
-  <!-- グッズのカード(推しの名刺のように、グッズのプロフィール) -->
   <article class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
-    <!-- 商品画像(画像がないときは、推しの色の背景にカメラの絵)と、状態のバッジ -->
     <div class="relative">
       <%= render "top/item_thumb", item: @item, css: "aspect-square" %>
       <span class="absolute top-3 left-3 rounded-full bg-white px-3 py-1 text-xs font-bold text-ink shadow-sm"><%= status_label(@item) %></span>
     </div>
 
-    <!-- 名前・推し・カテゴリ -->
     <div class="flex flex-col gap-1.5 border-b border-line px-4 py-4">
       <h2 class="font-display text-xl font-bold break-words text-ink"><%= @item.name %></h2>
       <div class="flex flex-wrap items-center gap-2 text-[13px] text-ink-soft">
@@ -33,7 +26,6 @@
       </div>
     </div>
 
-    <!-- 買ったときの記録(詳細を開いたときだけ出す。入っていない項目は「未入力」) -->
     <dl class="divide-y divide-line px-4 text-[14px]">
       <div class="flex justify-between gap-4 py-3">
         <dt class="shrink-0 text-ink-soft">購入先</dt>
@@ -43,14 +35,12 @@
         <dt class="shrink-0 text-ink-soft">金額</dt>
         <dd class="text-right font-medium text-ink">
           <% if @item.price %>
-            <%# 単価 × 個数 = 合計(合計は保存せず、ここで計算する) %>
             ¥<%= number_with_delimiter(@item.price) %> × <%= @item.quantity %>個 = <span class="font-bold">¥<%= number_with_delimiter(@item.price * @item.quantity) %></span>
           <% else %>
             未入力(<%= @item.quantity %>個)
           <% end %>
         </dd>
       </div>
-      <%# 目標個数(決めているときだけ出す。#62。予約画面のカードと同じ部品) %>
       <% if @item.target_quantity.present? %>
         <div class="flex justify-between gap-4 py-3">
           <dt class="shrink-0 text-ink-soft">目標</dt>
@@ -70,17 +60,13 @@
             <span class="rounded-full bg-paid-bg px-2.5 py-0.5 text-xs font-bold text-paid">支払い済み</span>
           <% else %>
             <span class="rounded-full bg-unpaid-bg px-2.5 py-0.5 text-xs font-bold text-unpaid">未払い</span>
-            <%# 未払いのときだけ、支払い期限を出す(7日以内は目立たせる) %>
             <span class="text-xs <%= payment_due_soon?(@item) ? "font-bold text-unpaid" : "text-ink-soft" %>"><%= payment_deadline_label(@item) %></span>
           <% end %>
         </dd>
       </div>
-      <%# 商品ページは、http か https で始まる安全な URL のときだけリンクにする(safe_item_url) %>
       <% if (item_url = safe_item_url(@item)) %>
         <div class="flex justify-between gap-4 py-3">
           <dt class="shrink-0 text-ink-soft">商品ページ</dt>
-          <%# ほかのサイトを開くので、新しいタブで開く(noopener で、開いた先からこの画面をさわれないようにする) %>
-          <%# どのお店のページか分かるように、お店の住所(例:animate-onlineshop.jp)を出す。長い住所は「…」で切る %>
           <dd class="min-w-0 text-right"><%= link_to "#{item_url_label(@item)} ↗", item_url, target: "_blank", rel: "noopener noreferrer", class: "inline-block max-w-full truncate align-bottom font-bold text-accent-strong underline" %></dd>
         </div>
       <% end %>
@@ -93,6 +79,5 @@
     </dl>
   </article>
 
-  <!-- 編集ボタン(カードのすぐ下に置く) -->
   <%= link_to "編集する", edit_good_path(@item), class: "mt-4 flex w-full items-center justify-center rounded-2xl bg-accent py-3.5 font-display text-base font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
 </div>

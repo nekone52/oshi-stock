@@ -1,23 +1,18 @@
-<%# この画面は本物のフォームなので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
 
 <div class="flex min-h-screen items-center justify-center px-4">
   <div class="relative w-full max-w-[430px]">
 
-    <!-- ロゴ(カードの上に重ねて配置) -->
     <div class="absolute inset-x-0 bottom-full mb-10">
       <%= image_tag "logo.png", alt: "推しストック", class: "w-full" %>
     </div>
 
-    <!-- パスワードの再設定カード -->
     <div class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
 
-      <!-- ヘッダー -->
       <div class="bg-hdr px-4 py-3">
         <h1 class="font-display text-base font-bold text-white">パスワードの再設定</h1>
       </div>
 
-      <!-- メールアドレスの入力(送り先は POST /passwords → passwords#create) -->
       <%= form_with url: passwords_path do |f| %>
         <div class="flex flex-col gap-3 p-4">
           <p class="text-[13px] leading-relaxed text-ink">登録したメールアドレスを入れてください。パスワードを再設定するためのリンクを送ります。</p>
@@ -27,13 +22,11 @@
           </label>
         </div>
 
-        <!-- 送信ボタン -->
         <div class="flex flex-col items-center gap-3 px-4 pb-5">
           <%= f.submit "再設定のメールを送る", class: "w-full cursor-pointer rounded-full bg-accent px-6 py-2.5 font-display text-sm font-bold text-on-accent transition hover:-translate-y-0.5 hover:shadow-md active:scale-95" %>
         </div>
       <% end %>
 
-      <!-- ログインへ戻る -->
       <div class="flex flex-col items-center gap-2 border-t border-line bg-bg px-4 py-4">
         <p class="text-xs text-ink-soft">パスワードを思い出した方はこちら</p>
         <%= link_to "ログイン", new_session_path, class: "w-full rounded-full border-2 border-accent bg-white px-6 py-2 text-center font-display text-sm font-bold text-accent-strong transition hover:bg-accent-soft active:scale-95" %>

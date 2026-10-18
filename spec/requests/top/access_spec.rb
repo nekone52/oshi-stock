@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# ホーム画面:ログインしていないとき、推しがいないとき
 RSpec.describe "ホーム画面(入れるか・推しがいないとき)", type: :request do
   let(:user) { create(:user) }
     it "ログインしていないと、ログイン画面へ移る" do

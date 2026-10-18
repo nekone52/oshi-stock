@@ -6,7 +6,6 @@ class CreateCategories < ActiveRecord::Migration[8.1]
 
       t.timestamps
     end
-    # 同じユーザーの中で、同じ名前のカテゴリは1つだけ(ちがうユーザーなら同じ名前でもOK)
     add_index :categories, [ :user_id, :name ], unique: true
   end
 end

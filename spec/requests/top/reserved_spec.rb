@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# ホーム画面:予約注文中のボタン・届いた未払い・並び順
 RSpec.describe "ホーム画面(予約注文中)", type: :request do
   let(:user) { create(:user) }
   include_context "ホームの推しとグッズ"
@@ -14,7 +13,6 @@ RSpec.describe "ホーム画面(予約注文中)", type: :request do
 
     it "届いたけど未払いのものは、予約注文中にも「届いた・未払い」として残す" do
       get root_path
-      # アオイのタオルは所持・未払い
       expect(response.body).to include("届いた・未払い")
       expect(response.body.scan("アオイのタオル").size).to be >= 2
     end
@@ -24,7 +22,6 @@ RSpec.describe "ホーム画面(予約注文中)", type: :request do
       get root_path
       section = response.body[/予約注文中.*?所持グッズ/m]
 
-      # 期限が近い未払い → ヒナタのアクスタ(未払い・3日後)→ アオイのタオル(届いた・未払い・期限なし)→ アオイのぬい(支払い済み)
       expect(section.index("期限が近い未払い")).to be < section.index("ヒナタのアクスタ")
       expect(section.index("ヒナタのアクスタ")).to be < section.index("アオイのタオル")
       expect(section.index("アオイのタオル")).to be < section.index("アオイのぬい")

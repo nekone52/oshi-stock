@@ -1,8 +1,5 @@
-<%# 【共通の部品】「推しの色(おすすめ)」の24色の丸(設定画面のテーマの色と、推しの登録・編集で使う)
-    controller:丸を押したときに動かす Stimulus の名前("theme-picker" / "oshi-preview")。どちらも swatch の名札と pick を持つ %>
 <div class="flex flex-col gap-2">
   <span class="text-xs font-bold text-ink-soft">推しの色(おすすめ)</span>
-  <%# 24色を 6列×4段で並べる %>
   <div class="grid grid-cols-6 gap-x-1 gap-y-2.5">
     <% ThemeHelper::THEME_SWATCHES.each do |name, color| %>
       <button type="button" data-<%= controller %>-target="swatch" data-color="<%= color %>" data-action="<%= controller %>#pick" aria-pressed="false"

@@ -1,4 +1,3 @@
-# 項目の名前の日本語(エラーメッセージの「メールアドレスを入力してください」などに使われる)
 ja:
   activerecord:
     models:
@@ -11,7 +10,6 @@ ja:
         email_address: メールアドレス
         password: パスワード
         password_confirmation: パスワード(確認)
-        # メールアドレスを変えるときに聞く、今のパスワード(#125)
         password_challenge: 今のパスワード
         theme_color: テーマの色
       character:

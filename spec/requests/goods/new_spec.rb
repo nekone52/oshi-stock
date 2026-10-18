@@ -1,10 +1,8 @@
 require "rails_helper"
 
-# グッズを登録の画面
 RSpec.describe "グッズを登録の画面", type: :request do
   let(:user) { create(:user) }
 
-  # 「いまの状態」のラジオボタンで、どれが選ばれているか(checked がついているか)
   def checked_status(body)
     body[/<input[^>]*checked="checked"[^>]*name="item\[status\]"[^>]*>/].to_s[/value="(\w+)"/, 1]
   end
@@ -28,7 +26,6 @@ RSpec.describe "グッズを登録の画面", type: :request do
       expect(checked_status(response.body)).to eq("wanted")
     end
 
-    # 「<」の戻り先(?status= つきで来たときだけ、その状態の一覧へ。ついていなければホーム)
     def back_href(body)
       body[/<a aria-label="戻る"[^>]*href="([^"]*)"/, 1]
     end

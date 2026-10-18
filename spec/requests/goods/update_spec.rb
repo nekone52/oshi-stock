@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# グッズの編集の画面と、保存
 RSpec.describe "グッズの編集", type: :request do
   let(:user) { create(:user) }
 
@@ -28,7 +27,6 @@ RSpec.describe "グッズの編集", type: :request do
 
       body = response.body
       expect(body).to include('data-controller="deadline-picker"', 'data-controller="month-picker"')
-      # 属性の並び順に関係なく、その入力のタグを1つ取り出してから、中身を確かめる
       deadline_input = body[/<input[^>]*name="item\[payment_deadline\]"[^>]*>/]
       month_input = body[/<input[^>]*name="item\[release_month\]"[^>]*>/]
       expect(deadline_input).to include('type="hidden"', 'value="2026-10-14"')
@@ -74,7 +72,6 @@ RSpec.describe "グッズの編集", type: :request do
         expect(response.body).to include("グッズを更新しました")
       end
 
-      # 目標個数(#62):名簿(params.expect)に入っているので保存される。スイッチをオフ(空っぽ)にすると目標なしに戻る
       it "目標個数を保存でき、空っぽで送ると目標なしに戻る" do
         patch good_path(item), params: { item: { target_quantity: "3", character_id: character.id } }
         expect(item.reload.target_quantity).to eq(3)
@@ -100,13 +97,12 @@ RSpec.describe "グッズの編集", type: :request do
         expect(item.reload.name).to eq("ヒナタのアクスタ")
       end
 
-      # Codex の指摘②:編集でも、画像を選ぶ → エラー → 直して送る で画像が消えていた
       it "新しい画像を選んでエラーになっても、直して送ると新しい画像に変わる(引換券で引きつぐ)" do
         patch good_path(item), params: { item: { name: "", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
         expect(response).to have_http_status(:unprocessable_content)
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present
-        expect(item.reload.image).not_to be_attached # エラーのときは、まだ保存しない
+        expect(item.reload.image).not_to be_attached
 
         patch good_path(item), params: { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image }
         expect(item.reload.image).to be_attached

@@ -1,5 +1,3 @@
-<%# カテゴリのチップ1つ(グッズのフォームの中で使う。カテゴリを追加したときも、この部品をその場で足す) %>
-<%# 見た目はチップ、中身はラジオボタン(name は item[category_id] で、グッズのフォームと一緒に送られる) %>
 <label id="<%= dom_id(category, :chip) %>" class="flex h-9 cursor-pointer items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink has-checked:border-ink has-checked:bg-ink has-checked:font-bold has-checked:text-white">
   <%= radio_button_tag "item[category_id]", category.id, checked, class: "sr-only" %>
   <%= category.name %>

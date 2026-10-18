@@ -1,8 +1,6 @@
 require "rails_helper"
 
-# テーマの色から、ボタンやリンクの色を計算する(明るい色のときは、ボタンの文字を黒にする)
 RSpec.describe ThemeHelper, type: :helper do
-  # ログインしている人のテーマの色を、テストごとに決める
   def sign_in_with_color(color)
     Current.session = Session.new(user: build(:user, theme_color: color))
   end

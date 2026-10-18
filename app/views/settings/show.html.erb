@@ -1,24 +1,19 @@
-<%# ログアウトとテーマの色を本物にしたので、この画面は押せるようにする(ほかの項目はまだ見た目だけ) %>
 <% content_for :interactive, true %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-10">
 
-  <%# ホームに戻る(下のメニューのかわり) %>
   <%= render "shared/home_link" %>
   <header class="pt-1 pb-3">
     <h1 class="font-display text-2xl font-bold text-ink">設定</h1>
   </header>
 
-  <!-- アカウント -->
   <section aria-labelledby="account-heading" class="flex flex-col gap-2">
     <h2 id="account-heading" class="border-l-4 border-accent pl-2.5 font-display text-base font-bold text-ink">アカウント</h2>
     <div class="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
-      <%# メールアドレスを変える画面へ(パスワードと同じ、中身ごとリンクの形)。#125 %>
       <%= link_to edit_email_path, class: "flex h-14 items-center justify-between px-4 text-[15px] text-ink transition hover:bg-bg" do %>
         メールアドレス
         <span class="text-sm text-ink-soft">変更 ›</span>
       <% end %>
-      <%# 【自分の言葉】「パスワード」「変更 ›」をまとめてリンクにして、新しいパスワードを作るための画面(再設定の画面)へ移動する。#125 %>
       <%= link_to new_password_path, class: "flex h-14 items-center justify-between px-4 text-[15px] text-ink transition hover:bg-bg" do %>
         パスワード
         <span class="text-sm text-ink-soft">変更 ›</span>
@@ -26,14 +21,9 @@
     </div>
   </section>
 
-  <!-- テーマの色(カラーピッカーで自由に選ぶ) -->
   <section aria-labelledby="theme-heading" class="mt-6 flex flex-col gap-2">
     <h2 id="theme-heading" class="border-l-4 border-chara-c pl-2.5 font-display text-base font-bold text-ink">テーマの色</h2>
-    <%# 【封筒】ログインしている本人(Current.user)のデータとして、PATCH /settings(settings#update)に送る %>
-    <%# Current.user は保存ずみのユーザーなので、送り方は自動で PATCH(書きかえ)になる %>
-    <%# 丸い色を押したときの動きと、保存前のプレビューは theme_picker_controller.js %>
     <%= form_with model: Current.user, url: settings_path, data: { controller: "theme-picker" }, class: "flex flex-col gap-3 rounded-2xl border border-line bg-white p-4" do |f| %>
-      <!-- 入力ミスのお知らせ(保存できなかったときだけ出す) -->
       <% if Current.user.errors.any? %>
         <div role="alert" class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">
           <ul class="list-disc space-y-0.5 pl-4">
@@ -43,25 +33,19 @@
           </ul>
         </div>
       <% end %>
-      <!-- 推しの色(おすすめ):押すと、その色が下のカラーピッカーに入る -->
       <%= render "shared/color_swatches", controller: "theme-picker" %>
       <div class="flex items-center gap-3">
-        <%# 【手紙】テーマの色(users テーブルの theme_color の列)。自由な色もここで選べる %>
         <%= f.color_field :theme_color, aria: { label: "テーマの色" }, data: { theme_picker_target: "input", action: "input->theme-picker#sync" }, class: "h-12 w-14 shrink-0 cursor-pointer rounded-xl border border-line bg-white p-1" %>
-        <!-- 選んだ色のプレビュー(グラデーション) -->
         <div class="h-12 flex-1 rounded-xl bg-gradient-to-r from-accent via-accent-soft to-white"></div>
       </div>
-      <!-- ボタンの見え方(文字の色は、背景の明るさに合わせて自動で白か黒になる) -->
       <div class="flex items-center gap-3">
         <span class="shrink-0 whitespace-nowrap rounded-full bg-accent px-4 py-2 text-sm font-bold text-on-accent">ボタンの見え方</span>
         <span class="text-xs text-ink-soft">文字の色は自動で読みやすい色になります</span>
       </div>
-      <%# 【ポスト】押すと、選んだ色を保存する(推しのフォームの保存ボタンとそろえた見た目) %>
       <%= f.submit "保存する", class: "w-full cursor-pointer rounded-2xl bg-accent py-3 font-display text-base font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
     <% end %>
   </section>
 
-  <!-- その他 -->
   <section aria-labelledby="other-heading" class="mt-6 flex flex-col gap-2">
     <h2 id="other-heading" class="border-l-4 border-unpaid pl-2.5 font-display text-base font-bold text-ink">その他</h2>
     <div class="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
@@ -73,12 +57,10 @@
         プライバシーポリシー
         <span class="text-sm text-ink-soft">›</span>
       <% end %>
-      <!-- ログアウト(DELETE /session → sessions#destroy) -->
       <%= button_to session_path, method: :delete, form_class: "contents", class: "flex h-14 w-full items-center justify-between px-4 text-left text-[15px] text-ink transition hover:bg-bg" do %>
         ログアウト
         <span class="text-sm text-ink-soft">›</span>
       <% end %>
-      <!-- 退会(アカウント削除) -->
       <%= link_to withdraw_path, class: "flex h-14 items-center justify-between px-4 text-[15px] font-bold text-danger transition hover:bg-bg" do %>
         退会する
         <span class="text-sm">›</span>

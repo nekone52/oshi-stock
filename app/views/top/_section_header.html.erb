@@ -1,11 +1,7 @@
-<%# ホームの各セクションの見出し(左の色の線・タイトル・件数・説明)。ほしい物・予約注文中・所持で共通 %>
-<%# title:タイトル / count:件数 / note:説明 / border:左の線の色 / badge:件数の丸の色 %>
-<%# more_label / more_path:見出しの横のリンクの文字と行き先(「予約 →」など)。下のメニューがないので、件数に関係なくいつも出す %>
 <div class="mb-2.5 flex items-end justify-between gap-2">
   <div class="flex flex-col gap-0.5 border-l-4 <%= border %> pl-2.5">
     <h2 class="font-display text-[1.05rem] font-bold"><%= title %> <span class="ml-1 rounded-full px-2 py-0.5 font-body text-[11px] font-bold <%= badge %>"><%= count %></span></h2>
     <p class="text-[11px] text-ink-soft"><%= note %></p>
   </div>
-  <%# 【自分の言葉】「すべて見る」じゃなくて条件関係なく出したかったから、「もし〜」の条件である if と end を消した %>
   <%= link_to more_path, class: "inline-flex shrink-0 items-center gap-1 rounded-full border-2 #{more_class} bg-white px-3 py-1 text-xs font-bold" do %><%= more_label %> <span aria-hidden="true">→</span><% end %>
 </div>

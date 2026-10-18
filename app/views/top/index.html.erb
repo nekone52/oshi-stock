@@ -1,13 +1,10 @@
-<%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
-<%# ボタンを押してホームに戻ったとき、画面全体を読みこみ直さず、変わったところだけ書きかえる(スクロールの位置もそのまま) %>
 <% turbo_refreshes_with method: :morph, scroll: :preserve %>
 
   <div class="mx-auto max-w-[430px] px-4 pb-10">
 
     <header class="sticky top-0 z-10 flex items-center justify-between bg-bg pb-2 pt-4">
       <%= image_tag "logo.png", alt: "推しストック", class: "w-[9.5rem] h-auto" %>
-      <!-- 設定 -->
       <%= link_to settings_path, class: "inline-flex items-center gap-2 rounded-full border-2 border-ink bg-white px-4 py-2.5 text-sm font-bold text-ink transition hover:bg-bg active:scale-95" do %>
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
@@ -17,8 +14,6 @@
       <% end %>
     </header>
 
-    <%# これから支払う金額のまとめ。押すと予約画面へ(ホームで選んだ推しを引きつぐ。「予約 →」と同じ行き先) %>
-    <!-- これから支払う金額のまとめ(支払っていない、予約中・所持のグッズ) -->
     <%= link_to reservations_path(character_id: @selected_character&.id), class: "mt-2 flex items-center justify-between rounded-2xl border border-line bg-white px-4 py-3 transition active:scale-[0.98]" do %>
       <div class="flex flex-col">
         <span class="text-xs text-ink-soft">これから支払う金額</span>
@@ -32,16 +27,13 @@
       </div>
     <% end %>
 
-    <!-- 推しキャラ(囲み) -->
     <div class="mt-2 rounded-2xl bg-white px-3 pt-3 pb-1">
 
-    <!-- 推しキャラ一覧(見出し) -->
     <div class="flex items-center justify-between border-l-4 border-unpaid pl-2.5">
       <h2 class="font-display text-xl font-bold text-unpaid">推しキャラ</h2>
       <%= link_to oshis_path, class: "inline-flex items-center gap-1 rounded-full border-2 border-ink bg-white px-3 py-1 text-xs font-bold" do %>推しキャラ一覧 <span aria-hidden="true">→</span><% end %>
     </div>
 
-    <!-- キャラ絞り込み(押すと /?character_id=番号 になって、その推しのグッズだけになる。検索の言葉は引きつぐ) -->
     <nav class="-mx-4 flex gap-3.5 overflow-x-auto px-4 pb-4 pt-1" aria-label="推しキャラで絞り込む">
       <%= link_to root_path(q: @query.presence), class: "flex shrink-0 flex-col items-center gap-1.5", aria: { current: (@selected_character ? nil : "true") } do %>
         <span class="flex h-24 w-24 items-center justify-center rounded-full bg-[#64748B] font-display text-lg font-bold text-white <%= "ring-4 ring-[#64748B]/30" unless @selected_character %>">全</span>
@@ -51,11 +43,8 @@
         <% selected = character == @selected_character %>
         <% color = character.display_color %>
         <%= link_to root_path(character_id: character.id, q: @query.presence), class: "flex shrink-0 flex-col items-center gap-1.5", aria: { current: (selected ? "true" : nil) } do %>
-          <%# いつも推しの色の枠(#85)。選んでいる推しには、さらに外側にうすいふちを付ける %>
-          <%# 変数 color の中身(#E8577A など)を HTML に出すので、イコールつきのタグで包む %>
           <span style="background-color: color-mix(in srgb, <%= color %> 20%, white); color: <%= color %>; border: 3px solid <%= color %>; <%= "box-shadow: 0 0 0 4px color-mix(in srgb, #{color} 35%, transparent)" if selected %>" class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full font-display text-lg font-bold">
             <% if character.icon.attached? %>
-              <%# アイコンは縦長(名刺の形)なので、真ん中を丸く切って見せる(切り抜きの丸いガイドと同じ場所) %>
               <%= image_tag character.icon.variant(:display), alt: "", draggable: false, class: "h-full w-full object-cover select-none [-webkit-touch-callout:none]" %>
             <% else %>
               <%= character.name.first %>
@@ -68,7 +57,6 @@
 
     </div>
 
-    <!-- 検索(グッズ名で探す。GET /?q=言葉。選んでいる推しは引きつぐ) -->
     <%= form_with url: root_path, method: :get, class: "relative mt-2 mb-4" do |f| %>
       <%= hidden_field_tag :character_id, @selected_character&.id if @selected_character %>
       <svg class="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-ink-faint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -78,26 +66,21 @@
       <%= f.search_field :q, value: @query, placeholder: "グッズ名で検索...", aria: { label: "グッズ名で検索" }, class: "w-full rounded-full border border-line bg-white py-2.5 pr-4 pl-11 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     <% end %>
     <% if @query.present? %>
-      <!-- 検索中のお知らせ(検索をやめるリンク付き) -->
       <p class="-mt-2 mb-3 text-xs text-ink-soft">「<%= @query %>」の検索結果 ・ <%= link_to "検索をやめる", root_path(character_id: @selected_character&.id), class: "font-bold text-accent-strong underline" %></p>
     <% end %>
 
-    <!-- ほしい物リスト(横にスクロールするカード) -->
     <section class="pt-2">
       <%= render "top/section_header", title: "ほしい物リスト", count: @wanted_items.size, note: "まだ買っていないもの",
                  border: "border-chara-a", badge: "bg-chara-a-soft text-chara-a",
                  more_label: "ほしい物", more_path: goods_path({ status: "wanted", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-a text-chara-a" %>
       <% if @wanted_items.any? %>
         <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
-          <%# ホームには、新しい順に4つまで(5つ目からは「ほしい物 →」で) %>
           <% @wanted_items.limit(4).each do |item| %>
-            <%# カードを押すと、そのグッズの詳細(グッズのカード)へ。枠は推しの色(#85) %>
             <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
               <%= render "top/item_thumb", item: item, css: "h-20" %>
               <div class="p-2">
                 <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug"><%= item.name %></p>
                 <p class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 shrink-0 rounded-full"></span><span class="truncate"><%= item.character.name %></span></p>
-                <%# URL だけで、画像がまだないもの %>
                 <% if item.url.present? && !item.image.attached? %>
                   <span class="mt-1 inline-block rounded-full border border-line bg-bg px-2 py-0.5 text-[10px] font-bold text-ink-faint">URLのみ</span>
                 <% end %>
@@ -110,19 +93,13 @@
       <% end %>
     </section>
 
-    <!-- 予約注文中(1行ずつのリスト) -->
     <section class="pt-6">
-      <%# 「予約 →」:ホームで選んだ推しを、予約画面へ引きつぐ(選んでいないときは番号なしの /reservations) %>
-      <%# 【自分の言葉】特定のキャラの予約を表示するために、予約画面へのリンクにキャラの番号をつける %>
       <%= render "top/section_header", title: "予約注文中", count: @reserved_items.size, note: "注文済み・支払いや到着を待っているもの",
                  border: "border-unpaid", badge: "bg-unpaid-bg text-unpaid",
                  more_label: "予約", more_path: reservations_path(character_id: @selected_character&.id), more_class: "border-unpaid text-unpaid" %>
       <% if @reserved_items.any? %>
         <div class="flex flex-col gap-2.5">
-          <%# ホームには、未払い・期限の近い順に4つまで %>
           <% @reserved_items.limit(4).each do |item| %>
-            <%# 枠は推しの色(#85) %>
-            <%# 【自分の言葉】item.character.display_color = このキャラクターのアイテムはこの色! %>
             <div style="border: 2px solid <%= item.character.display_color %>" class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
               <%= link_to good_path(item), class: "flex min-w-0 flex-1 items-center gap-3" do %>
                 <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl" %>
@@ -133,7 +110,6 @@
                     <% if item.paid %>
                       <span class="rounded-full bg-paid-bg px-2 py-0.5 text-[10px] font-bold text-paid">支払い完了</span>
                     <% elsif item.owned? %>
-                      <%# 届いたけど、まだ払っていないもの(所持グッズにも出ている) %>
                       <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">届いた・未払い</span>
                     <% else %>
                       <span class="rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
@@ -145,9 +121,7 @@
                   </div>
                 </div>
               <% end %>
-              <!-- ワンタップの切り替え(支払い・受け取り。画面は移らず、ホームのまま) -->
               <div class="flex shrink-0 flex-col gap-1.5">
-                <%# 支払った:押すたびに 支払い済み ⇔ 未払い を切り替える(PATCH /goods/:id/toggle_paid) %>
                 <% if item.paid %>
                   <%= button_to "✓ 支払い済み", toggle_paid_good_path(item), method: :patch, aria: { pressed: "true" }, class: "w-full cursor-pointer whitespace-nowrap rounded-full bg-paid-bg px-3 py-1.5 text-xs font-bold text-paid" %>
                 <% else %>
@@ -155,8 +129,6 @@
                     <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l6 8 6-8M12 12v8M7.5 13h9M7.5 16.5h9"/></svg>支払った
                   <% end %>
                 <% end %>
-                <%# 届いた:所持グッズに移す(PATCH /goods/:id/receive)。もう届いているものには出さない %>
-                <%# 予約画面と同じ「白地+枠+アイコン」。色はテーマに関係なくピンク固定(支払った = 緑・¥ / 届いた = ピンク・箱) %>
                 <% unless item.owned? %>
                   <%= button_to receive_good_path(item), method: :patch, class: "inline-flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-full border-[1.5px] border-received bg-white px-3 py-1.5 text-xs font-bold text-received-strong" do %>
                     <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg>届いた
@@ -171,22 +143,17 @@
       <% end %>
     </section>
 
-    <!-- 所持グッズ(2列のカード) -->
     <section class="pt-6">
       <%= render "top/section_header", title: "所持グッズ", count: @owned_items.size, note: "手元にあるもの",
                  border: "border-chara-b", badge: "bg-chara-b-soft text-chara-b",
                  more_label: "グッズ一覧", more_path: goods_path({ status: "owned", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-b text-chara-b" %>
       <% if @owned_items.any? %>
         <div class="grid grid-cols-2 gap-3">
-          <%# ホームには、新しい順に4つまで %>
           <% @owned_items.limit(4).each do |item| %>
-            <%# 枠は推しの色(#85) %>
             <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "overflow-hidden rounded-2xl bg-white shadow-sm" do %>
               <div class="relative">
                 <%= render "top/item_thumb", item: item, css: "aspect-[1.15]" %>
-                <%# 右上:どの推しのグッズか(推しの色の丸と頭文字) %>
                 <span style="background-color: <%= item.character.display_color %>" class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white font-display text-[10px] font-bold text-white"><%= item.character.name.first %></span>
-                <%# 届いたけど未払いのもの(支払い忘れを防ぐ) %>
                 <% unless item.paid %>
                   <span class="absolute bottom-2 left-2 rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
                 <% end %>
@@ -200,7 +167,6 @@
       <% end %>
     </section>
 
-    <!-- グッズを登録(ボタン) -->
     <%= link_to "＋ グッズを登録", new_good_path, class: "mt-6 flex h-12 w-full items-center justify-center rounded-2xl bg-accent font-display text-base font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
 
     <footer class="mt-6 border-t border-dashed border-line pt-4 text-[11px] leading-relaxed text-ink-faint">

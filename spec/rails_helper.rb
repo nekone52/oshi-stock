@@ -1,6 +1,3 @@
-# 【カバレッジ】テストがアプリのコードの何%を通ったかを測る(#29。レポートは coverage/index.html)
-# アプリのコードを読みこむ前に動かす決まりなので、このファイルのいちばん上に書く
-# 'rails' … コントローラー・モデル・ヘルパーなどに分けて数えてくれる
 require "simplecov"
 SimpleCov.start "rails"
 
@@ -51,7 +48,6 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
-  # FactoryBot.create(:user) ではなく create(:user) と書けるようにする
   config.include FactoryBot::Syntax::Methods
 
   # You can uncomment this line to turn off ActiveRecord support entirely.

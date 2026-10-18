@@ -22,11 +22,8 @@ module App
     # in config/environments, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
-    # 日本の時間にする(なにもしないと UTC で、夜中0時〜朝9時は「今日」が1日ずれて、支払い期限の判定がずれる)
-    # データベースの中は UTC のまま保存されて、画面や Date.current のときだけ東京の時間に直る
     config.time_zone = "Tokyo"
 
-    # 画面やエラーメッセージを日本語にする(翻訳は rails-i18n と config/locales/ja.yml)
     config.i18n.default_locale = :ja
     # config.eager_load_paths << Rails.root.join("extras")
   end

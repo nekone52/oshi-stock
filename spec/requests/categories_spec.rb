@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe "カテゴリ", type: :request do
   let(:user) { create(:user) }
-  # Turbo Stream で返してほしいときの送り方(画面を移らずに、その場で書きかえる)
   let(:turbo_stream_headers) { { "Accept" => "text/vnd.turbo-stream.html, text/html" } }
 
   describe "POST /categories" do

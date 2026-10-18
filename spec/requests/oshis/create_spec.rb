@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 推しキャラの登録の画面と、登録
 RSpec.describe "推しキャラの登録", type: :request do
   let(:user) { create(:user) }
 
@@ -69,7 +68,6 @@ RSpec.describe "推しキャラの登録", type: :request do
         expect(response.body).to include("アイコン画像は JPEG, PNG, WebP 形式にしてください")
       end
 
-      # Codex の指摘②:推しでも、アイコンを選ぶ → エラー → 直して送る でアイコンが消えていた
       it "アイコンを選んでエラーになっても、直して送るとアイコンつきで登録される(引換券で引きつぐ)" do
         post oshis_path, params: { character: { name: "", icon: fixture_file_upload("icon.png", "image/png") } }
         expect(response).to have_http_status(:unprocessable_content)

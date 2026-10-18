@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 推しキャラの消去の確認画面と、消去
 RSpec.describe "推しキャラの消去", type: :request do
   let(:user) { create(:user) }
 

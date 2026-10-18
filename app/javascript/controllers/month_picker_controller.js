@@ -1,21 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
-// 【発売月の大きいボタンと、12か月のボタン】(#94)
-// HTML では data-controller="month-picker" と書いて使う(ファイル名は _、HTML の名札は -)
-// 本物の値は見えない入力(hidden_field)に「2026-11-01」の形で入れる(日は1日。保存のしくみ release_month は今までと同じ)
-// 選べるのは、前の年から2年先まで(前のリストの「1年前から2年先まで」とだいたい同じ)
-
 export default class extends Controller {
-  // HTML側で名札をつけたものを受け取る
-  //   input:見えない本物の入力 / button:大きいボタン / panel:月のボタンを入れる場所
-  //   text:「2026年11月」/ calTop・calBottom:ボタンの小さいカレンダーの絵(上に年、下に月)
   static targets = ["input", "button", "panel", "text", "calTop", "calBottom"]
 
   connect() {
     this.render()
   }
 
-  // 大きいボタン:押すたびに、月のボタンをひらく ⇔ とじる
   toggle() {
     if (this.panelTarget.hidden) {
       const picked = this.picked()
@@ -28,20 +19,17 @@ export default class extends Controller {
     }
   }
 
-  // 「<」「>」:前の年・次の年へ(はしまで来たら、それ以上は行かない)
   move({ params: { years } }) {
     this.year = Math.min(Math.max(this.year + years, this.thisYear() - 1), this.thisYear() + 2)
     this.draw()
   }
 
-  // 月を押す:その月を入れて閉じる。「未定」は空にする
   pick({ params: { value } }) {
     this.inputTarget.value = value
     this.render()
     this.close()
   }
 
-  // 見えない入力の値を見て、大きいボタンの表示を書きかえる
   render() {
     const picked = this.picked()
     this.textTarget.textContent = picked ? `${picked.year}年${picked.month}月` : "未定"
@@ -49,15 +37,11 @@ export default class extends Controller {
     this.calBottomTarget.textContent = picked ? `${picked.month}月` : "?"
   }
 
-  // ---- ここから下は、この係の中だけで使う道具 ----
-
   close() {
     this.panelTarget.hidden = true
     this.buttonTarget.setAttribute("aria-expanded", "false")
   }
 
-  // 「< 2026年 >」と、12か月のボタン(4列 × 3段)と「未定」を作って、panel に入れる
-  // 今月 = 点線のわく / えらんだ月 = ピンクでぬりつぶし
   draw() {
     const picked = this.picked()
     const now = new Date()
@@ -93,7 +77,6 @@ export default class extends Controller {
       </div>`
   }
 
-  // 見えない入力の「2026-11-01」を { year: 2026, month: 11 } にする(空なら null)
   picked() {
     const value = this.inputTarget.value
     if (!value) return null

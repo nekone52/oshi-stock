@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# グッズの詳細(グッズのカード)
 RSpec.describe "グッズの詳細", type: :request do
   let(:user) { create(:user) }
 
@@ -26,7 +25,6 @@ RSpec.describe "グッズの詳細", type: :request do
       expect(response.body).to include("夏祭りアクスタ", "ヒナタ", "アクスタ", "公式ショップ", "¥1,650 × 2個", "¥3,300",
                                        "2026年10月 上旬", "未払い", "特典付き", "所持")
       expect(response.body).to include(edit_good_path(item))
-      # 商品ページは、新しいタブで安全に開く
       expect(response.body).to include('href="https://example.com/goods/1"', 'rel="noopener noreferrer"')
     end
 
@@ -40,7 +38,7 @@ RSpec.describe "グッズの詳細", type: :request do
     end
 
     it "http・https 以外の URL は、リンクにしない(javascript: などを開かせない)" do
-      item.update_column(:url, "javascript:alert(1)") # チェックを通らない値を、むりやり入れた場合
+      item.update_column(:url, "javascript:alert(1)")
       sign_in_as(user)
       get good_path(item)
 
@@ -56,7 +54,6 @@ RSpec.describe "グッズの詳細", type: :request do
       expect(response).to have_http_status(:not_found)
     end
 
-    # 「<」の戻り先は、グッズの状態で決める(くわしい分け方は spec/helpers/items_helper_spec.rb)
     it "「<」で、予約中のグッズは予約画面へ戻る" do
       reserved_item = create(:item, character: character, status: :reserved)
 

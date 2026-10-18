@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# ホーム画面:推しのアイコンでの絞り込み
 RSpec.describe "ホーム画面(推しの絞り込み)", type: :request do
   let(:user) { create(:user) }
   include_context "ホームの推しとグッズ"

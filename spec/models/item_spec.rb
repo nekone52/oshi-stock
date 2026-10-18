@@ -50,7 +50,6 @@ RSpec.describe Item, type: :model do
       expect(item.errors[:quantity]).to include("は1以上の値にしてください")
     end
 
-    # 目標個数(#62):空っぽ = 目標なし。決めるなら1以上の整数
     it "目標個数は空でも、1以上の整数でも有効" do
       expect(build(:item, target_quantity: nil)).to be_valid
       expect(build(:item, target_quantity: 3)).to be_valid
@@ -66,7 +65,6 @@ RSpec.describe Item, type: :model do
       expect(build(:item, target_quantity: 1.5)).not_to be_valid
     end
 
-    # 上限(単価 × 個数 が、データベースで計算できる数をこえないように)
     it "単価は100万円まで、個数・目標個数は999個まで" do
       expect(build(:item, price: 1_000_000, quantity: 999, target_quantity: 999)).to be_valid
       expect(build(:item, price: 1_000_001)).not_to be_valid

@@ -9,5 +9,4 @@ test:
   adapter: test
 
 production:
-  # MVP ではリアルタイム通信を使わないため、データベースを使わない仕組みにする
   adapter: async

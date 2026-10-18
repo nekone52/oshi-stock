@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 下のメニューがないので、ホーム以外の画面には「← ホーム」を出して、ホームに戻れるようにする
 RSpec.describe "← ホーム", type: :request do
   let(:user) { create(:user) }
 
@@ -14,7 +13,6 @@ RSpec.describe "← ホーム", type: :request do
     end
   end
 
-  # 推しでしぼっている画面からは、その推しを選んだままホームに戻る
   %w[/goods /reservations].each do |path|
     it "#{path} で推しを選んでいたら、「← ホーム」にその推しの番号がつく" do
       character = create(:character, user: user)
