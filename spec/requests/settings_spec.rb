@@ -181,6 +181,7 @@ RSpec.describe "テーマの色の保存", type: :request do
         expect(flash[:notice]).to eq("メールアドレスを変えました")
       end
 
+      # 【自分の言葉】個人データ(メールアドレス)を、本人以外に勝手に変えられないように守る
       it "今のパスワードがちがうと、変わらずにエラーが出る" do
         sign_in_as(user)
         patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "wrong-password" } }
