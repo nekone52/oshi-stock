@@ -28,6 +28,7 @@ RSpec.describe "推し・グッズの流れ", type: :system do
     select "ヒナタ", from: "item[character_id]"
     fill_in "item[price]", with: "1650"
     choose "予約中"
+    find("input[name='item[release_month]']", visible: false).set("2026-11-01")
     click_button "登録する"
 
     # 登録したグッズの詳細に移って、中身が出ている
@@ -42,5 +43,11 @@ RSpec.describe "推し・グッズの流れ", type: :system do
 
     expect(page).to have_content("グッズを更新しました")
     expect(page).to have_content("ヒナタのアクスタ(通常版)")
+
+    visit reservations_path
+    click_button "支払った"
+    expect(page).to have_content("支払い済みにしました")
+    click_button "届いた"
+    expect(page).to have_content("を所持グッズに移しました")
   end
 end
