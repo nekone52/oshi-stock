@@ -45,8 +45,8 @@
           <%# 保存ずみの商品画像か、棚にしまっておいた画像があれば表示する(しまえなかった新しい画像は、まだ表示できないため) %>
           <% saved_image = @item.image.attached? && @item.image.blob.persisted? %>
           <% if saved_image %>
-            <%# 登録する前のグッズなら、しまっておいた画像の引換券を入れておく(もう一度送ったときに、この画像を使う。goods_controller.rb の use_kept_image) %>
-            <%= hidden_field_tag :kept_image, @item.image.blob.signed_id if @item.new_record? %>
+            <%# 選んだ画像を棚にしまったときは、引換券を入れておく(もう一度送ったときに、この画像を使う。concerns/keeps_chosen_image.rb) %>
+            <%= hidden_field_tag :kept_image, @kept_image if @kept_image %>
             <%= image_tag @item.image.variant(:display), alt: "今の商品画像", data: { image_cropper_target: "image" }, class: "h-full w-full object-contain" %>
           <% else %>
             <%# 選んだ画像のプレビュー(画像を選ぶと出てくる) %>
