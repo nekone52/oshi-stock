@@ -68,6 +68,17 @@ RSpec.describe "推しキャラの登録", type: :request do
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include("アイコン画像は JPEG, PNG, WebP 形式にしてください")
       end
+
+      # Codex の指摘②:推しでも、アイコンを選ぶ → エラー → 直して送る でアイコンが消えていた
+      it "アイコンを選んでエラーになっても、直して送るとアイコンつきで登録される(引換券で引きつぐ)" do
+        post oshis_path, params: { character: { name: "", icon: fixture_file_upload("icon.png", "image/png") } }
+        expect(response).to have_http_status(:unprocessable_content)
+        kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
+        expect(kept_image).to be_present
+
+        expect { post oshis_path, params: { character: { name: "ヒナタ" }, kept_image: kept_image } }.to change(Character, :count).by(1)
+        expect(Character.last.icon).to be_attached
+      end
     end
   end
 end

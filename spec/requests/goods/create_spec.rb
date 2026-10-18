@@ -146,6 +146,41 @@ RSpec.describe "グッズの登録", type: :request do
         expect(Item.last.image).not_to be_attached
       end
 
+      # Codex の指摘①:サインが本物でも、本人用でなければ使えないようにする
+      it "ほかの人用の引換券では、画像はつかない" do
+        other = create(:user)
+        blob = ActiveStorage::Blob.create_and_upload!(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
+        others_ticket = blob.signed_id(purpose: "kept_image_for_user_#{other.id}", expires_in: 1.hour)
+
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: others_ticket, confirm_duplicate: "1" }
+        expect { post goods_path, params: params }.to change(Item, :count).by(1)
+        expect(Item.last.image).not_to be_attached
+      end
+
+      it "画像の URL に入っている番号(ほかのグッズについている画像)では、画像はつかない" do
+        others_item = create(:item, character: create(:character, user: create(:user)))
+        others_item.image.attach(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
+
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: others_item.image.blob.signed_id, confirm_duplicate: "1" }
+        expect { post goods_path, params: params }.to change(Item, :count).by(1)
+        expect(Item.last.image).not_to be_attached
+        expect(others_item.reload.image).to be_attached
+      end
+
+      # travel(時間を進める道具)を使えるようにする
+      include ActiveSupport::Testing::TimeHelpers
+
+      it "1時間より前の引換券は、時間切れで使えない" do
+        post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
+
+        travel 2.hours do
+          params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image, confirm_duplicate: "1" }
+          expect { post goods_path, params: params }.to change(Item, :count).by(1)
+          expect(Item.last.image).not_to be_attached
+        end
+      end
+
       it "ほかのユーザーの同じ名前のグッズは、関係ない(警告を出さない)" do
         create(:item, character: create(:character, user: create(:user)), name: "アオイの缶バッジ")
         params = { item: { name: "アオイの缶バッジ", character_id: character.id } }

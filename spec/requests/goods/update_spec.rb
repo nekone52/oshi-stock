@@ -99,6 +99,19 @@ RSpec.describe "グッズの編集", type: :request do
         expect(response.body).to include("グッズ名を入力してください")
         expect(item.reload.name).to eq("ヒナタのアクスタ")
       end
+
+      # Codex の指摘②:編集でも、画像を選ぶ → エラー → 直して送る で画像が消えていた
+      it "新しい画像を選んでエラーになっても、直して送ると新しい画像に変わる(引換券で引きつぐ)" do
+        patch good_path(item), params: { item: { name: "", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        expect(response).to have_http_status(:unprocessable_content)
+        kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
+        expect(kept_image).to be_present
+        expect(item.reload.image).not_to be_attached # エラーのときは、まだ保存しない
+
+        patch good_path(item), params: { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image }
+        expect(item.reload.image).to be_attached
+        expect(item.image.filename.to_s).to eq("icon.png")
+      end
     end
 
     context "ほかのユーザーのものを送ってきたとき" do
