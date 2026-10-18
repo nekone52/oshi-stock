@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 設定画面の「テーマの色」の保存と、アプリ全体への反映
 RSpec.describe "テーマの色の保存", type: :request do
   let(:user) { create(:user) }
 
@@ -21,13 +20,9 @@ RSpec.describe "テーマの色の保存", type: :request do
       sign_in_as(user)
       get settings_path
 
-      # color_field は、ブラウザの決まりに合わせて色を小文字で出す
       expect(response.body).to include('value="#4e6fa3"')
     end
 
-    # #125:パスワードの「変更 ›」を押すと、パスワード再設定の画面に行ける
-    # リクエストスペックは押せないので、リンクの行き先(href)が再設定の画面になっているかを見る
-    # 【自分の言葉】設定画面に、新規パスワードを作るための画面へのリンクがあるかどうか!
     it "パスワードの「変更 ›」が、パスワード再設定の画面へのリンクになっている" do
       sign_in_as(user)
       get settings_path
@@ -99,7 +94,7 @@ RSpec.describe "テーマの色の保存", type: :request do
           .to change(User, :count).by(-1)
           .and change(Character, :count).by(-1)
           .and change(Item, :count).by(-1)
-          .and change(Category, :count).by(-5) # 最初の5つのカテゴリ
+          .and change(Category, :count).by(-5)
           .and change(Session, :count).by(-1)
           .and change(ActiveStorage::Attachment, :count).by(-1)
       end
@@ -111,7 +106,6 @@ RSpec.describe "テーマの色の保存", type: :request do
         expect(response).to redirect_to(new_session_path)
         expect(flash[:notice]).to eq("退会しました。ご利用ありがとうございました")
 
-        # ホームを開こうとしても、ログイン画面へ移る(ログインの鍵も消えている)
         get root_path
         expect(response).to redirect_to(new_session_path)
       end
@@ -144,7 +138,6 @@ RSpec.describe "テーマの色の保存", type: :request do
     end
   end
 
-  # #125:メールアドレスの変更(今のパスワードで本人か確かめてから書きかえる)
   describe "メールアドレスの変更" do
     let(:user) { create(:user, email_address: "before@example.com") }
 
@@ -181,7 +174,6 @@ RSpec.describe "テーマの色の保存", type: :request do
         expect(flash[:notice]).to eq("メールアドレスを変えました")
       end
 
-      # 【自分の言葉】個人データ(メールアドレス)を、本人以外に勝手に変えられないように守る
       it "今のパスワードがちがうと、変わらずにエラーが出る" do
         sign_in_as(user)
         patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "wrong-password" } }

@@ -20,7 +20,7 @@ RSpec.describe Category, type: :model do
 
     it "同じユーザーの中で、同じ名前は登録できない" do
       user = create(:user)
-      category = build(:category, user: user, name: "アクスタ") # 「アクスタ」は最初の5種類で作られている
+      category = build(:category, user: user, name: "アクスタ")
       expect(category).not_to be_valid
       expect(category.errors[:name]).to include("はすでに存在します")
     end

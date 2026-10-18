@@ -1,26 +1,20 @@
-<%# この画面は本物のフォームなので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
 
 <div class="flex min-h-screen items-center justify-center px-4">
   <div class="relative w-full max-w-[430px]">
 
-    <!-- ロゴ(カードの上に重ねて配置) -->
     <div class="absolute inset-x-0 bottom-full mb-10">
       <%= image_tag "logo.png", alt: "推しストック", class: "w-full" %>
     </div>
 
-    <!-- ログインカード -->
     <div class="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
 
-      <!-- ヘッダー -->
       <div class="bg-hdr px-4 py-3">
         <h1 class="font-display text-base font-bold text-white">ログイン</h1>
       </div>
 
-      <!-- ログインのフォーム(送り先は POST /session → sessions#create) -->
       <%= form_with url: session_url do |f| %>
 
-        <!-- 入力フォーム -->
         <div class="flex flex-col gap-3 p-4">
           <label class="flex flex-col gap-1">
             <span class="text-xs text-ink-soft">メールアドレス</span>
@@ -29,7 +23,6 @@
 
           <label class="flex flex-col gap-1">
             <span class="text-xs text-ink-soft">パスワード</span>
-            <!-- 目のアイコンを押すと、伏せ字と文字を切り替える -->
             <div class="relative" data-controller="password-visibility">
               <%= f.password_field :password, required: true, autocomplete: "current-password", placeholder: "••••••••", maxlength: 72, data: { password_visibility_target: "input" }, class: "w-full pr-11 rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
               <%= render "shared/password_visibility_button" %>
@@ -37,14 +30,12 @@
           </label>
         </div>
 
-        <!-- ボタンとリンク -->
         <div class="flex flex-col items-center gap-3 px-4 pb-5">
           <%= f.submit "ログイン", class: "w-full cursor-pointer rounded-full bg-accent px-6 py-2.5 font-display text-sm font-bold text-on-accent transition hover:-translate-y-0.5 hover:shadow-md active:scale-95" %>
           <%= link_to "パスワードを忘れた方はこちら", new_password_path, class: "text-xs font-bold text-accent-strong underline" %>
         </div>
       <% end %>
 
-      <!-- 新規登録(フォームの外) -->
       <div class="flex flex-col items-center gap-2 border-t border-line bg-bg px-4 py-4">
         <p class="text-xs text-ink-soft">はじめての方はこちら</p>
         <%= link_to "新規登録(アカウント作成)", new_registration_path, class: "w-full rounded-full border-2 border-accent bg-white px-6 py-2 text-center font-display text-sm font-bold text-accent-strong transition hover:bg-accent-soft active:scale-95" %>

@@ -1,13 +1,6 @@
-<%# グッズの登録・編集で共通のフォーム(goods/new と goods/edit で使う) %>
-<%# url:送り先(登録は goods_path、編集は good_path(@item))/ submit_label:下のボタンの文字 %>
-<%# 合計(単価 × 個数)の自動計算は item_form_controller.js、商品画像の切り抜きは image_cropper_controller.js %>
-<%# モデル名は Item、住所は /goods で名前がちがうので、url: で送り先を教える %>
-<%# @item が保存ずみなら、送り方は自動で PATCH(更新)になる %>
 <%= form_with model: @item, url: url, data: { controller: "item-form" } do |f| %>
   <div class="flex flex-col gap-4">
     <% if @duplicate_items.present? %>
-      <%# 同じ名前のグッズがあるときの警告(ダブり買いを防ぐ)。「それでも登録する」で、そのまま保存できる %>
-      <!-- 同じ名前のグッズがあるときの警告 -->
       <div role="alert" class="flex flex-col gap-2 rounded-xl border border-unpaid bg-unpaid-bg px-4 py-3 text-[13px] text-ink">
         <p class="flex items-center gap-1.5 font-bold text-unpaid">
           <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>
@@ -19,12 +12,10 @@
           <% end %>
         </ul>
         <p class="text-ink-soft">布教用・保存用など、わざと増やすときは、そのまま登録できます。</p>
-        <%# name="confirm_duplicate" のボタン:押すと params[:confirm_duplicate] が届いて、警告を出さずに保存する %>
         <%= button_tag "それでも登録する", type: "submit", name: "confirm_duplicate", value: "1", class: "h-10 cursor-pointer self-start rounded-full border border-unpaid bg-white px-4 text-[13px] font-bold text-unpaid" %>
       </div>
     <% end %>
 
-    <!-- 入力ミスのお知らせ(保存できなかったときだけ出す) -->
     <% if @item.errors.any? %>
       <div role="alert" class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">
         <ul class="list-disc space-y-0.5 pl-4">
@@ -35,42 +26,30 @@
       </div>
     <% end %>
 
-    <%# 商品画像を選ぶところと、切り抜きの場所をまとめて image_cropper_controller.js が担当する %>
-    <%# 切り抜く形は正方形。保存する大きさは 800×800px %>
     <%= tag.div class: "flex flex-col gap-4", data: { controller: "image-cropper", image_cropper_aspect_value: 1, image_cropper_width_value: 800, image_cropper_height_value: 800 } do %>
-      <!-- 商品画像(枠を押すと、画像を選ぶ画面が開く) -->
       <label class="flex cursor-pointer flex-col gap-1.5">
         <span class="text-[15px] font-bold text-ink">商品画像</span>
         <div class="flex h-40 flex-col items-center justify-center gap-1.5 overflow-hidden rounded-xl border-2 border-dashed border-line bg-white text-ink-soft">
-          <%# 保存ずみの商品画像か、棚にしまっておいた画像があれば表示する(しまえなかった新しい画像は、まだ表示できないため) %>
           <% saved_image = @item.image.attached? && @item.image.blob.persisted? %>
           <% if saved_image %>
-            <%# 選んだ画像を棚にしまったときは、引換券を入れておく(もう一度送ったときに、この画像を使う。concerns/keeps_chosen_image.rb) %>
             <%= hidden_field_tag :kept_image, @kept_image if @kept_image %>
             <%= image_tag @item.image.variant(:display), alt: "今の商品画像", data: { image_cropper_target: "image" }, class: "h-full w-full object-contain" %>
           <% else %>
-            <%# 選んだ画像のプレビュー(画像を選ぶと出てくる) %>
             <img data-image-cropper-target="image" alt="選んだ商品画像" class="hidden h-full w-full object-contain">
           <% end %>
-          <!-- 画像を選ぶ前の絵(画像を選ぶと隠れる) -->
           <div data-image-cropper-target="placeholder" class="<%= "hidden" if saved_image %> flex flex-col items-center gap-1.5">
             <svg class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m20.5 16-5-5-8 8.5"/></svg>
             <span class="text-[13px] font-bold"><%= @item.persisted? ? "画像を変更" : "画像を追加" %></span>
           </div>
-          <!-- 切り抜いた結果のプレビュー(画像を選んだときだけ出す。正方形) -->
           <div data-image-cropper-target="preview" class="hidden aspect-square h-full overflow-hidden"></div>
         </div>
-        <%# 画像を選ぶ欄(選ぶと、下に切り抜きの場所が出る) %>
         <%= f.file_field :image, accept: "image/png,image/jpeg,image/webp", data: { image_cropper_target: "fileInput", action: "image-cropper#choose" }, class: "w-full text-xs text-ink-soft file:mr-2 file:rounded-full file:border-0 file:bg-accent-soft file:px-3 file:py-1 file:text-xs file:font-bold file:text-accent-strong" %>
       </label>
-      <!-- 商品画像の切り抜き(画像を選ぶと出てくる。ドラッグで位置、スライダーや指でつまんで拡大縮小) -->
       <div data-image-cropper-target="cropArea" class="hidden">
         <div class="flex flex-col items-center gap-3">
           <div class="aspect-square w-full max-w-[280px] overflow-hidden rounded-xl bg-ink/5">
-            <%# Cropper.js が、この画像を切り抜きの道具に変える %>
             <img data-image-cropper-target="cropImage" alt="切り抜く画像" class="block max-w-full">
           </div>
-          <!-- 拡大・縮小のスライダー(1倍〜4倍) -->
           <label class="flex w-full max-w-[280px] items-center gap-3 text-xs text-ink-soft">
             <span class="shrink-0">縮小</span>
             <input type="range" min="1" max="4" step="0.01" value="1" data-image-cropper-target="zoom" data-action="input->image-cropper#zoom" aria-label="商品画像の拡大・縮小" class="w-full accent-accent">
@@ -81,20 +60,16 @@
       </div>
     <% end %>
 
-    <!-- 商品ページのURL -->
-    <%# URL から商品の情報を読み込む機能(モックの「読み込む」ボタン)は、別のイシューで作る %>
     <div class="flex flex-col gap-1.5">
       <%= f.label :url, "商品ページのURL", class: "text-[15px] font-bold text-ink" %>
       <%= f.url_field :url, placeholder: "https://", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
-    <!-- 購入先 -->
     <div class="flex flex-col gap-1.5">
       <%= f.label :shop_name, "購入先", class: "text-[15px] font-bold text-ink" %>
       <%= f.text_field :shop_name, placeholder: "例：アニメイト通販、公式ショップ", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
-    <!-- グッズ名(必須) -->
     <div class="flex flex-col gap-1.5">
       <%= f.label :name, class: "flex items-center gap-1.5 text-[15px] font-bold text-ink" do %>
         グッズ名 <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span>
@@ -102,7 +77,6 @@
       <%= f.text_field :name, required: true, maxlength: 50, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
     </div>
 
-    <!-- 推しキャラ(必須。ログイン中ユーザーの推しだけを選べる) -->
     <div class="flex flex-col gap-1.5">
       <%= f.label :character_id, class: "flex items-center gap-1.5 text-[15px] font-bold text-ink" do %>
         推しキャラ <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span>
@@ -110,20 +84,15 @@
       <% if @characters.any? %>
         <%= f.collection_select :character_id, @characters, :id, :name, { include_blank: "選んでください" }, required: true, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
       <% else %>
-        <%# 推しがまだいないときは、先に推しを登録してもらう %>
         <p class="rounded-xl border border-dashed border-line bg-white px-3 py-3 text-[13px] text-ink-soft">
           まだ推しがいません。<%= link_to "推しを追加", new_oshi_path, class: "font-bold text-accent-strong underline" %>してから、グッズを登録してください。
         </p>
       <% end %>
     </div>
 
-    <!-- カテゴリ(チップで選ぶ。ログイン中ユーザーのカテゴリだけ) -->
-    <%# 見た目はチップ、中身はラジオボタン(1つだけ選べる)。選ばれたチップは has-checked で色が変わる %>
     <fieldset class="flex flex-col gap-1.5">
       <legend class="text-[15px] font-bold text-ink">カテゴリ</legend>
-      <%# id="category_chips":カテゴリを追加したとき、Turbo Stream でこの中にチップを足す %>
       <div id="category_chips" class="flex flex-wrap gap-2">
-        <%# 「なし」:カテゴリは空でもOK %>
         <label class="flex h-9 cursor-pointer items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink has-checked:border-ink has-checked:bg-ink has-checked:font-bold has-checked:text-white">
           <%= f.radio_button :category_id, "", checked: @item.category_id.blank?, class: "sr-only" %>
           なし
@@ -132,11 +101,9 @@
           <%= render "goods/category_chip", category: category, checked: @item.category_id == category.id %>
         <% end %>
       </div>
-      <!-- カテゴリの追加・消去(シートを開く。シートはフォームの外の goods/_category_dialog.html.erb) -->
       <button type="button" data-controller="dialog-opener" data-dialog-opener-id-value="category_dialog" data-action="dialog-opener#open" class="flex h-9 cursor-pointer items-center self-start rounded-full border border-dashed border-accent bg-white px-3.5 text-[13px] font-bold text-accent-strong">＋ 追加・消去</button>
     </fieldset>
 
-    <!-- 単価・個数(入力すると、下の合計が自動で変わる) -->
     <div class="grid grid-cols-2 gap-2.5">
       <div class="flex flex-col gap-1.5">
         <%= f.label :price, "単価（円）", class: "text-[15px] font-bold text-ink" %>
@@ -144,21 +111,16 @@
       </div>
       <div class="flex flex-col gap-1.5">
         <%= f.label :quantity, "個数", class: "text-[15px] font-bold text-ink" %>
-        <%# 最初から 1 が入っている(テーブルの初期値) %>
         <%= f.number_field :quantity, min: 1, max: 999, step: 1, required: true, inputmode: "numeric", data: { item_form_target: "quantity", action: "input->item-form#updateTotal" }, class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink focus:border-accent focus:outline-none" %>
       </div>
     </div>
 
-    <!-- 目標個数(#62)。スイッチがオンのときだけ入力欄を出す -->
-    <%# スイッチは保存しない(name なし)。出し入れと、オフで空っぽにするのは item_form_controller.js %>
-    <%# 空っぽで保存 = 目標なし(カードにも出ない)。個数(確保した数)と比べてカードに出す %>
     <div class="flex flex-col gap-2.5 border-t border-dashed border-line pt-3">
       <label for="goal_switch" class="flex cursor-pointer items-center justify-between gap-3">
         <span class="flex min-w-0 flex-col gap-0.5">
           <span class="text-[15px] font-bold text-ink">目標個数を決める</span>
           <span class="text-[13px] text-ink-soft">観賞用・保存用・布教用など、何個ほしいか</span>
         </span>
-        <%# 見た目はスイッチ、中身はチェックボックス(peer で、チェックされたら色とつまみの位置を変える) %>
         <span class="relative h-7.5 w-13 shrink-0">
           <input type="checkbox" id="goal_switch" role="switch" class="peer sr-only" data-item-form-target="goalSwitch" data-action="change->item-form#toggleGoal">
           <span class="absolute inset-0 rounded-full bg-line transition-colors peer-checked:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"></span>
@@ -172,12 +134,9 @@
       </div>
     </div>
 
-    <!-- 所持ステータス(ほしい物 / 予約中 / 所持) -->
-    <%# 見た目は切りかえボタン、中身はラジオボタン。最初は「ほしい物」(テーブルの初期値) %>
     <fieldset class="flex flex-col gap-1.5">
       <legend class="text-[15px] font-bold text-ink">いまの状態</legend>
       <div class="grid grid-cols-3 gap-1 rounded-xl bg-accent-soft/60 p-1">
-        <%# 状態の名前と日本語は、ItemsHelper の STATUS_LABELS(1か所)から %>
         <% ItemsHelper::STATUS_LABELS.each do |value, label| %>
           <label class="flex h-10 cursor-pointer items-center justify-center rounded-lg text-[13px] text-ink has-checked:bg-white has-checked:font-bold has-checked:text-accent-strong">
             <%= f.radio_button :status, value, class: "sr-only" %>
@@ -187,17 +146,12 @@
       </div>
     </fieldset>
 
-    <!-- 発売月(年月だけ) -->
-    <%# 長いリストから探すのは見づらいので、押すとその場で「< 2026年 >」と12か月のボタンがひらく形にする(#94) %>
-    <%# 本物の値は、見えない入力(hidden_field)に「2026-11-01」の形で入れて送る。日は1日で保存する(ER図のメモどおり) %>
-    <%# 名札 month-picker = month_picker_controller.js(ファイル名は _、HTML の名札は -) %>
     <div class="flex flex-col gap-1.5" data-controller="month-picker">
       <span id="release_month_label" class="text-[15px] font-bold text-ink">発売月</span>
       <%= f.hidden_field :release_month, data: { month_picker_target: "input" } %>
       <button type="button" aria-labelledby="release_month_label" aria-expanded="false" aria-controls="release_month_panel"
               data-month-picker-target="button" data-action="month-picker#toggle"
               class="flex min-h-16 w-full cursor-pointer items-center gap-3 rounded-2xl border-[1.5px] border-line bg-white px-3.5 py-2 text-left aria-expanded:border-accent">
-        <!-- 小さいカレンダーの絵(上に年、下に月) -->
         <span class="flex h-[42px] w-[42px] shrink-0 flex-col overflow-hidden rounded-[10px] border-[1.5px] border-accent text-center" aria-hidden="true">
           <b class="bg-accent text-[10px] leading-[14px] text-white" data-month-picker-target="calTop">—</b>
           <span class="grid flex-1 place-items-center font-display text-base text-accent-strong" data-month-picker-target="calBottom">?</span>
@@ -208,49 +162,38 @@
         </span>
         <span class="text-lg text-ink-faint" aria-hidden="true">⌄</span>
       </button>
-      <%# 月のボタンは、押したときに month_picker_controller.js がここに作る %>
       <div id="release_month_panel" data-month-picker-target="panel" hidden></div>
     </div>
 
-    <!-- 発売の補足(上旬などのあいまいな書き方) -->
     <div class="flex flex-col gap-1.5">
       <%= f.label :release_period, "発売の補足", class: "text-[15px] font-bold text-ink" %>
       <%= f.text_field :release_period, placeholder: "例：上旬", class: "h-12 w-full rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </div>
 
-    <!-- 支払い済みかどうか -->
     <label class="flex h-12 cursor-pointer items-center justify-between rounded-xl border border-line bg-white px-4">
       <span class="text-[15px] font-bold text-ink">支払い済み</span>
       <%= f.check_box :paid, class: "h-6 w-6 accent-accent" %>
     </label>
 
-    <!-- 支払期限(空欄でもOK) -->
-    <%# 数字だけ(2026/10/14)で小さくて見づらいので、日本語の大きいボタン+推しストックの色の大きいカレンダーにする(#94) %>
-    <%# 押すとその場でカレンダーがひらいて、日にちを押すと閉じる。本物の値は、見えない入力(hidden_field)に「2026-10-14」の形で入れて送る %>
-    <%# 名札 deadline-picker = deadline_picker_controller.js(ファイル名は _、HTML の名札は -) %>
     <div class="flex flex-col gap-1.5" data-controller="deadline-picker">
       <span id="payment_deadline_label" class="text-[15px] font-bold text-ink">支払期限</span>
       <%= f.hidden_field :payment_deadline, data: { deadline_picker_target: "input" } %>
       <button type="button" aria-labelledby="payment_deadline_label" aria-expanded="false" aria-controls="payment_deadline_panel"
               data-deadline-picker-target="button" data-action="deadline-picker#toggle"
               class="flex min-h-16 w-full cursor-pointer items-center gap-3 rounded-2xl border-[1.5px] border-line bg-white px-3.5 py-2 text-left aria-expanded:border-accent">
-        <!-- 小さいカレンダーの絵(上に月、下に日) -->
         <span class="flex h-[42px] w-[42px] shrink-0 flex-col overflow-hidden rounded-[10px] border-[1.5px] border-accent text-center" aria-hidden="true">
           <b class="bg-accent text-[10px] leading-[14px] text-white" data-deadline-picker-target="calMonth">—</b>
           <span class="grid flex-1 place-items-center font-display text-lg text-accent-strong" data-deadline-picker-target="calDay">?</span>
         </span>
-        <!-- 日本語の日付と、あと何日 -->
         <span class="flex min-w-0 flex-1 flex-col gap-0.5">
           <strong class="font-display text-[19px] text-ink" data-deadline-picker-target="text">期限なし</strong>
           <small class="text-[13px] text-ink-soft" data-deadline-picker-target="left">押すとカレンダーがひらきます</small>
         </span>
         <span class="text-lg text-ink-faint" aria-hidden="true">⌄</span>
       </button>
-      <%# カレンダーは、押したときに deadline_picker_controller.js がここに作る %>
       <div id="payment_deadline_panel" data-deadline-picker-target="panel" hidden></div>
     </div>
 
-    <!-- メモ -->
     <div class="flex flex-col gap-1.5">
       <%= f.label :memo, "メモ", class: "text-[15px] font-bold text-ink" %>
       <%= f.text_area :memo, rows: 3, placeholder: "例：送料+660円、保存用、特典付き", class: "w-full rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
@@ -258,7 +201,6 @@
 
   </div>
 
-  <!-- 下の合計(単価×個数の自動表示)と登録・保存ボタン -->
   <div class="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-[430px] items-center gap-3 border-t border-line bg-white px-5 pt-3 pb-5">
     <div class="flex flex-col">
       <span class="text-[11px] text-ink-soft">合計</span>
@@ -269,10 +211,6 @@
 <% end %>
 
 <% if @item.persisted? %>
-  <%# 消去のボタン(編集のときだけ出す。DELETE /goods/:id → goods#destroy) %>
-  <%# button_to はボタンごとにフォームを作るので、グッズのフォームの外に置く(フォームの中にフォームは入れられない) %>
-  <%# 消す前に、確認ダイアログを出す(turbo_confirm。見た目は confirm_dialog.js とレイアウトの confirm_dialog) %>
-  <!-- 消去(編集のときだけ出す) -->
   <div class="mt-4">
     <%= button_to "このグッズを消去する", good_path(@item), method: :delete,
           form: { data: { turbo_confirm: "「#{@item.name_was}」を消去します。\nこの操作は取り消せません。" } },
@@ -280,5 +218,4 @@
   </div>
 <% end %>
 
-<%# カテゴリの追加・削除のシート(フォームの中にフォームは入れられないので、グッズのフォームの外に置く) %>
 <%= render "goods/category_dialog" %>

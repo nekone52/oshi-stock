@@ -17,7 +17,6 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-# Rails 8.1 の ActiveSupport::JSON はまだ json 3.x の新しい引数仕様に対応していないため、2系に固定する
 gem "json", "~> 2.9"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
@@ -42,11 +41,8 @@ gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.2"
-# image_processing 2 からは、画像を加工する部分(ruby-vips)を自分で書く必要がある
-# require: false で、libvips がない場所(CI の scan_js など)では起動時に読み込まないようにする
 gem "ruby-vips", require: false
 
-# Active Storage の添付ファイルのチェック(画像の種類・大きさ)
 gem "active_storage_validations"
 
 group :development, :test do
@@ -66,24 +62,19 @@ end
 group :development, :test do
   gem "rspec-rails"
   gem "factory_bot_rails"
-  # テスト・サンプルデータ用のダミーの値を作る
   gem "faker"
 end
 gem "tailwindcss-rails"
 
-# エラーメッセージなどを日本語にする
 gem "rails-i18n"
 
-# Active Storageの保存先(S3)用
 gem "aws-sdk-s3", require: false
 
-# メール送信用
 gem "resend"
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  # N+1(いちいち取りに行く)を見つけて「まとめて取れるよ」と教えてくれる見張り役。#30
   gem "bullet"
 end
 
@@ -92,7 +83,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 
-  # テストのカバレッジ(テストがコードの何%を通ったか)を測る。#29
-  # require: false … Rails が起きるときには読みこまず、spec/rails_helper.rb のいちばん上で読みこむ
   gem "simplecov", require: false
 end

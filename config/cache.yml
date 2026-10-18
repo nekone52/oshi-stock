@@ -12,5 +12,4 @@ test:
   <<: *default
 
 production:
-  # MVP ではキャッシュ用のデータベースを使わない(production.rb で memory_store にしている)
   <<: *default

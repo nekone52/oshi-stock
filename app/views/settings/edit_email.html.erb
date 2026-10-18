@@ -1,9 +1,7 @@
-<%# メールアドレスを変える画面(GET /settings/email → settings#edit_email)。#125 %>
 <% content_for :interactive, true %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-10">
 
-  <%# 設定画面に戻る %>
   <%= link_to settings_path, class: "inline-flex h-11 items-center gap-1.5 pt-2 text-[15px] font-bold text-ink-soft transition hover:text-ink" do %>
     ‹ 設定
   <% end %>
@@ -11,9 +9,7 @@
     <h1 class="font-display text-2xl font-bold text-ink">メールアドレスの変更</h1>
   </header>
 
-  <%# 封筒:ログイン中の本人(Current.user)のデータを、PATCH /settings/email(settings#update_email)に送る %>
   <%= form_with model: Current.user, url: settings_email_path, method: :patch, class: "flex flex-col gap-3 rounded-2xl border border-line bg-white p-4" do |f| %>
-    <!-- 入力ミスのお知らせ(保存できなかったときだけ出す) -->
     <% if Current.user.errors.any? %>
       <div role="alert" class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">
         <ul class="list-disc space-y-0.5 pl-4">
@@ -24,29 +20,24 @@
       </div>
     <% end %>
 
-    <%# 今のメールアドレス(保存できなかったときも、データベースに入っている今のものを出す) %>
     <p class="flex flex-col gap-1 text-[15px] text-ink">
       <span class="font-bold">今のメールアドレス</span>
       <span class="break-all text-ink-soft"><%= Current.user.email_address_in_database %></span>
     </p>
 
-    <%# 手紙①:新しいメールアドレス %>
     <label class="flex flex-col gap-1">
       <span class="flex items-center gap-1.5 text-[15px] font-bold text-ink">新しいメールアドレス <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span></span>
       <%= f.email_field :email_address, value: (Current.user.errors.any? ? Current.user.email_address : ""), required: true, autocomplete: "email", placeholder: "example@mail.com", class: "rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
     </label>
 
-    <%# 手紙②:今のパスワード(本人か確かめる。ログインしたままのスマホを、ほかの人にさわられても変えられないように) %>
     <label class="flex flex-col gap-1">
       <span class="flex items-center gap-1.5 text-[15px] font-bold text-ink">今のパスワード <span class="rounded-md bg-required px-1.5 py-0.5 text-[11px] font-bold text-white">必須</span></span>
-      <!-- 目のアイコンを押すと、伏せ字と文字を切り替える(password_visibility_controller.js) -->
       <div class="relative" data-controller="password-visibility">
         <%= f.password_field :password_challenge, required: true, autocomplete: "current-password", placeholder: "••••••••", maxlength: 72, data: { password_visibility_target: "input" }, class: "w-full pr-11 rounded-lg border border-line bg-bg px-3 py-2 text-base placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
         <%= render "shared/password_visibility_button" %>
       </div>
     </label>
 
-    <%# ポスト:送るボタン %>
     <%= f.submit "変更する", class: "mt-1 w-full cursor-pointer rounded-full bg-accent px-6 py-2.5 font-display text-sm font-bold text-on-accent transition hover:-translate-y-0.5 hover:shadow-md active:scale-95" %>
   <% end %>
 </div>

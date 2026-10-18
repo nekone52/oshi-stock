@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 推しキャラの編集の画面と、保存
 RSpec.describe "推しキャラの編集", type: :request do
   let(:user) { create(:user) }
 
@@ -84,7 +83,7 @@ RSpec.describe "推しキャラの編集", type: :request do
         expect(response).to have_http_status(:unprocessable_content)
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present
-        expect(character.reload.icon).not_to be_attached # エラーのときは、まだ保存しない
+        expect(character.reload.icon).not_to be_attached
 
         patch oshi_path(character), params: { character: { name: "ヒナタ" }, kept_image: kept_image }
         expect(character.reload.icon).to be_attached

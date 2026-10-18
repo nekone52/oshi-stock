@@ -1,4 +1,2 @@
-<%# カテゴリを削除できたときの画面の書きかえ(画面は移らない) %>
-<%# グッズのフォームのチップと、シートの行を消す %>
 <%= turbo_stream.remove dom_id(@category, :chip) %>
 <%= turbo_stream.remove dom_id(@category) %>

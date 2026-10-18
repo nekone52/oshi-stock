@@ -1,5 +1,3 @@
-# ホーム画面のテストで使う、推しとグッズの見本(spec/requests/top/ のテストで共通)
-# include_context "ホームの推しとグッズ" と書くと、この準備をしてからテストが動く
 RSpec.shared_context "ホームの推しとグッズ" do
   let!(:hinata) { create(:character, user: user, name: "ヒナタ") }
   let!(:aoi) { create(:character, user: user, name: "アオイ") }

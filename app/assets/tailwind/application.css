@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* 色とフォントの名前を定義する(例: bg-accent、text-ink、font-display として使える) */
 @theme {
   --color-bg: #FBF5F2;
   --color-ink: #2B1E2A;
@@ -11,20 +10,14 @@
   --color-accent: #E8577A;
   --color-accent-strong: #D43F63;
   --color-accent-soft: #FBE1E7;
-  /* アクセント色の上に置く文字の色(text-on-accent)。最初は白。明るいテーマの色を選んだ人だけ、黒に入れかわる */
   --color-on-accent: #FFFFFF;
   --color-paid: #2E8A6C;
   --color-paid-bg: #DFF1E7;
-  /* 「届いた」ボタンの色。推しの色(テーマ)を変えてもピンクのまま(theme_picker が書きかえない名前にしている) */
-  /* 【自分の言葉】色の指定!(テーマに関係なく、届いたはいつもピンク) */
   --color-received: #E8577A;
   --color-received-strong: #D43F63;
-  /* 「必須」バッジの色。推しの色(テーマ)を変えてもピンクのまま(届いたとは別の名前にして、片方を変えてもほかに広がらないようにしている) */
-  /* 【自分の言葉】accent はアクセントカラーの指定。必須は推しカラーで変更しないため、accent を使わない */
   --color-required: #D43F63;
   --color-unpaid: #A9741C;
   --color-unpaid-bg: #FBEBD2;
-  /* 退会・削除など、取り消せない操作の色 */
   --color-danger: #D93636;
   --color-danger-bg: #FDE4E4;
   --color-chara-a: #E8577A;
@@ -35,7 +28,6 @@
   --color-chara-c-soft: #E9E2FA;
   --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
   --font-body: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
-  /* お知らせが出たときに、光の線が左から右へスッと走る(animate-shine として使える) */
   --animate-shine: shine 0.9s ease-out 0.15s both;
 
   @keyframes shine {
@@ -47,8 +39,6 @@
     }
   }
 
-  /* 「支払った」「届いた」のお知らせだけ、マスコットと吹き出しがぽよんと出る(animate-poyon として使える。#92) */
-  /* 小さいところ(0.7倍)から、少し大きく(1.06倍)なって、元の大きさにもどる */
   --animate-poyon: poyon 0.42s cubic-bezier(0.3, 1.5, 0.5, 1) both;
 
   @keyframes poyon {

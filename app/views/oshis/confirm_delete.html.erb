@@ -1,18 +1,12 @@
-<%# 推しキャラ一覧の上に、削除の確認を重ねて表示する(一覧の @characters と、消す推しの @character はコントローラーで用意) %>
 <%= render template: "oshis/index" %>
 
-<!-- 削除の確認 -->
 <div class="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 px-6">
   <div role="alertdialog" aria-labelledby="delete-title" class="flex w-full max-w-[340px] flex-col gap-3 rounded-2xl bg-white p-5">
     <h2 id="delete-title" class="font-display text-lg font-bold text-ink">消去しますか？</h2>
-    <!-- 消す推しの名前 -->
     <p class="text-sm text-ink">「<%= @character.name %>」を消去します。この操作は取り消せません。</p>
-    <%# グッズの件数は、グッズ機能(#23)ができたら出す %>
     <p class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">このキャラのグッズもすべて消去されます</p>
-    <!-- やめる(一覧に戻る)・削除する -->
     <div class="mt-1 grid grid-cols-2 gap-2">
       <%= link_to "やめる", oshis_path, class: "flex h-11 items-center justify-center rounded-xl border border-line bg-white text-sm text-ink" %>
-      <%# 本当に消すボタン(DELETE /oshis/:id → oshis#destroy)。消すときは link_to ではなく button_to を使う %>
       <%= button_to "消去する", oshi_path(@character), method: :delete, form_class: "contents", class: "h-11 w-full cursor-pointer rounded-xl bg-danger text-sm font-bold text-white" %>
     </div>
   </div>

@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# グッズの消去
 RSpec.describe "グッズの消去", type: :request do
   let(:user) { create(:user) }
 
@@ -18,7 +17,6 @@ RSpec.describe "グッズの消去", type: :request do
       expect(response).to redirect_to(new_session_path)
     end
 
-    # 消去のあとは、グッズの状態で決めた一覧へ(詳細の「<」と同じ。くわしい分け方は spec/helpers/items_helper_spec.rb)
     it "自分のほしい物を消去して、グッズ一覧(ほしい物)へ移る(303)" do
       sign_in_as(user)
       expect { delete good_path(item) }.to change(Item, :count).by(-1)

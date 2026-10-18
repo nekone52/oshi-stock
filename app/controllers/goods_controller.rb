@@ -1,58 +1,39 @@
 class GoodsController < ApplicationController
-  # 選んだ画像を、エラーなどのあとも引きつぐ部品(concerns/keeps_chosen_image.rb)
   include KeepsChosenImage
 
-  # 1つのグッズに対するアクションは、最初に「自分のグッズの中から」探しておく(ほかの人のグッズは見つからず 404)
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid ]
 
-  # グッズの一覧(ホームの「ほしい物 →」「グッズ一覧 →」から来る。状態・推し・カテゴリ・検索でしぼれる)
   def index
-    # ① 自分のグッズを、新しい順に取ってくる
     @items = Current.user.items.includes(:character, :category, image_attachment: :blob).order(created_at: :desc)
-    # ② URL の status(wanted・reserved・owned)で、しぼる(決まっていない値は無視する)
     @status = params[:status] if Item.statuses.key?(params[:status])
     @items = @items.where(status: @status) if @status.present?
-    # 予約中は、ホームと同じく未払いを先に、支払い期限の近い順に並べる
     @items = @items.unpaid_first if @status == "reserved"
 
-    # 推しの絞り込み(ホームで推しを選んでいたら、それを引きつぐ。自分の推しの中からだけ探す)
     @selected_character = Current.user.characters.find_by(id: params[:character_id]) if params[:character_id].present?
     @items = @items.where(character: @selected_character) if @selected_character
-    # 検索(グッズ名にその言葉をふくむもの)
     @query = params[:q].to_s.strip
     @items = @items.where("items.name ILIKE ?", "%#{Item.sanitize_sql_like(@query)}%") if @query.present?
 
-    # カテゴリのチップ(今しぼっているグッズの中で、カテゴリごとの件数)。チップを押すと、そのカテゴリだけになる
     @category_counts = @items.reorder(nil).group(:category_id).count
     @categories = Current.user.categories.order(:created_at)
     @selected_category = @categories.find_by(id: params[:category_id]) if params[:category_id].present?
     @items = @items.where(category: @selected_category) if @selected_category
   end
 
-  # グッズの詳細(グッズのカード。購入先・金額・発売・支払いなど、買ったときの記録を見る)
   def show
   end
 
-  # グッズを登録の画面を開く(入力フォーム用)
   def new
-    # フォームを組み立てるための、空のグッズ(個数は1、状態は「ほしい」が最初から入る)
     @item = Item.new
-    # 予約画面の「＋ 予約を登録」から来たときは、URL の status(?status=reserved)で状態を選んでおく
-    # 🛡️ URL は書きかえられるので、決まった3つ(wanted・reserved・owned)のどれかのときだけ使う(一覧の index と同じ)
-    # 【自分の言葉】(if のあと)URL についてきた status が、その3つの状態(wanted・reserved・owned)のどれかをきいてる
     @item.status = params[:status] if Item.statuses.key?(params[:status])
     set_form_choices
   end
 
-  # 「登録する」ボタンを押したときの保存処理
   def create
     @item = Item.new(item_params)
     assign_character_and_category
     use_kept_image(@item, :image)
 
-    # 自分のグッズに同じ名前のものがあって、かつ、まだ「それでも登録する」を押していなかったら
-    # 保存せずに、警告と一緒に登録画面をもう一度出す(ダブり買いを防ぐ。布教用・保存用なら、そのまま登録できる)
-    # 同じ名前のグッズ(警告の中に、推しと状態を出す)
     @duplicate_items = Current.user.items.includes(:character).where(name: @item.name)
     if @duplicate_items.exists? && params[:confirm_duplicate].blank?
       keep_chosen_image(@item, :image)
@@ -62,66 +43,44 @@ class GoodsController < ApplicationController
     end
 
     if @item.save
-      # 保存に成功:登録したグッズの詳細へ移動し、完了メッセージを表示
       redirect_to good_path(@item), notice: "グッズを登録しました"
     else
-      # 保存に失敗(名前が空・推しを選んでいないなど):入力画面を再表示し、エラーメッセージを画面に残す
       keep_chosen_image(@item, :image)
       set_form_choices
       render :new, status: :unprocessable_content
     end
   end
 
-  # グッズを編集の画面を開く
   def edit
     set_form_choices
   end
 
-  # 「保存する」ボタンを押したときの更新処理
   def update
-    # 送られてきた中身を入れる(まだ保存しない。推しとカテゴリをつなげてから保存するため)
     @item.assign_attributes(item_params)
     assign_character_and_category
     use_kept_image(@item, :image)
 
-    # 保存して、成功・失敗で分ける
     if @item.save
-      # 更新に成功:そのグッズの詳細へ戻り、完了メッセージを表示
       redirect_to good_path(@item), notice: "グッズを更新しました"
     else
-      # 更新に失敗(名前が空など):編集画面を再表示し、エラーメッセージを画面に残す
       keep_chosen_image(@item, :image)
       set_form_choices
       render :edit, status: :unprocessable_content
     end
   end
 
-  # 編集画面の「このグッズを消去する」を押したときの消去処理(確認はアプリの確認ダイアログ。confirm_dialog.js)
   def destroy
     @item.destroy
-    # 消去のあとは、グッズの状態で決めた一覧へ移動し、完了メッセージを表示(詳細の「<」と同じ道具。items_helper.rb)
-    # 消したあとでも、@item のお皿には消す前の中身(状態など)がのっているので、道具に見せて戻り先を聞ける
-    # コントローラーから道具箱(ヘルパー)を使うときは、前に helpers. をつける
-    # status: :see_other(303)は「次は GET で見に行ってね」の合図(DELETE のまま一覧へ行かないように)
-    # 【自分の言葉】消したあと、このグッズ(の状態)をみて、前の画面(一覧)に戻る
     redirect_to helpers.back_path_for(@item), status: :see_other, notice: "グッズを消去しました"
   end
 
-  # ホームの「届いた」ボタン:所持に変える(支払い済みかどうかは、そのまま残す)
   def receive
-    # enum のおかげで、「所持に変えて保存」が1行で書ける
     @item.owned!
-    # 押した画面(ホーム)に戻る。推しで絞り込んでいても、そのまま戻れる
-    # 届いたのはうれしい瞬間なので、お祝いのお知らせ(celebrate)にする。マスコットがぽよんと出る(#92)
     redirect_back_or_to root_path, celebrate: "「#{@item.name}」を所持グッズに移しました"
   end
 
-  # ホームの「支払った」ボタン:押すたびに、支払い済み ⇔ 未払い を切り替える
   def toggle_paid
-    # toggle!(:paid):Rails が用意している「true ⇔ false を反対にして保存する」メソッド
-    # (前は @item.update(paid: !@item.paid) と書いていた。中身は同じ)
     @item.toggle!(:paid)
-    # 支払い済みにしたときだけお祝い(celebrate)でぽよん。未払いに戻したときは、ふつうのお知らせ(notice)のまま(#92)
     if @item.paid
       redirect_back_or_to root_path, celebrate: "支払い済みにしました"
     else
@@ -131,29 +90,21 @@ class GoodsController < ApplicationController
 
   private
 
-  # URL の番号のグッズを、ログイン中ユーザーのグッズの中から探す(推しキャラを通して持っているグッズ)
   def set_item
     @item = Current.user.items.find(params[:id])
   end
 
-  # 推しとカテゴリは、フォームから送られた番号をそのまま使わない
-  # ログイン中ユーザーの推し・カテゴリの中から探してつなげる(ほかの人の番号なら見つからず nil になる)
-  # find ではなく find_by:見つからないときに 404 にせず、フォームにエラーを出すため
   def assign_character_and_category
     @item.character = Current.user.characters.find_by(id: params.dig(:item, :character_id))
     @item.category = Current.user.categories.find_by(id: params.dig(:item, :category_id))
   end
 
-  # フォームの選択肢(推し・カテゴリ)を用意する。ログイン中ユーザーのものだけ
   def set_form_choices
     @characters = Current.user.characters.order(:created_at)
     @categories = Current.user.categories.order(:created_at)
   end
 
-  # ストロングパラメーター:許可した項目だけを取り出す安全フィルター
-  # character_id と category_id は入れない(上の create で、自分の推し・カテゴリから探してつなげるため)
   def item_params
-    # 【自分の言葉】ここ(名簿)にないと、受付で捨てられて保存されない → だからカードにも表示されない(target_quantity を足した。#62)
     params.expect(item: [ :name, :url, :release_month, :release_period, :shop_name, :price, :quantity,
                           :status, :paid, :payment_deadline, :target_quantity, :memo, :image ])
   end

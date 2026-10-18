@@ -88,7 +88,6 @@ RSpec.describe Character, type: :model do
       create(:item, character: character, status: :owned, price: 550, quantity: 3)
       create(:item, character: character, status: :owned, price: 5500)
       create(:item, character: character, status: :owned, price: nil)
-      # ほかの推しのグッズは数えない
       create(:item, status: :owned, price: 9999)
 
       expect(character.item_counts).to eq({ "wanted" => 1, "reserved" => 1, "owned" => 3 })

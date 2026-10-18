@@ -33,9 +33,7 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
-
 /app/assets/builds/*
 !/app/assets/builds/.keep
 
-# テストのカバレッジのレポート(SimpleCov。テストを動かすたびに作り直すので、GitHub には上げない)
 /coverage/

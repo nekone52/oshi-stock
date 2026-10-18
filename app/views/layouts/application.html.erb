@@ -24,57 +24,35 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <%# 【テーマの色】ログインしている人が選んだ色で、ボタンやリンクの色を入れかえる(theme_helper.rb の theme_style) %>
-  <%# <html> ではなく <body> に置く。Turbo は画面を切りかえるとき <body> だけを入れかえるので、保存した色がすぐ反映される %>
   <body class="bg-bg font-body text-ink antialiased" style="<%= theme_style %>">
-    <!-- お知らせ(登録しました・回数が多すぎます など。数秒で読める位置に出して、1.5秒たったら0.5秒かけて消す。flash_controller.js) -->
-    <%# お祝い(支払った・届いた)のときだけ、マスコット(女の子・男の子のどちらかをランダム)が吹き出しでしゃべる形 %>
-    <%# ほかのお知らせは、マスコットなしの小さい吹き出しだけ(毎日なんども見るので、じゃまにならないように。#92) %>
-    <%# 吹き出しが出るときに、光の線が左から右へキラッと走る(animate-shine。application.css で定義) %>
     <% flash.each do |type, message| %>
-      <%# できたときのお知らせ = notice(ふつう)と celebrate(お祝い。支払った・届いた)。どちらも緑のキラキラで出す %>
-      <%# 【自分の言葉】通知はしないといけない。けどその表示にポヨンとしてから %>
       <% good = type.in?(%w[notice celebrate]) %>
       <% celebrate = type == "celebrate" %>
-      <%# お祝いのときだけ、マスコットと吹き出しがぽよんと出る(animate-poyon。application.css で定義)。「動きを少なくする」設定のときは動かさない(motion-safe) %>
-      <%# pointer-events-none = お知らせが出ていても、押した指は下に通す(左上の「<」などがすぐ押せる。#92) %>
-      <%# top-18(上から72px)= 「<」と画面の名前の行(約68px)をよけて、そのすぐ下に出す(#92) %>
       <div role="status" data-controller="flash" class="pointer-events-none fixed inset-x-0 top-18 z-50 mx-auto flex w-[calc(100%-2rem)] max-w-[398px] items-center justify-center gap-3 transition-opacity duration-500 <%= "motion-safe:animate-poyon" if celebrate %>">
         <% if celebrate %>
-          <!-- マスコット(お祝いのときだけ。どちらが出るかは、毎回ランダム) -->
           <%= image_tag %w[mascot_girl.png mascot_boy.png].sample, alt: "", class: "h-24 w-24 shrink-0 rounded-full bg-white object-contain shadow-lg" %>
         <% end %>
-        <!-- 吹き出し(背景は白。できたか・うまくいかなかったかは、アイコンの色で分かる) -->
-        <%# お祝いのときはマスコットのとなりいっぱいに広げる。ふつうのときは文字の長さだけの小さい吹き出しを、真ん中に出す %>
         <div class="relative min-w-0 rounded-2xl bg-white shadow-lg <%= "flex-1" if celebrate %>">
           <% if celebrate %>
-            <%# 吹き出しのしっぽ(マスコットのほうを向く三角。マスコットがいるときだけ) %>
             <span class="absolute top-1/2 -left-2 h-4 w-4 -translate-y-1/2 rotate-45 bg-white" aria-hidden="true"></span>
           <% end %>
-          <%# 文字は、見出しと同じ丸っこいフォント(font-display = Zen Maru Gothic)。ふつうのときは少し小さく %>
           <div class="relative flex items-center gap-2.5 overflow-hidden rounded-2xl font-display font-bold <%= celebrate ? "px-5 py-5 text-lg" : "px-4 py-3 text-base" %> <%= good ? "text-ink" : "text-danger" %>">
-            <!-- 左のアイコン(できたとき:緑のキラキラ / うまくいかなかったとき:赤のびっくりマーク) -->
             <% if good %>
               <svg class="h-8 w-8 shrink-0 text-paid" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2-2.2-.8 2.2-.8z"/></svg>
             <% else %>
               <svg class="h-8 w-8 shrink-0 text-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>
             <% end %>
             <span><%= message %></span>
-            <!-- キラッと走る光の線(読み上げには関係ないので aria-hidden) -->
             <span class="pointer-events-none absolute inset-y-0 left-0 w-1/3 animate-shine bg-gradient-to-r from-transparent via-accent-soft/80 to-transparent" aria-hidden="true"></span>
           </div>
         </div>
       </div>
     <% end %>
 
-    <!-- 確認ダイアログ(消去する前に出す。confirm_dialog.js がメッセージを入れて開く) -->
-    <%# method="dialog" のフォーム:ボタンを押すと、その value(confirm / cancel)を返してダイアログが閉じる %>
     <dialog id="confirm_dialog" aria-labelledby="confirm_dialog_title" class="m-auto w-[calc(100%-3rem)] max-w-[340px] rounded-2xl bg-white p-0 shadow-xl backdrop:bg-ink/40">
       <form method="dialog" class="flex flex-col items-center gap-3 px-5 pt-5 pb-5 text-center">
-        <!-- マスコット2人の絵(かざりなので、読み上げでは飛ばす) -->
         <%= image_tag "confirm_delete.png", alt: "", class: "w-full max-w-[240px]" %>
         <h2 id="confirm_dialog_title" class="font-display text-xl font-bold text-ink"><span class="text-danger">消去</span>しますか？</h2>
-        <!-- 何を消去するか(ボタンの data-turbo-confirm に書いたメッセージ) -->
         <p data-confirm-message class="whitespace-pre-line text-sm leading-relaxed text-ink"></p>
         <div class="mt-1 grid w-full grid-cols-2 gap-2">
           <button value="cancel" class="h-11 cursor-pointer rounded-xl border border-line bg-white text-sm text-ink">やめる</button>
@@ -83,8 +61,6 @@
       </form>
     </dialog>
 
-    <%# まだ見た目だけのモックの画面は、inert で入力・ボタン・リンクを効かなくしている %>
-    <%# 本物にした画面は content_for :interactive を書くと、押せるようになる %>
     <div <%= "inert" unless content_for?(:interactive) %>>
       <%= yield %>
     </div>

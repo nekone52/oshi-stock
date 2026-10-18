@@ -1,19 +1,14 @@
-<%# この画面は本物のデータを表示するので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
-<%# 今の絞り込み(状態・推し・検索・カテゴリ)。タブやチップのリンクで引きつぐ %>
 <% filters = { status: @status, character_id: @selected_character&.id, q: @query.presence, category_id: @selected_category&.id } %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-10">
 
-  <!-- ヘッダー(見出しと追加ボタン) -->
-  <%# ホームに戻る(下のメニューのかわり) %>
   <%= render "shared/home_link" %>
   <header class="flex items-center justify-between gap-3 pt-1 pb-3">
     <h1 class="font-display text-2xl font-bold text-ink">グッズ</h1>
     <%= link_to "＋ グッズを登録", new_good_path, class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
   </header>
 
-  <!-- 状態の切り替え(すべて / ほしい物 / 予約中 / 所持)。GET /goods?status=... -->
   <nav aria-label="状態で絞り込み" class="grid grid-cols-4 gap-1 rounded-xl bg-accent-soft/60 p-1">
     <% [ [ nil, "すべて" ], *ItemsHelper::STATUS_LABELS.to_a ].each do |status, label| %>
       <% current = @status == status %>
@@ -22,7 +17,6 @@
     <% end %>
   </nav>
 
-  <!-- 検索欄(グッズ名で探す。今の状態・推しは引きつぐ) -->
   <%= form_with url: goods_path, method: :get, class: "relative mt-3" do |f| %>
     <%= hidden_field_tag :status, @status if @status %>
     <%= hidden_field_tag :character_id, @selected_character.id if @selected_character %>
@@ -30,14 +24,12 @@
     <%= f.search_field :q, value: @query, placeholder: "グッズ名で検索", aria: { label: "グッズ名で検索" }, class: "h-12 w-full rounded-xl border border-line bg-white pr-4 pl-11 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
   <% end %>
 
-  <!-- カテゴリの絞り込み(横にスクロール。件数は、今しぼっているグッズの中の数) -->
   <nav aria-label="カテゴリで絞り込み" class="-mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
     <% total = @category_counts.values.sum %>
     <%= link_to "すべて #{total}", goods_path(filters.merge(category_id: nil).compact), aria: { current: (@selected_category ? nil : "true") },
           class: "flex h-9 shrink-0 items-center rounded-full px-3.5 text-[13px] #{@selected_category ? 'border border-line bg-white text-ink' : 'bg-ink font-bold text-white'}" %>
     <% @categories.each do |category| %>
       <% count = @category_counts[category.id].to_i %>
-      <%# 1つもないカテゴリは出さない(チップが増えすぎないように) %>
       <% next if count.zero? && category != @selected_category %>
       <% selected = category == @selected_category %>
       <%= link_to "#{category.name} #{count}", goods_path(filters.merge(category_id: category.id).compact), aria: { current: (selected ? "true" : nil) },
@@ -45,7 +37,6 @@
     <% end %>
   </nav>
 
-  <!-- 今の絞り込みの説明と件数(推しで絞り込んでいたら、その推しの名前と、絞り込みをやめるリンク) -->
   <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-[13px] text-ink-soft">
     <span>
       <%= @selected_character ? @selected_character.name : "すべての推し" %>
@@ -58,18 +49,14 @@
   </div>
 
   <% if @items.any? %>
-    <!-- グッズのカード(2列。押すと、そのグッズの詳細へ) -->
     <div class="mt-2 grid grid-cols-2 gap-3">
       <% @items.each do |item| %>
-        <%# 枠は推しの色(#85。ホームのカードと同じ書き方。グッズ1件分の名前が item なので、そのまま写せる) %>
         <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "flex flex-col overflow-hidden rounded-2xl bg-white" do %>
           <div class="relative">
             <%= render "top/item_thumb", item: item, css: "h-24" %>
-            <%# 「すべて」のときは、状態のバッジを出す %>
             <% unless @status %>
               <span class="absolute top-2 left-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm"><%= status_label(item) %></span>
             <% end %>
-            <%# 支払っていない予約中・所持には「未払い」 %>
             <% if !item.paid && !item.wanted? %>
               <span class="absolute right-2 bottom-2 rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
             <% end %>

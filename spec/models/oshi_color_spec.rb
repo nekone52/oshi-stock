@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 推しの色のお掃除係(明るすぎ・暗すぎ・ギラギラの色を、落ち着いた色に直す)
 RSpec.describe OshiColor do
   describe ".soften" do
     it "おすすめの24色は、どれも直さずにそのまま" do
@@ -10,12 +9,12 @@ RSpec.describe OshiColor do
     end
 
     it "明るすぎる色は、落ち着いた色に直す" do
-      expect(described_class.soften("#FFFF00")).to eq("#B8B521") # まっ黄色 → マスタードくらい
-      expect(described_class.soften("#FFFFFF")).to eq("#CCC9CC") # まっ白 → ペールグレーくらい
+      expect(described_class.soften("#FFFF00")).to eq("#B8B521")
+      expect(described_class.soften("#FFFFFF")).to eq("#CCC9CC")
     end
 
     it "暗すぎる色は、見えるくらいに明るくする" do
-      expect(described_class.soften("#000000")).to eq("#3D3D3D") # まっ黒 → チャコールくらい
+      expect(described_class.soften("#000000")).to eq("#3D3D3D")
     end
 
     it "鮮やかすぎる青は、チカチカしないようにおさえる" do

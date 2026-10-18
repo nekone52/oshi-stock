@@ -1,21 +1,13 @@
-<%# 【予約の画面】決まった見た目は、ノーション「47」にまとめてある %>
-<%# 決まったこと:発売月ごとに見出しで分ける / 発売日待ちは、上に小さいお知らせ + いちばん下の点線の箱にたたむ %>
-<%#             「支払った」「届いた」は、どちらも白地に色の枠(緑・¥ / ピンク・箱)で、押しまちがいを防ぐ %>
-<%# ボタンが本物になったので、押せるようにする(レイアウトの inert を外す) %>
 <% content_for :interactive, true %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-10">
 
-  <!-- ヘッダー(見出しと追加ボタン) -->
-  <%# ホームに戻る(下のメニューのかわり) %>
   <%= render "shared/home_link" %>
   <header class="flex items-center justify-between gap-3 pt-1 pb-3">
     <h1 class="font-display text-2xl font-bold text-ink">予約</h1>
-    <%# 本物の登録はグッズ登録のフォームを使う。?status=reserved をつけて「予約中」を選んだ状態で開く %>
     <%= link_to "＋ 予約を登録", new_good_path(status: "reserved"), class: "inline-flex h-11 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
   </header>
 
-  <!-- これから支払う金額(本物。数字はコントローラーのお皿から。期限7日以内は、あるときだけ出す) -->
   <section aria-label="支払いのまとめ" class="flex flex-col gap-2.5 rounded-2xl border border-line bg-white p-4 text-ink">
     <span class="text-[13px] text-ink-soft">これから支払う金額</span>
     <span class="font-display text-[32px] leading-none font-bold">¥<%= number_with_delimiter(@unpaid_total) %></span>
@@ -28,16 +20,8 @@
     </div>
   </section>
 
-  <!-- 絞り込み -->
-  <%# 押すと、同じ予約画面に付せん(?filter=〇〇)を貼って、ひらき直す。「すべて」は付せんなし %>
-  <%# reservations_path(filter: "unpaid") と書くと、Rails が /reservations?filter=unpaid に変えてくれる %>
-  <%# 推しでしぼっているときは、推しの付せん(character_id)も一緒に貼って、推しのしぼりこみを消さない %>
-  <%# 【自分の言葉】キャラクターidは、特定のキャラで絞る(選んでいる推しを、ボタンを押しても消さない) %>
-  <%# 押しているボタンだけ黒い服(選択中)、ほかは白い服。長いクラスを4回書かないように、ここで1回だけ名前をつける %>
   <% selected_class = "inline-flex h-10 shrink-0 items-center rounded-full bg-ink px-4 text-[13px] font-bold text-white" %>
   <% normal_class   = "inline-flex h-10 shrink-0 items-center rounded-full border border-line bg-white px-3.5 text-[13px] text-ink" %>
-  <%# しつもん ? はいのとき : いいえのとき(if を1行で書く形)。いまの付せん(params[:filter])とボタンの付せんが同じなら黒 %>
-  <%# 【自分の言葉】未払いのボタンは、選んだら黒、未選択は白(ほかのボタンも同じ) %>
   <nav aria-label="絞り込み" class="mt-3 flex gap-2 overflow-x-auto">
     <%= link_to "すべて", reservations_path(character_id: params[:character_id]), class: params[:filter].blank? ? selected_class : normal_class %>
     <%= link_to "未払い", reservations_path(filter: "unpaid", character_id: params[:character_id]), class: params[:filter] == "unpaid" ? selected_class : normal_class %>
@@ -45,9 +29,6 @@
     <%= link_to "届いた・未払い", reservations_path(filter: "arrived", character_id: params[:character_id]), class: params[:filter] == "arrived" ? selected_class : normal_class %>
   </nav>
 
-  <%# ホームで選んだ推しでしぼっているときだけ、推しの名前と件数と「やめる」を出す %>
-  <%# 小さい文字だと気づきにくかったので、上の金額の箱と同じ白い角丸の帯にして、名前を大きく太く(推しの色の丸つき) %>
-  <%# 【自分の言葉】(if のあと)選んだ推しがあるときだけ出す。@reserved_items は予約したアイテムなのでちがう %>
   <% if @selected_character %>
     <section aria-label="推しで絞りこみ中" class="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-line bg-white px-4 py-3">
       <div class="flex min-w-0 items-center gap-2.5">
@@ -57,17 +38,13 @@
           <span class="text-[13px] text-ink-soft">予約 <%= @reserved_items.size %>件</span>
         </div>
       </div>
-      <%# やめると、番号なしの /reservations(全員分)にもどる。指で押しやすいボタンの形 %>
       <%= link_to reservations_path, aria: { label: "絞り込みをやめる" }, class: "inline-flex h-10 shrink-0 items-center gap-1 rounded-full border-2 border-ink bg-white px-3.5 text-[13px] font-bold text-ink transition hover:bg-bg active:scale-95" do %>
         やめる <span aria-hidden="true">×</span>
       <% end %>
     </section>
   <% end %>
 
-  <%# 発売日待ち(発売月が空のグッズ)は、コントローラーで @waiting_items によけてある。1件もないときは、お知らせも箱も出さない %>
-  <%# 【自分の言葉】発売日待ちのグッズが1つでもあったら、表示する %>
   <% if @waiting_items.any? %>
-    <!-- 発売日待ちのお知らせ(押すと、いちばん下の点線の箱へ飛ぶ。場所をとらない小さいバー) -->
     <a href="#waiting" class="mt-3 flex items-center gap-2 rounded-full border-[1.5px] border-dashed border-ink-faint bg-white px-4 py-2 text-[13px] text-ink">
       <span class="font-bold">発売日待ち</span>
       <span class="text-xs text-ink-soft"><%= @waiting_items.size %>件</span>
@@ -75,30 +52,24 @@
     </a>
   <% end %>
 
-  <!-- 発売月ごとの予約(本物。箱はコントローラーで発売月ごとに仕分け済み。月の見出しは、スクロールしても上に残る) -->
-  <%# release_month = 発売月(例:2026-10-01。名前は自由で、テーブルの項目名とそろえた) / items = その月のグッズたち %>
   <% @items_by_month.each do |release_month, items| %>
-    <% now = release_month.beginning_of_month == Date.current.beginning_of_month %><%# 今月かどうか(今月だけ色を変えて「今月」のしるしをつける) %>
+    <% now = release_month.beginning_of_month == Date.current.beginning_of_month %>
     <section class="mt-2">
       <div class="sticky top-0 z-10 flex items-baseline gap-2 bg-bg px-1 pt-4 pb-2">
-        <%# 【自分の言葉】予約している発売日から、年を自動で入力する。月の数字も取り出す(2027年11月発売 など)。来年の予約と見分けるため %>
         <span class="font-display text-[17px] font-bold <%= now ? "text-accent-strong" : "text-ink" %>"><span class="text-xs text-ink-soft"><%= release_month.year %>年</span><%= release_month.month %>月発売</span>
         <% if now %>
           <span class="self-center rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-on-accent">今月</span>
         <% end %>
-        <%# 件数と、その月の金額(コントローラーの @month_totals から) %>
         <span class="text-[13px] text-ink-soft"><%= items.size %>件 · ¥<%= number_with_delimiter(@month_totals[release_month]) %></span>
         <span class="h-px flex-1 self-center bg-line"></span>
       </div>
       <ul class="flex flex-col gap-2.5">
-        <%# グッズ1件ずつ、カード(_card)を並べる %>
         <%= render partial: "card", collection: items, as: :item %>
       </ul>
     </section>
   <% end %>
 
   <% if @waiting_items.any? %>
-    <!-- 発売日待ち(いちばん下の点線の箱。ふだんはたたんでおく) -->
     <details id="waiting" class="mt-6 rounded-2xl border-[1.5px] border-dashed border-ink-faint bg-white/50 px-2.5 py-1">
       <summary class="flex cursor-pointer list-none items-center gap-2 px-0.5 py-2.5">
         <span class="font-display text-[15px] font-bold text-ink">発売日待ち</span>
@@ -106,7 +77,6 @@
         <span class="ml-auto text-xs text-ink-soft">ひらく ▼</span>
       </summary>
       <ul class="mb-2.5 flex flex-col gap-2.5">
-        <%# 発売月の中と同じカードを使う %>
         <%= render partial: "card", collection: @waiting_items, as: :item %>
       </ul>
     </details>

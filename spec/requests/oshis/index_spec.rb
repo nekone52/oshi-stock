@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 推しキャラの一覧(名刺)
 RSpec.describe "推しキャラの一覧", type: :request do
   let(:user) { create(:user) }
 
@@ -27,19 +26,16 @@ RSpec.describe "推しキャラの一覧", type: :request do
       expect(response.body).not_to include("ほかの人の推し")
     end
 
-    # 名刺の数(見本の 0 のままになっていたのを本物にした)
     it "名刺に、その推しの「ほしい・予約中・所持」の件数と、持っているグッズの個数が出る" do
       character = create(:character, user: user, name: "ヒナタ")
       create(:item, character: character, status: :wanted)
       create_list(:item, 2, character: character, status: :reserved)
       create(:item, character: character, status: :owned, price: 1650, quantity: 2)
-      # ほかの人のグッズは数えない
       create(:item, character: create(:character, user: create(:user)), status: :owned, quantity: 99)
 
       sign_in_as(user)
       get oshis_path
       body = response.body
-      # 所持は1件だけど、2個持っているので「2個」
       expect(body).to match(%r{所持グッズ <span[^>]*>2</span>個})
       expect(body).to match(%r{ほしい</span><span[^>]*>1</span>})
       expect(body).to match(%r{予約中</span><span[^>]*>2</span>})

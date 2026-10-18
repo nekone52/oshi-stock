@@ -1,23 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 
-// 【支払期限の大きいボタンと、推しストックの色のカレンダー】(#94)
-// HTML では data-controller="deadline-picker" と書いて使う(ファイル名は _、HTML の名札は -)
-// 本物の値は見えない入力(hidden_field)に「2026-10-14」の形で入れる。保存のしくみ(payment_deadline)は今までと同じ
 const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"]
-const ONE_DAY = 86400000 // 1日のミリ秒(24時間 × 60分 × 60秒 × 1000)
+const ONE_DAY = 86400000
 
 export default class extends Controller {
-  // HTML側で名札をつけたものを受け取る
-  //   input:見えない本物の入力 / button:大きいボタン / panel:カレンダーを入れる場所
-  //   text:「10月14日(水)」/ left:「あと3日」/ calMonth・calDay:ボタンの小さいカレンダーの絵
   static targets = ["input", "button", "panel", "text", "left", "calMonth", "calDay"]
 
-  // 画面を開いたときにも、今の値でボタンの表示を作る(編集のときや、入力ミスで画面が戻ってきたときのため)
   connect() {
     this.render()
   }
 
-  // 大きいボタン:押すたびに、カレンダーをひらく ⇔ とじる
   toggle() {
     if (this.panelTarget.hidden) {
       const picked = this.pickedDate()
@@ -31,38 +23,32 @@ export default class extends Controller {
     }
   }
 
-  // 「<」「>」:前の月・次の月へ
   move({ params: { months } }) {
     this.view = new Date(this.view.getFullYear(), this.view.getMonth() + months, 1)
     this.draw()
   }
 
-  // 日にちを押す:その日を入れて、カレンダーを閉じる
   pick({ params: { date } }) {
     this.inputTarget.value = date
     this.render()
     this.close()
   }
 
-  // 「1週間後」「2週間後」:今日から〇日後を入れる
   addDays({ params: { days } }) {
     const date = this.today()
     date.setDate(date.getDate() + days)
     this.pick({ params: { date: this.iso(date) } })
   }
 
-  // 「今月末」:来月の0日 = 今月の最後の日
   endOfMonth() {
     const today = this.today()
     this.pick({ params: { date: this.iso(new Date(today.getFullYear(), today.getMonth() + 1, 0)) } })
   }
 
-  // 「✕ 期限なし」:空にする(保存すると、支払期限なしになる)
   clear() {
     this.pick({ params: { date: "" } })
   }
 
-  // 見えない入力の値を見て、大きいボタンの表示を書きかえる
   render() {
     const date = this.pickedDate()
     if (!date) {
@@ -75,26 +61,20 @@ export default class extends Controller {
     }
 
     const days = this.daysFromToday(date)
-    // 今年なら「10月14日(水)」、ちがう年なら「2027年1月5日(火)」
     const yearLabel = date.getFullYear() === this.today().getFullYear() ? "" : `${date.getFullYear()}年`
     this.textTarget.textContent = `${yearLabel}${date.getMonth() + 1}月${date.getDate()}日(${WEEKDAYS[date.getDay()]})`
     this.leftTarget.textContent = days > 0 ? `あと${days}日` : days === 0 ? "今日まで" : `${-days}日すぎています`
-    // 7日以内は、予約画面の「⚠ 期限が近い」と同じ色で目立たせる
     this.leftTarget.classList.toggle("font-bold", days <= 7)
     this.leftTarget.classList.toggle("text-unpaid", days <= 7)
     this.calMonthTarget.textContent = `${date.getMonth() + 1}月`
     this.calDayTarget.textContent = date.getDate()
   }
 
-  // ---- ここから下は、この係の中だけで使う道具 ----
-
   close() {
     this.panelTarget.hidden = true
     this.buttonTarget.setAttribute("aria-expanded", "false")
   }
 
-  // カレンダー(見出し・曜日・日にち・よく使う期限)を作って、panel に入れる
-  // 今日 = ピンクの丸わく / 7日以内 = うすい茶色 / えらんだ日 = ピンクでぬりつぶし / 日曜 = ピンク・土曜 = 青
   draw() {
     const year = this.view.getFullYear()
     const month = this.view.getMonth()
@@ -121,7 +101,6 @@ export default class extends Controller {
         data-action="deadline-picker#pick" data-deadline-picker-date-param="${this.iso(date)}">${d}</button>`
     }
 
-    // よく使う期限の丸いボタン。「✕ 期限なし」も同じ形の仲間にする(小さい下線の文字だと、ボタンだと気づきにくかったため)
     const chip = "h-10 cursor-pointer rounded-full border border-line bg-white px-3.5 text-sm text-ink"
     const arrow = "grid h-11 w-11 cursor-pointer place-items-center rounded-full border border-line bg-white text-lg text-ink"
     this.panelTarget.innerHTML = `
@@ -146,14 +125,12 @@ export default class extends Controller {
       </div>`
   }
 
-  // 日曜はピンク、土曜は青、ほかはふつうの色
   weekdayColor(weekday, normal) {
     if (weekday === 0) return "text-accent-strong"
     if (weekday === 6) return "text-[#3F72B5]"
     return normal
   }
 
-  // 見えない入力の「2026-10-14」を日付にする(空なら null)
   pickedDate() {
     const value = this.inputTarget.value
     if (!value) return null
@@ -161,18 +138,15 @@ export default class extends Controller {
     return new Date(year, month - 1, day)
   }
 
-  // 日付を「2026-10-14」の形にする
   iso(date) {
     const pad = (n) => String(n).padStart(2, "0")
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
   }
 
-  // 今日から何日後か(過ぎていたらマイナス)
   daysFromToday(date) {
     return Math.round((date - this.today()) / ONE_DAY)
   }
 
-  // 今日の0時0分(「あと何日」を、時間のずれなしで数えるため)
   today() {
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), now.getDate())

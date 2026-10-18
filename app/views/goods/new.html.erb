@@ -1,13 +1,8 @@
-<%# この画面は本物のフォームなので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-32">
 
-  <!-- ヘッダー(戻るとタイトル) -->
   <header class="flex items-center gap-1 pt-4 pb-2">
-    <%# 「<」の戻り先:?status= つきで来たとき(予約画面の「＋ 予約を登録」など)は、その状態の一覧へ(道具は items_helper.rb) %>
-    <%# ついていないとき(ホーム・グッズ一覧の「＋ グッズを登録」)はホームへ。最初から「ほしい物」が選ばれているので、状態だけで決めない %>
-    <%# 3つのどれかかの確かめ方は、コントローラーの new と同じ(Item.statuses.key?) %>
     <% back_path = Item.statuses.key?(params[:status]) ? back_path_for(@item) : root_path %>
     <%= link_to back_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
       <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
@@ -15,6 +10,5 @@
     <h1 class="font-display text-xl font-bold text-ink">グッズを登録</h1>
   </header>
 
-  <!-- グッズの登録フォーム(送り先は POST /goods → goods#create。中身は goods/_form.html.erb) -->
   <%= render "goods/form", url: goods_path, submit_label: "登録する" %>
 </div>

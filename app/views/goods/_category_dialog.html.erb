@@ -1,6 +1,3 @@
-<%# カテゴリの追加・消去のシート(グッズのフォームの「＋ 追加・削除」で開く。dialog_controller.js) %>
-<%# グッズのフォームの「外」に置く(フォームの中にフォームは入れられないため) %>
-<%# 追加・削除は Turbo Stream で、画面を移らずにその場で反映する(入力中のグッズの内容は消えない) %>
 <dialog id="category_dialog" data-controller="dialog" data-action="click->dialog#closeOnBackdrop" aria-labelledby="category-dialog-title" class="mx-auto mt-auto mb-0 w-full max-w-[430px] rounded-t-2xl bg-white p-0 backdrop:bg-ink/40">
   <div class="flex flex-col gap-4 px-5 pt-5 pb-8">
     <div class="flex items-center justify-between">
@@ -10,8 +7,6 @@
       </button>
     </div>
 
-    <!-- カテゴリを追加(送り先は POST /categories → categories#create) -->
-    <%# 追加できたら、入力欄を空にする(dialog#resetForm) %>
     <%= form_with model: Category.new, url: categories_path, data: { action: "turbo:submit-end->dialog#resetForm" } do |f| %>
       <div class="flex flex-col gap-1.5">
         <%= f.label :name, "カテゴリ名", class: "text-[13px] font-bold text-ink" %>
@@ -19,12 +14,10 @@
           <%= f.text_field :name, required: true, maxlength: 20, placeholder: "例：うちわ", class: "h-12 min-w-0 flex-1 rounded-xl border border-line bg-white px-3 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none" %>
           <%= f.submit "追加する", class: "h-12 shrink-0 cursor-pointer rounded-xl bg-accent px-4 text-sm font-bold text-on-accent transition hover:bg-accent-strong active:scale-95" %>
         </div>
-        <!-- 追加できなかったときのお知らせ(同じ名前がある・空など。Turbo Stream で中身を入れる) -->
         <div id="category_errors"></div>
       </div>
     <% end %>
 
-    <!-- 今あるカテゴリ(消去ボタン付き) -->
     <div class="flex flex-col gap-1">
       <p class="text-[13px] font-bold text-ink">今あるカテゴリ</p>
       <ul id="category_rows" class="divide-y divide-line">

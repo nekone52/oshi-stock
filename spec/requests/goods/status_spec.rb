@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# ホームの「届いた」「支払った」のワンタップの切り替え
 RSpec.describe "グッズの届いた・支払った", type: :request do
   let(:user) { create(:user) }
 

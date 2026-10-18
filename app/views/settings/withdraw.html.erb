@@ -1,7 +1,5 @@
-<%# 設定画面の上に、退会の確認を重ねて表示する %>
 <%= render template: "settings/show" %>
 
-<!-- 退会の確認 -->
 <div class="fixed inset-0 z-40 flex items-center justify-center bg-ink/40 px-6">
   <div role="alertdialog" aria-labelledby="withdraw-title" class="flex w-full max-w-[340px] flex-col gap-3 rounded-2xl bg-white p-5">
     <h2 id="withdraw-title" class="font-display text-lg font-bold text-ink">退会しますか？</h2>
@@ -9,8 +7,6 @@
     <p class="rounded-lg bg-danger-bg px-3 py-2 text-[13px] text-danger">登録した推し・グッズ・カテゴリ・画像も、すべて削除されます</p>
     <div class="mt-1 grid grid-cols-2 gap-2">
       <%= link_to "いいえ", settings_path, class: "flex h-11 items-center justify-center rounded-xl border border-line bg-white text-sm text-ink" %>
-      <%# 押すと退会する(DELETE /settings/withdraw → settings#destroy)。取り消せない操作なので、赤(danger)のボタン %>
-      <%# form_class: "contents" で、ボタンを包むフォームの箱をなくして、「いいえ」と横にならべる %>
       <%= button_to "はい", withdraw_path, method: :delete, form_class: "contents", class: "h-11 w-full cursor-pointer rounded-xl bg-danger text-sm font-bold text-white" %>
     </div>
   </div>

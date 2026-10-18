@@ -19,7 +19,6 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-
 development:
   <<: *default
   database: app_development
@@ -64,6 +63,5 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  # Render の PostgreSQL の接続先(render.yaml で DATABASE_URL を渡す)
   <<: *default
   url: <%= ENV["DATABASE_URL"] %>

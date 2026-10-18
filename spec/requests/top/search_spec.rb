@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# ホーム画面:グッズ名の検索
 RSpec.describe "ホーム画面(検索)", type: :request do
   let(:user) { create(:user) }
   include_context "ホームの推しとグッズ"

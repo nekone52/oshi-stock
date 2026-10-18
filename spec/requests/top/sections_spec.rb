@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# ホーム画面:ほしい物・予約注文中・所持の3つのセクション
 RSpec.describe "ホーム画面(3つのセクション)", type: :request do
   let(:user) { create(:user) }
   include_context "ホームの推しとグッズ"
@@ -22,7 +21,6 @@ RSpec.describe "ホーム画面(3つのセクション)", type: :request do
 
     it "推しアイコンとグッズのカードの枠が、推しの色になる(#85)" do
       get root_path
-      # アイコンは 3px、カードは 2px の枠
       expect(response.body).to include("border: 3px solid #{hinata.display_color}", "border: 2px solid #{hinata.display_color}")
     end
 
@@ -31,12 +29,10 @@ RSpec.describe "ホーム画面(3つのセクション)", type: :request do
     get root_path
     section = response.body[/ほしい物リスト.*?予約注文中/m]
 
-    # 新しい順に4つ(ほしい物5〜2)。いちばん古い ほしい物1 と、最初からある ヒナタの缶バッジ は出ない
     expect(section).to include("ほしい物5", "ほしい物2")
     expect(section).not_to include("ほしい物1")
   end
 
-  # 下のメニューがないので、見出しの横のリンクがほかの画面への入口になる
   it "見出しの横に、件数に関係なくいつも「ほしい物」「予約」「グッズ一覧」へのリンクを出す" do
     get root_path
     body = response.body

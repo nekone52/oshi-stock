@@ -19,7 +19,7 @@ RSpec.describe User, type: :model do
     end
 
     it "メールアドレスが256文字以上の場合は無効であること" do
-      user = build(:user, email_address: "#{'a' * 244}@example.com") # 244 + 12 = 256文字
+      user = build(:user, email_address: "#{'a' * 244}@example.com")
       expect(user).to be_invalid
     end
 
@@ -125,7 +125,6 @@ RSpec.describe User, type: :model do
       create(:item, character: character, status: :reserved, price: 1000, quantity: 2, payment_deadline: Date.current + 3)
       create(:item, character: character, status: :owned, price: 500, payment_deadline: Date.current + 10)
       create(:item, character: character, status: :reserved, price: nil)
-      # ここから下は数えないもの
       create(:item, character: character, status: :reserved, price: 3000, paid: true)
       create(:item, character: character, status: :wanted, price: 800)
       create(:item, character: create(:character), status: :reserved, price: 9999)

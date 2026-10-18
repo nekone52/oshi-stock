@@ -1,6 +1,5 @@
 require "rails_helper"
 
-# 予約の一覧
 RSpec.describe "予約の一覧", type: :request do
   let(:user) { create(:user) }
 
@@ -36,13 +35,11 @@ RSpec.describe "予約の一覧", type: :request do
       get reservations_path
       body = response.body
       expect(body).to include("10月発売", "11月発売")
-      # 10月の見出し → 10月のグッズ → 11月の見出し → 11月のグッズ の順に並ぶ
       expect(body.index("10月発売")).to be < body.index("10月の缶バッジ")
       expect(body.index("10月の缶バッジ")).to be < body.index("11月発売")
       expect(body.index("11月発売")).to be < body.index("11月のぬい")
     end
 
-    # Codex の指摘:2026年11月と2027年11月が、どちらも「11月発売」で見分けにくかった
     it "ちがう年の同じ月は、見出しに年が出て見分けられる" do
       character = create(:character, user: user)
       create(:item, character: character, status: :reserved, name: "今年のぬい", release_month: Date.new(2026, 11, 1))
@@ -52,7 +49,6 @@ RSpec.describe "予約の一覧", type: :request do
       get reservations_path
       body = response.body
       expect(body).to include("2026年</span>11月発売", "2027年</span>11月発売")
-      # 2026年 → 今年のぬい → 2027年 → 来年のぬい の順に並ぶ
       expect(body.index("2026年</span>11月発売")).to be < body.index("今年のぬい")
       expect(body.index("今年のぬい")).to be < body.index("2027年</span>11月発売")
       expect(body.index("2027年</span>11月発売")).to be < body.index("来年のぬい")
@@ -67,7 +63,6 @@ RSpec.describe "予約の一覧", type: :request do
       get reservations_path
       body = response.body
       expect(body).to include("発売日待ち")
-      # 発売日待ちの箱(id="waiting")は月の見出しより下にあって、その中に新作アクスタがいる
       expect(body.index("10月の缶バッジ")).to be < body.index('id="waiting"')
       expect(body.index('id="waiting"')).to be < body.index("新作アクスタ")
     end
@@ -141,7 +136,6 @@ RSpec.describe "予約の一覧", type: :request do
       expect(response.body).not_to include("発売日待ち")
     end
 
-    # ホームで選んだ推しを引きつぐ(?character_id=番号)
     context "推しの番号がついているとき" do
       let(:hinata) { create(:character, user: user, name: "ヒナタ") }
       let(:aoi) { create(:character, user: user, name: "アオイ") }
@@ -182,7 +176,6 @@ RSpec.describe "予約の一覧", type: :request do
       end
     end
 
-    # 絞り込みボタンの付せん(?filter=〇〇)で、カードをしぼる(#84)
     context "絞り込みボタンを押したとき" do
       let(:character) { create(:character, user: user) }
 
@@ -193,12 +186,10 @@ RSpec.describe "予約の一覧", type: :request do
         sign_in_as(user)
       end
 
-      # 押したボタンの class を取り出す(Nokogiri は Rails に入っている、HTML を読む道具)
       def button_class(href)
         Nokogiri::HTML(response.body).at_css(%(a[href="#{href}"]))["class"]
       end
 
-      # 【自分の言葉】未払いは、届いたものも含め表示する(支払済は出さない)
       it "「未払い」は、届いたものもふくめて、まだ払っていないグッズだけが出る" do
         get reservations_path(filter: "unpaid")
         expect(response.body).to include("予約のぬい", "届いたキーホルダー")
@@ -236,7 +227,6 @@ RSpec.describe "予約の一覧", type: :request do
       end
     end
 
-    # 推しの色の枠(#85)。期限が近いことは、枠の色のかわりに札で知らせる
     describe "推しの色の枠と「⚠ 期限が近い」の札" do
       let(:character) { create(:character, user: user) }
 
@@ -261,7 +251,6 @@ RSpec.describe "予約の一覧", type: :request do
         expect(response.body).not_to include("⚠ 期限が近い")
       end
     end
-    # 目標個数(#62):目標があるグッズだけ、カードに進みぐあいを出す(5個まではハート、6個からはバー)
     describe "目標個数" do
       let(:character) { create(:character, user: user) }
 

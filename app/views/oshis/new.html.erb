@@ -1,9 +1,7 @@
-<%# この画面は本物のフォームなので、押せない設定(inert)を外す %>
 <% content_for :interactive, true %>
 
 <div class="mx-auto max-w-[430px] px-4 pb-32">
 
-  <!-- ヘッダー(戻るとタイトル) -->
   <header class="flex items-center gap-1 pt-4 pb-2">
     <%= link_to oshis_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
       <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
@@ -11,6 +9,5 @@
     <h1 class="font-display text-xl font-bold text-ink">推しを追加</h1>
   </header>
 
-  <!-- 推しの登録フォーム(送り先は POST /oshis → oshis#create。中身は oshis/_form.html.erb) -->
   <%= render "oshis/form", url: oshis_path, submit_label: "登録する" %>
 </div>

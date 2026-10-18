@@ -15,37 +15,27 @@ Rails.application.routes.draw do
   root "top#index"
 
   get "login", to: "sessions#new", as: :login
-  # 新規登録(画面の表示 new と、登録の create)
   resource :registration, only: [ :new, :create ]
   get "signup", to: "registrations#new", as: :signup
   get "terms", to: "pages#terms", as: :terms
   get "privacy", to: "pages#privacy", as: :privacy
 
-  # 予約の一覧(登録はグッズ登録のフォームを「予約中」で開く)
   resources :reservations, only: [ :index ]
-  # グッズ(一覧・詳細・登録・編集・削除機能への案内)
   resources :goods, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
-    # 1つのグッズに対する道(URL に番号が入る)。ホームのワンタップの切り替えで使う
     member do
-      patch :receive       # 届いた    PATCH /goods/:id/receive
-      patch :toggle_paid   # 支払った  PATCH /goods/:id/toggle_paid
+      patch :receive
+      patch :toggle_paid
     end
   end
-  # 推しキャラ(一覧・登録・編集・削除機能への案内)
   resources :oshis, only: [ :index, :new, :create, :edit, :update, :destroy ] do
     get :confirm_delete, on: :member
   end
-  # カテゴリ(グッズの画面のシートから、追加と削除だけ)
   resources :categories, only: [ :create, :destroy ]
   get "start", to: "top#start", as: :start
   get "settings", to: "settings#show", as: :settings
   get "settings/withdraw", to: "settings#withdraw", as: :withdraw
-  # 退会する(アカウントを消す)。消すので delete。データを変える操作なので get は使わない
   delete "settings/withdraw", to: "settings#destroy"
-  # 設定画面で選んだテーマの色を保存する(書きかえなので patch)
   patch "settings", to: "settings#update"
-  # メールアドレスを変える画面を見る(#125)
   get "settings/email", to: "settings#edit_email", as: :edit_email
-  # 新しいメールアドレスに書きかえる(書きかえなので patch。消すわけではないので delete ではない)
   patch "settings/email", to: "settings#update_email"
 end

@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "App screens (mock)", type: :request do
-  # ログインが必要な画面(まだモック)
   {
     "グッズを登録" => "/goods/new",
     "設定" => "/settings",
@@ -24,7 +23,6 @@ RSpec.describe "App screens (mock)", type: :request do
     end
   end
 
-  # ログインしなくても開ける画面
   {
     "新規登録" => "/signup",
     "利用規約" => "/terms",
