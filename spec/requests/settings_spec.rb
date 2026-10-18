@@ -143,4 +143,85 @@ RSpec.describe "テーマの色の保存", type: :request do
       expect(response.body).not_to include("--color-accent:")
     end
   end
+
+  # #125:メールアドレスの変更(今のパスワードで本人か確かめてから書きかえる)
+  describe "メールアドレスの変更" do
+    let(:user) { create(:user, email_address: "before@example.com") }
+
+    describe "GET /settings/email" do
+      it "設定画面に、メールアドレスを変える画面へのリンクがある" do
+        sign_in_as(user)
+        get settings_path
+
+        expect(response.body).to include(%(href="#{edit_email_path}"))
+      end
+
+      it "変える画面に、今のメールアドレスと入力欄が出る" do
+        sign_in_as(user)
+        get edit_email_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("before@example.com")
+        expect(response.body).to include('name="user[email_address]"', 'name="user[password_challenge]"')
+      end
+
+      it "ログインしていないと、ログイン画面へ移る" do
+        get edit_email_path
+        expect(response).to redirect_to(new_session_path)
+      end
+    end
+
+    describe "PATCH /settings/email" do
+      it "今のパスワードが合っていれば、メールアドレスが変わって、設定画面に戻る" do
+        sign_in_as(user)
+        patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "password" } }
+
+        expect(user.reload.email_address).to eq("after@example.com")
+        expect(response).to redirect_to(settings_path)
+        expect(flash[:notice]).to eq("メールアドレスを変えました")
+      end
+
+      it "今のパスワードがちがうと、変わらずにエラーが出る" do
+        sign_in_as(user)
+        patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "wrong-password" } }
+
+        expect(user.reload.email_address).to eq("before@example.com")
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("今のパスワードは不正な値です")
+      end
+
+      it "今のパスワードを送ってこなくても、確かめはとばされない(変わらない)" do
+        sign_in_as(user)
+        patch settings_email_path, params: { user: { email_address: "after@example.com" } }
+
+        expect(user.reload.email_address).to eq("before@example.com")
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "メールアドレスの形でなければ、変わらずにエラーが出る" do
+        sign_in_as(user)
+        patch settings_email_path, params: { user: { email_address: "not-an-email", password_challenge: "password" } }
+
+        expect(user.reload.email_address).to eq("before@example.com")
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("メールアドレスは不正な値です")
+      end
+
+      it "ほかの人と同じメールアドレスには、変えられない" do
+        create(:user, email_address: "taken@example.com")
+        sign_in_as(user)
+        patch settings_email_path, params: { user: { email_address: "taken@example.com", password_challenge: "password" } }
+
+        expect(user.reload.email_address).to eq("before@example.com")
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "ログインしていないと、ログイン画面へ移る(だれのメールアドレスも変わらない)" do
+        patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "password" } }
+
+        expect(response).to redirect_to(new_session_path)
+        expect(user.reload.email_address).to eq("before@example.com")
+      end
+    end
+  end
 end
