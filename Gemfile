@@ -72,6 +72,9 @@ gem "aws-sdk-s3", require: false
 
 gem "resend"
 
+gem "sentry-ruby"
+gem "sentry-rails"
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
