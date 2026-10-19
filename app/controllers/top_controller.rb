@@ -7,7 +7,7 @@ class TopController < ApplicationController
     @selected_character = @characters.find_by(id: params[:character_id]) if params[:character_id].present?
     @items = @items.where(character: @selected_character) if @selected_character
     @query = params[:q].to_s.strip
-    @items = @items.where("items.name ILIKE ?", "%#{Item.sanitize_sql_like(@query)}%") if @query.present?
+    @items = @items.search_name(@query) if @query.present?
 
     @wanted_items   = @items.wanted
     @reserved_items = @items.reserved.or(@items.owned.where(paid: false)).unpaid_first

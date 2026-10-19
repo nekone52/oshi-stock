@@ -10,6 +10,7 @@ class Item < ApplicationRecord
   enum :status, { wanted: 0, reserved: 1, owned: 2 }, validate: true
 
   scope :unpaid_first, -> { reorder(paid: :asc, payment_deadline: :asc) }
+  scope :search_name, ->(query) { where("items.name ILIKE ?", "%#{sanitize_sql_like(query)}%") }
 
   validates :name, presence: true, length: { maximum: 50 }
 
