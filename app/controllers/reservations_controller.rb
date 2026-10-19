@@ -1,6 +1,6 @@
 class ReservationsController < ApplicationController
   def index
-    @reserved_items = Current.user.items.reserved.or(Current.user.items.owned.where(paid: false))
+    @reserved_items = Current.user.items.reserved_or_unpaid
                                   .includes(:character, image_attachment: :blob).unpaid_first
     @reserved_count = @reserved_items.size
     @unpaid_total   = Current.user.unpaid_total

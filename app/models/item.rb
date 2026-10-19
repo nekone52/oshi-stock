@@ -11,6 +11,7 @@ class Item < ApplicationRecord
 
   scope :unpaid_first, -> { reorder(paid: :asc, payment_deadline: :asc) }
   scope :search_name, ->(query) { where("items.name ILIKE ?", "%#{sanitize_sql_like(query)}%") }
+  scope :reserved_or_unpaid, -> { reserved.or(owned.where(paid: false)) }
 
   validates :name, presence: true, length: { maximum: 50 }
 

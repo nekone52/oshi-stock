@@ -10,7 +10,7 @@ class TopController < ApplicationController
     @items = @items.search_name(@query) if @query.present?
 
     @wanted_items   = @items.wanted
-    @reserved_items = @items.reserved.or(@items.owned.where(paid: false)).unpaid_first
+    @reserved_items = @items.reserved_or_unpaid.unpaid_first
     @owned_items    = @items.owned
 
     @unpaid_total   = Current.user.unpaid_total
