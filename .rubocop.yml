@@ -39,10 +39,21 @@ Lint/UselessAssignment:
 Lint/UnusedMethodArgument:
   Enabled: true
 
-# ---- 入れないと決めたルール ----
-
 # Metrics(メソッドの長さ・仕事の重さ)は、処理の長さや複雑さを見直すきっかけの目安。
-# 指摘があっても必ず分けるとは限らないので、#135 でコントローラーを整理するときに、入れるかどうかも含めて決める。
+# #135 でスコープにまとめたあとの、いちばん重いものより少し上を上限にして、これ以上ふくらませない見張り役にする。
+# (#135 のあと:いちばん長いのは goods#create の17行、いちばん重いのは goods#index の 36.9)
+Metrics/MethodLength:
+  Enabled: true
+  Max: 20
+  Exclude:
+    - "db/**/*"
+Metrics/AbcSize:
+  Enabled: true
+  Max: 40
+  Exclude:
+    - "db/**/*"
+
+# ---- 入れないと決めたルール ----
 
 # Rails/I18nLocaleTexts は入れない。
 # 現時点では多言語対応の予定がなく、画面の文章は使用箇所で管理する方針のため。
