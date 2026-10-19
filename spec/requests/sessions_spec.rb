@@ -1,7 +1,9 @@
 require "rails_helper"
 
 RSpec.describe "ログイン・ログアウト", type: :request do
-  let!(:user) { create(:user, email_address: "oshi@example.com", password: "password", password_confirmation: "password") }
+  let!(:user) {
+    create(:user, email_address: "oshi@example.com", password: "password", password_confirmation: "password")
+  }
 
   describe "POST /session(ログイン)" do
     it "正しいメールアドレスとパスワードなら、ログインしてホームへ移る" do

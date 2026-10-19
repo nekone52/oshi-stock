@@ -59,7 +59,9 @@ RSpec.describe "グッズの詳細", type: :request do
 
       sign_in_as(user)
       get good_path(reserved_item)
-      expect(response.body).to include(%(<a aria-label="戻る" class="flex h-11 w-11 items-center justify-center text-ink" href="#{reservations_path}"))
+      expect(response.body).to include(
+        %(<a aria-label="戻る" class="flex h-11 w-11 items-center justify-center text-ink" href="#{reservations_path}")
+      )
     end
 
     it "「<」で、ほしい物はグッズ一覧(ほしい物)へ戻る" do
@@ -67,7 +69,8 @@ RSpec.describe "グッズの詳細", type: :request do
 
       sign_in_as(user)
       get good_path(wanted_item)
-      expect(response.body).to include(%(<a aria-label="戻る" class="flex h-11 w-11 items-center justify-center text-ink" href="#{goods_path(status: 'wanted')}"))
+      back_link = %(<a aria-label="戻る" class="flex h-11 w-11 items-center justify-center text-ink" )
+      expect(response.body).to include(back_link + %(href="#{goods_path(status: 'wanted')}"))
     end
   end
 end

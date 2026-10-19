@@ -10,7 +10,8 @@ class CategoriesController < ApplicationController
     else
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("category_errors", partial: "categories/errors", locals: { category: @category }),
+          render turbo_stream: turbo_stream.update("category_errors",
+                                                   partial: "categories/errors", locals: { category: @category }),
                  status: :unprocessable_content
         end
         format.html { redirect_back_or_to new_good_path, alert: @category.errors.full_messages.first }

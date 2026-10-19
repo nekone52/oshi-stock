@@ -167,7 +167,8 @@ RSpec.describe "テーマの色の保存", type: :request do
     describe "PATCH /settings/email" do
       it "今のパスワードが合っていれば、メールアドレスが変わって、設定画面に戻る" do
         sign_in_as(user)
-        patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "password" } }
+        patch settings_email_path,
+          params: { user: { email_address: "after@example.com", password_challenge: "password" } }
 
         expect(user.reload.email_address).to eq("after@example.com")
         expect(response).to redirect_to(settings_path)
@@ -176,7 +177,8 @@ RSpec.describe "テーマの色の保存", type: :request do
 
       it "今のパスワードがちがうと、変わらずにエラーが出る" do
         sign_in_as(user)
-        patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "wrong-password" } }
+        patch settings_email_path,
+          params: { user: { email_address: "after@example.com", password_challenge: "wrong-password" } }
 
         expect(user.reload.email_address).to eq("before@example.com")
         expect(response).to have_http_status(:unprocessable_content)
@@ -203,14 +205,16 @@ RSpec.describe "テーマの色の保存", type: :request do
       it "ほかの人と同じメールアドレスには、変えられない" do
         create(:user, email_address: "taken@example.com")
         sign_in_as(user)
-        patch settings_email_path, params: { user: { email_address: "taken@example.com", password_challenge: "password" } }
+        patch settings_email_path,
+          params: { user: { email_address: "taken@example.com", password_challenge: "password" } }
 
         expect(user.reload.email_address).to eq("before@example.com")
         expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "ログインしていないと、ログイン画面へ移る(だれのメールアドレスも変わらない)" do
-        patch settings_email_path, params: { user: { email_address: "after@example.com", password_challenge: "password" } }
+        patch settings_email_path,
+          params: { user: { email_address: "after@example.com", password_challenge: "password" } }
 
         expect(response).to redirect_to(new_session_path)
         expect(user.reload.email_address).to eq("before@example.com")

@@ -58,7 +58,8 @@ RSpec.describe "グッズの編集", type: :request do
 
       it "名前・推し・カテゴリ・単価を書きかえて、そのグッズの詳細へ戻る" do
         category = user.categories.find_by!(name: "缶バッジ")
-        params = { item: { name: "アオイの缶バッジ", character_id: other_character.id, category_id: category.id, price: "550" } }
+        params = { item: { name: "アオイの缶バッジ", character_id: other_character.id, category_id: category.id,
+          price: "550" } }
         patch good_path(item), params: params
         expect(response).to redirect_to(good_path(item))
 
@@ -98,13 +99,15 @@ RSpec.describe "グッズの編集", type: :request do
       end
 
       it "新しい画像を選んでエラーになっても、直して送ると新しい画像に変わる(引換券で引きつぐ)" do
-        patch good_path(item), params: { item: { name: "", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        image = fixture_file_upload("icon.png", "image/png")
+        patch good_path(item), params: { item: { name: "", character_id: character.id, image: image } }
         expect(response).to have_http_status(:unprocessable_content)
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present
         expect(item.reload.image).not_to be_attached
 
-        patch good_path(item), params: { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image }
+        patch good_path(item),
+          params: { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image }
         expect(item.reload.image).to be_attached
         expect(item.image.filename.to_s).to eq("icon.png")
       end

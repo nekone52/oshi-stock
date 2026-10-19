@@ -36,7 +36,9 @@ RSpec.describe "グッズの登録", type: :request do
     let(:category) { user.categories.find_by!(name: "アクスタ") }
 
     it "ログインしていないと、グッズは作られずログイン画面へ移る" do
-      expect { post goods_path, params: { item: { name: "アクスタ", character_id: character.id } } }.not_to change(Item, :count)
+      expect {
+        post goods_path, params: { item: { name: "アクスタ", character_id: character.id } }
+      }.not_to change(Item, :count)
       expect(response).to redirect_to(new_session_path)
     end
 
@@ -77,20 +79,24 @@ RSpec.describe "グッズの登録", type: :request do
       before { sign_in_as(user) }
 
       it "グッズは作られず、エラーと一緒に画面をもう一度出す" do
-        expect { post goods_path, params: { item: { name: "", character_id: "", quantity: "" } } }.not_to change(Item, :count)
+        expect {
+          post goods_path, params: { item: { name: "", character_id: "", quantity: "" } }
+        }.not_to change(Item, :count)
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include("グッズ名を入力してください", "推しキャラを入力してください", "個数を入力してください")
       end
 
       it "GIF の画像では登録できない" do
-        params = { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.gif", "image/gif") } }
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id,
+          image: fixture_file_upload("icon.gif", "image/gif") } }
         expect { post goods_path, params: params }.not_to change(Item, :count)
         expect(response.body).to include("商品画像は JPEG, PNG, WebP 形式にしてください")
         expect(response.body).not_to include('name="kept_image"')
       end
 
       it "名前が空のエラーのあとも、選んだ画像は引きつがれる" do
-        post goods_path, params: { item: { name: "", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        image = fixture_file_upload("icon.png", "image/png")
+        post goods_path, params: { item: { name: "", character_id: character.id, image: image } }
         expect(response).to have_http_status(:unprocessable_content)
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present
@@ -123,29 +129,34 @@ RSpec.describe "グッズの登録", type: :request do
       end
 
       it "画像を選んで警告が出ても、「それでも登録する」で画像つきで保存される(引換券で引きつぐ)" do
-        post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        image = fixture_file_upload("icon.png", "image/png")
+        post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, image: image } }
         expect(response).to have_http_status(:unprocessable_content)
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present
 
-        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image, confirm_duplicate: "1" }
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image,
+          confirm_duplicate: "1" }
         expect { post goods_path, params: params }.to change(Item, :count).by(1)
         expect(Item.last.image).to be_attached
         expect(Item.last.image.filename.to_s).to eq("icon.png")
       end
 
       it "書きかえた引換券では、画像はつかない(ほかの人の画像は取り出せない)" do
-        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: "kakikaeta-hikikaeken", confirm_duplicate: "1" }
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: "kakikaeta-hikikaeken",
+          confirm_duplicate: "1" }
         expect { post goods_path, params: params }.to change(Item, :count).by(1)
         expect(Item.last.image).not_to be_attached
       end
 
       it "ほかの人用の引換券では、画像はつかない" do
         other = create(:user)
-        blob = ActiveStorage::Blob.create_and_upload!(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
+        blob = ActiveStorage::Blob.create_and_upload!(io: file_fixture("icon.png").open, filename: "icon.png",
+          content_type: "image/png")
         others_ticket = blob.signed_id(purpose: "kept_image_for_user_#{other.id}", expires_in: 1.hour)
 
-        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: others_ticket, confirm_duplicate: "1" }
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: others_ticket,
+          confirm_duplicate: "1" }
         expect { post goods_path, params: params }.to change(Item, :count).by(1)
         expect(Item.last.image).not_to be_attached
       end
@@ -154,7 +165,8 @@ RSpec.describe "グッズの登録", type: :request do
         others_item = create(:item, character: create(:character, user: create(:user)))
         others_item.image.attach(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
 
-        params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: others_item.image.blob.signed_id, confirm_duplicate: "1" }
+        params = { item: { name: "ヒナタのアクスタ", character_id: character.id },
+          kept_image: others_item.image.blob.signed_id, confirm_duplicate: "1" }
         expect { post goods_path, params: params }.to change(Item, :count).by(1)
         expect(Item.last.image).not_to be_attached
         expect(others_item.reload.image).to be_attached
@@ -163,11 +175,13 @@ RSpec.describe "グッズの登録", type: :request do
       include ActiveSupport::Testing::TimeHelpers
 
       it "1時間より前の引換券は、時間切れで使えない" do
-        post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, image: fixture_file_upload("icon.png", "image/png") } }
+        image = fixture_file_upload("icon.png", "image/png")
+        post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, image: image } }
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
 
         travel 2.hours do
-          params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image, confirm_duplicate: "1" }
+          params = { item: { name: "ヒナタのアクスタ", character_id: character.id }, kept_image: kept_image,
+            confirm_duplicate: "1" }
           expect { post goods_path, params: params }.to change(Item, :count).by(1)
           expect(Item.last.image).not_to be_attached
         end
@@ -185,13 +199,16 @@ RSpec.describe "グッズの登録", type: :request do
 
       it "ほかのユーザーの推しを選んでも、グッズは作られない" do
         other_character = create(:character, user: create(:user))
-        expect { post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: other_character.id } } }.not_to change(Item, :count)
+        expect {
+          post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: other_character.id } }
+        }.not_to change(Item, :count)
         expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "ほかのユーザーのカテゴリを選んでも、カテゴリはつながらない" do
         other_category = create(:category, user: create(:user))
-        post goods_path, params: { item: { name: "ヒナタのアクスタ", character_id: character.id, category_id: other_category.id } }
+        post goods_path,
+          params: { item: { name: "ヒナタのアクスタ", character_id: character.id, category_id: other_category.id } }
         expect(Item.last.category).to be_nil
       end
     end

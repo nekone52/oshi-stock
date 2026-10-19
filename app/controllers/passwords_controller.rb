@@ -1,7 +1,9 @@
 class PasswordsController < ApplicationController
   allow_unauthenticated_access
   before_action :set_user_by_token, only: %i[ edit update ]
-  rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_password_path, alert: "制限回数を超えました。しばらく時間を置いてから再度お試しください。" }
+  rate_limit to: 10, within: 3.minutes, only: :create, with: -> {
+    redirect_to new_password_path, alert: "制限回数を超えました。しばらく時間を置いてから再度お試しください。"
+  }
 
   def new
   end

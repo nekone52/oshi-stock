@@ -13,11 +13,17 @@ class Item < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 50 }
 
-  validates :price, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1_000_000 }, allow_nil: true
+  validates :price,
+            numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 1_000_000 },
+            allow_nil: true
 
   validates :quantity, presence: true
-  validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 999 }, allow_nil: true
-  validates :target_quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 999 }, allow_nil: true
+  validates :quantity,
+            numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 999 },
+            allow_nil: true
+  validates :target_quantity,
+            numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 999 },
+            allow_nil: true
 
   validates :image,
             content_type: { in: %w[image/jpeg image/png image/webp], message: "は JPEG, PNG, WebP 形式にしてください" },

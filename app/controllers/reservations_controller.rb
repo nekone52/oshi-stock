@@ -14,6 +14,8 @@ class ReservationsController < ApplicationController
     items_by_month = @reserved_items.group_by(&:release_month)
     @waiting_items  = items_by_month.delete(nil) || []
     @items_by_month = items_by_month.sort_by { |release_month, _items| release_month }
-    @month_totals = @items_by_month.to_h.transform_values { |items| items.sum { |item| item.price.to_i * item.quantity } }
+    @month_totals = @items_by_month.to_h.transform_values do |items|
+      items.sum { |item| item.price.to_i * item.quantity }
+    end
   end
 end
