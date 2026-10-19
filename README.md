@@ -1,6 +1,6 @@
 # 推しストック（oshi-stock）
 
-**サービスURL**: https://oshi-stock.onrender.com
+**サービスURL**: https://oshi-stock.com
 
 ## 1. サービス概要
 

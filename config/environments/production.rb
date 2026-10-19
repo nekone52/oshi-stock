@@ -54,7 +54,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "oshi-stock.onrender.com", protocol: "https" }
+  config.action_mailer.default_url_options = { host: "oshi-stock.com", protocol: "https" }
 
   config.action_mailer.delivery_method = :resend
 
@@ -78,7 +78,8 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  config.hosts = [ "oshi-stock.onrender.com" ]
+  # 【自分の言葉】www はなしでくるから、リストに入れなくていい(Render が www なしに送ってくれる)
+  config.hosts = [ "oshi-stock.com", "oshi-stock.onrender.com" ]
 
   # Skip DNS rebinding protection for the default health check endpoint.
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
