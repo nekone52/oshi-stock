@@ -8,4 +8,12 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   add_flash_types :celebrate
+
+  private
+
+  def find_selected_character
+    return if params[:character_id].blank?
+
+    Current.user.characters.find_by(id: params[:character_id])
+  end
 end
