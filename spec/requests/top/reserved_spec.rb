@@ -18,7 +18,8 @@ RSpec.describe "ホーム画面(予約注文中)", type: :request do
     end
 
     it "予約注文中は、未払いを先に、支払い期限の近い順に並べる" do
-      create(:item, character: hinata, name: "期限が近い未払い", status: :reserved, paid: false, payment_deadline: Date.current + 1)
+      create(:item, character: hinata, name: "期限が近い未払い", status: :reserved, paid: false,
+        payment_deadline: Date.current + 1)
       get root_path
       section = response.body[/予約注文中.*?所持グッズ/m]
 

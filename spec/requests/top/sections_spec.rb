@@ -21,7 +21,8 @@ RSpec.describe "ホーム画面(3つのセクション)", type: :request do
 
     it "推しアイコンとグッズのカードの枠が、推しの色になる(#85)" do
       get root_path
-      expect(response.body).to include("border: 3px solid #{hinata.display_color}", "border: 2px solid #{hinata.display_color}")
+      expect(response.body).to include("border: 3px solid #{hinata.display_color}",
+        "border: 2px solid #{hinata.display_color}")
     end
 
   it "各セクションは4つまで出す" do

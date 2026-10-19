@@ -74,7 +74,9 @@ RSpec.describe "推しキャラの登録", type: :request do
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present
 
-        expect { post oshis_path, params: { character: { name: "ヒナタ" }, kept_image: kept_image } }.to change(Character, :count).by(1)
+        expect {
+          post oshis_path, params: { character: { name: "ヒナタ" }, kept_image: kept_image }
+        }.to change(Character, :count).by(1)
         expect(Character.last.icon).to be_attached
       end
     end

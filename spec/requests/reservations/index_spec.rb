@@ -29,7 +29,8 @@ RSpec.describe "予約の一覧", type: :request do
     it "発売月ごとに、古い月から順に見出しが出る(未払いが先頭でも、月の順はくずれない)" do
       character = create(:character, user: user)
       create(:item, character: character, status: :reserved, name: "11月のぬい", release_month: Date.new(2026, 11, 1))
-      create(:item, character: character, status: :reserved, name: "10月の缶バッジ", release_month: Date.new(2026, 10, 1), paid: true)
+      create(:item, character: character, status: :reserved, name: "10月の缶バッジ", release_month: Date.new(2026, 10, 1),
+        paid: true)
 
       sign_in_as(user)
       get reservations_path
@@ -86,7 +87,8 @@ RSpec.describe "予約の一覧", type: :request do
       sign_in_as(user)
       get reservations_path
       body = response.body
-      expect(body).to include(toggle_paid_good_path(reserved), receive_good_path(reserved), toggle_paid_good_path(arrived))
+      expect(body).to include(toggle_paid_good_path(reserved), receive_good_path(reserved),
+        toggle_paid_good_path(arrived))
       expect(body).not_to include(receive_good_path(arrived))
     end
 
@@ -118,7 +120,8 @@ RSpec.describe "予約の一覧", type: :request do
       character = create(:character, user: user)
       october = Date.new(2026, 10, 1)
       create(:item, character: character, status: :reserved, price: 5500, quantity: 1, release_month: october)
-      create(:item, character: character, status: :reserved, price: 1650, quantity: 2, release_month: october, paid: true)
+      create(:item, character: character, status: :reserved, price: 1650, quantity: 2, release_month: october,
+        paid: true)
       create(:item, character: character, status: :reserved, price: nil, release_month: october)
       create(:item, character: character, status: :reserved, price: 1000, release_month: Date.new(2026, 11, 1))
 

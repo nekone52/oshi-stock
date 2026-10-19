@@ -72,14 +72,16 @@ RSpec.describe "推しキャラの編集", type: :request do
       end
 
       it "GIF の画像では書きかえられない" do
-        patch oshi_path(character), params: { character: { name: "アオイ", icon: fixture_file_upload("icon.gif", "image/gif") } }
+        patch oshi_path(character),
+          params: { character: { name: "アオイ", icon: fixture_file_upload("icon.gif", "image/gif") } }
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include("アイコン画像は JPEG, PNG, WebP 形式にしてください")
         expect(character.reload.name).to eq("ヒナタ")
       end
 
       it "新しいアイコンを選んでエラーになっても、直して送ると新しいアイコンに変わる(引換券で引きつぐ)" do
-        patch oshi_path(character), params: { character: { name: "", icon: fixture_file_upload("icon.png", "image/png") } }
+        patch oshi_path(character),
+          params: { character: { name: "", icon: fixture_file_upload("icon.png", "image/png") } }
         expect(response).to have_http_status(:unprocessable_content)
         kept_image = response.body[/name="kept_image"[^>]*value="([^"]+)"/, 1]
         expect(kept_image).to be_present

@@ -122,7 +122,8 @@ RSpec.describe User, type: :model do
     let(:character) { create(:character, user: user) }
 
     before do
-      create(:item, character: character, status: :reserved, price: 1000, quantity: 2, payment_deadline: Date.current + 3)
+      create(:item, character: character, status: :reserved, price: 1000, quantity: 2,
+        payment_deadline: Date.current + 3)
       create(:item, character: character, status: :owned, price: 500, payment_deadline: Date.current + 10)
       create(:item, character: character, status: :reserved, price: nil)
       create(:item, character: character, status: :reserved, price: 3000, paid: true)

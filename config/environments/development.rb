@@ -84,8 +84,10 @@ Rails.application.configure do
     Bullet.rails_logger = true
 
     Bullet.add_safelist type: :unused_eager_loading, class_name: "ActiveStorage::Blob", association: :variant_records
-    Bullet.add_safelist type: :unused_eager_loading, class_name: "ActiveStorage::Blob", association: :preview_image_attachment
-    Bullet.add_safelist type: :unused_eager_loading, class_name: "ActiveStorage::VariantRecord", association: :image_attachment
+    Bullet.add_safelist type: :unused_eager_loading, class_name: "ActiveStorage::Blob",
+      association: :preview_image_attachment
+    Bullet.add_safelist type: :unused_eager_loading, class_name: "ActiveStorage::VariantRecord",
+      association: :image_attachment
     Bullet.add_safelist type: :unused_eager_loading, class_name: "ActiveStorage::Attachment", association: :blob
   end
 end

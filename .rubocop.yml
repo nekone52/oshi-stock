@@ -6,3 +6,43 @@ inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
 # Layout/SpaceInsideArrayLiteralBrackets:
 #   Enabled: false
+
+# ---- 推しストック用に足したルール(#134) ----
+
+# 1行は120文字まで(横にスクロールしなくても読めるように)
+# マイグレーションは作ったときの記録なので、あとから書きかえない
+Layout/LineLength:
+  Enabled: true
+  Max: 120
+  Exclude:
+    - "db/**/*"
+
+# 「〜じゃなければ、すぐ帰る」の形で書いて、入れ子を浅くする
+Style/GuardClause:
+  Enabled: true
+
+# has_many に dependent: をつけ忘れない(親を消したときに、子が迷子にならないように)
+Rails/HasManyOrHasOneDependent:
+  Enabled: true
+
+# つながりの反対がわを Rails が見つけられるようにする
+Rails/InverseOf:
+  Enabled: true
+
+# belongs_to は最初から「必須」なので、presence のチェックを二重に書かない
+Rails/RedundantPresenceValidationOnBelongsTo:
+  Enabled: true
+
+# 使っていない変数・引数を見つける
+Lint/UselessAssignment:
+  Enabled: true
+Lint/UnusedMethodArgument:
+  Enabled: true
+
+# ---- 入れないと決めたルール ----
+
+# Metrics(メソッドの長さ・仕事の重さ)は、処理の長さや複雑さを見直すきっかけの目安。
+# 指摘があっても必ず分けるとは限らないので、#135 でコントローラーを整理するときに、入れるかどうかも含めて決める。
+
+# Rails/I18nLocaleTexts は入れない。
+# 現時点では多言語対応の予定がなく、画面の文章は使用箇所で管理する方針のため。

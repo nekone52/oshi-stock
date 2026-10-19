@@ -7,7 +7,8 @@ RSpec.describe "グッズの一覧", type: :request do
 
   before do
     create(:item, character: hinata, name: "ヒナタのアクスタ", status: :owned, category: user.categories.find_by!(name: "アクスタ"))
-    create(:item, character: hinata, name: "ヒナタの缶バッジ", status: :wanted, category: user.categories.find_by!(name: "缶バッジ"))
+    create(:item, character: hinata, name: "ヒナタの缶バッジ", status: :wanted,
+      category: user.categories.find_by!(name: "缶バッジ"))
     create(:item, character: aoi, name: "アオイのぬい", status: :reserved, paid: false)
     create(:item, character: create(:character, user: create(:user)), name: "ほかの人のグッズ", status: :owned)
   end
@@ -59,7 +60,8 @@ RSpec.describe "グッズの一覧", type: :request do
 
     it "カードの枠が、そのグッズの推しの色になる(#85)" do
       get goods_path
-      expect(response.body).to include("border: 2px solid #{hinata.display_color}", "border: 2px solid #{aoi.display_color}")
+      expect(response.body).to include("border: 2px solid #{hinata.display_color}",
+        "border: 2px solid #{aoi.display_color}")
     end
   end
 end

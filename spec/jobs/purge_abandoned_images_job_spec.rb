@@ -4,7 +4,8 @@ RSpec.describe PurgeAbandonedImagesJob, type: :job do
   include ActiveSupport::Testing::TimeHelpers
 
   def put_on_shelf
-    ActiveStorage::Blob.create_and_upload!(io: file_fixture("icon.png").open, filename: "icon.png", content_type: "image/png")
+    ActiveStorage::Blob.create_and_upload!(io: file_fixture("icon.png").open, filename: "icon.png",
+      content_type: "image/png")
   end
 
   it "1日より前にしまって、どこにもついていない画像だけ消す" do
