@@ -9,7 +9,7 @@ class GoodsController < ApplicationController
     @items = @items.where(status: @status) if @status.present?
     @items = @items.unpaid_first if @status == "reserved"
 
-    @selected_character = Current.user.characters.find_by(id: params[:character_id]) if params[:character_id].present?
+    @selected_character = find_selected_character
     @items = @items.where(character: @selected_character) if @selected_character
     @query = params[:q].to_s.strip
     @items = @items.search_name(@query) if @query.present?

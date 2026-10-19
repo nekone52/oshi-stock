@@ -4,7 +4,7 @@ class TopController < ApplicationController
     return render :start if @characters.empty?
 
     @items = Current.user.items.includes(:character, image_attachment: :blob).order(created_at: :desc)
-    @selected_character = @characters.find_by(id: params[:character_id]) if params[:character_id].present?
+    @selected_character = find_selected_character
     @items = @items.where(character: @selected_character) if @selected_character
     @query = params[:q].to_s.strip
     @items = @items.search_name(@query) if @query.present?

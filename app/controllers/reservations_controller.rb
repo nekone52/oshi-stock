@@ -6,7 +6,7 @@ class ReservationsController < ApplicationController
     @unpaid_total   = Current.user.unpaid_total
     @unpaid_count   = Current.user.unpaid_items.count
     @due_soon_count = Current.user.due_soon_count
-    @selected_character = Current.user.characters.find_by(id: params[:character_id]) if params[:character_id].present?
+    @selected_character = find_selected_character
     @reserved_items = @reserved_items.where(character: @selected_character) if @selected_character
     @reserved_items = @reserved_items.payment_filter(params[:filter])
     items_by_month = @reserved_items.group_by(&:release_month)
