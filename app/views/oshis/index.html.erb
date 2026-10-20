@@ -16,7 +16,8 @@
       <% @characters.each do |character| %>
         <% color = character.display_color %>
         <li class="relative">
-          <%= tag.div style: "background-image: linear-gradient(to bottom, #{color} 0%, #{color} 25%, color-mix(in srgb, #{color} 45%, white) 100%); border: 1.5px solid color-mix(in srgb, #{color} 60%, white)", class: "flex aspect-[91/55] overflow-hidden rounded-2xl shadow-sm" do %>
+          <%# 【自分の言葉】その推しの付せん(character_id)を link_to につけて、グッズ一覧へ行く %>
+          <%= link_to goods_path(character_id: character.id), style: "background-image: linear-gradient(to bottom, #{color} 0%, #{color} 25%, color-mix(in srgb, #{color} 45%, white) 100%); border: 1.5px solid color-mix(in srgb, #{color} 60%, white)", class: "flex aspect-[91/55] overflow-hidden rounded-2xl shadow-sm" do %>
             <% if character.icon.attached? %>
               <%= image_tag character.icon.variant(:display), alt: character.name, draggable: false, class: "w-[44%] shrink-0 object-cover select-none [-webkit-touch-callout:none]" %>
             <% else %>
