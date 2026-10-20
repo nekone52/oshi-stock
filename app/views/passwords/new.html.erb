@@ -1,9 +1,10 @@
 <% content_for :interactive, true %>
 
-<div class="flex min-h-screen items-center justify-center px-4">
-  <div class="relative w-full max-w-[430px]">
+<%# ロゴ → 箱 の順にふつうに並べて、2つまとめてまん中に置く(PC の低い画面でもロゴが切れない) %>
+<div class="flex min-h-screen items-center justify-center px-4 py-8">
+  <div class="flex w-full max-w-[430px] flex-col gap-10">
 
-    <div class="absolute inset-x-0 bottom-full mb-10">
+    <div>
       <%= image_tag "logo.png", alt: "推しストック", class: "w-full" %>
     </div>
 
