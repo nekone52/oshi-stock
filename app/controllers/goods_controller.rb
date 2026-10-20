@@ -106,6 +106,7 @@ class GoodsController < ApplicationController
 
   def item_params
     params.expect(item: [ :name, :url, :release_month, :release_period, :shop_name, :price, :quantity,
-                          :status, :paid, :payment_deadline, :target_quantity, :memo, :image ])
+                          :status, :paid, :payment_deadline, :target_quantity, :memo, :image,
+                          :reservation_start_on, :reservation_deadline_on ])
   end
 end
