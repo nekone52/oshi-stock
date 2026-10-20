@@ -1,13 +1,11 @@
 class GoodsController < ApplicationController
   include KeepsChosenImage
 
-  before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid ]
+  before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid, :reserve ]
 
   def index
-    @items = Current.user.items.includes(:character, :category, image_attachment: :blob).order(created_at: :desc)
     @status = params[:status] if Item.statuses.key?(params[:status])
-    @items = @items.where(status: @status) if @status.present?
-    @items = @items.unpaid_first if @status == "reserved"
+    @items = items_for_status
 
     @selected_character = find_selected_character
     @items = @items.where(character: @selected_character) if @selected_character
@@ -18,6 +16,7 @@ class GoodsController < ApplicationController
     @categories = Current.user.categories.order(:created_at)
     @selected_category = @categories.find_by(id: params[:category_id]) if params[:category_id].present?
     @items = @items.where(category: @selected_category) if @selected_category
+    @wanted_groups = Item.group_by_reservation(@items) if @status == "wanted"
   end
 
   def show
@@ -71,12 +70,18 @@ class GoodsController < ApplicationController
 
   def destroy
     @item.destroy
-    redirect_to helpers.back_path_for(@item), status: :see_other, notice: "グッズを消去しました"
+    # ほしい物リストの「諦めた」は、付せん back_to の画面(ホーム・一覧)にもどる。url_from でアプリの中の住所だけ通す
+    redirect_to url_from(params[:back_to]) || helpers.back_path_for(@item), status: :see_other, notice: "グッズを消去しました"
   end
 
   def receive
     @item.owned!
     redirect_back_or_to root_path, celebrate: "「#{@item.name}」を所持グッズに移しました"
+  end
+
+  def reserve
+    @item.reserved!
+    redirect_back_or_to root_path, celebrate: "「#{@item.name}」を予約注文中に移しました"
   end
 
   def toggle_paid
@@ -94,6 +99,16 @@ class GoodsController < ApplicationController
     @item = Current.user.items.find(params[:id])
   end
 
+  # 状態のタブでしぼる。「ほしい物」タブの1行の見た目はカテゴリを出さないので、ほかのタブのときだけカテゴリを読みこむ
+  def items_for_status
+    items = Current.user.items.includes(:character, image_attachment: :blob).order(created_at: :desc)
+    return items.includes(:category) if @status.blank?
+
+    items = items.where(status: @status)
+    items = items.unpaid_first if @status == "reserved"
+    @status == "wanted" ? items : items.includes(:category)
+  end
+
   def assign_character_and_category
     @item.character = Current.user.characters.find_by(id: params.dig(:item, :character_id))
     @item.category = Current.user.categories.find_by(id: params.dig(:item, :category_id))
@@ -106,6 +121,7 @@ class GoodsController < ApplicationController
 
   def item_params
     params.expect(item: [ :name, :url, :release_month, :release_period, :shop_name, :price, :quantity,
-                          :status, :paid, :payment_deadline, :target_quantity, :memo, :image ])
+                          :status, :paid, :payment_deadline, :target_quantity, :memo, :image,
+                          :reservation_start_on, :reservation_deadline_on ])
   end
 end

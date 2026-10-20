@@ -91,4 +91,31 @@ RSpec.describe "グッズの届いた・支払った", type: :request do
       expect(other_item.reload.paid).to be(false)
     end
   end
+
+  describe "PATCH /goods/:id/reserve(予約した・#104)" do
+    let!(:item) { create(:item, character: create(:character, user: user), status: :wanted) }
+
+    it "ログインしていないと、変えずにログイン画面へ移る" do
+      patch reserve_good_path(item)
+      expect(response).to redirect_to(new_session_path)
+      expect(item.reload).to be_wanted
+    end
+
+    it "予約中に変えて、お祝いのお知らせを出す" do
+      sign_in_as(user)
+      patch reserve_good_path(item)
+      expect(response).to redirect_to(root_path)
+      expect(item.reload).to be_reserved
+      expect(flash[:celebrate]).to eq("「#{item.name}」を予約注文中に移しました")
+    end
+
+    it "ほかのユーザーのグッズは、変えられない(404)" do
+      other_item = create(:item, character: create(:character, user: create(:user)), status: :wanted)
+
+      sign_in_as(user)
+      patch reserve_good_path(other_item)
+      expect(response).to have_http_status(:not_found)
+      expect(other_item.reload).to be_wanted
+    end
+  end
 end

@@ -5,6 +5,8 @@ const ONE_DAY = 86400000
 
 export default class extends Controller {
   static targets = ["input", "button", "panel", "text", "left", "calMonth", "calDay"]
+  // 空っぽのときの文字(支払期限は「期限なし」、予約の日付は「まだ分からない」)
+  static values = { empty: { type: String, default: "期限なし" } }
 
   connect() {
     this.render()
@@ -52,7 +54,7 @@ export default class extends Controller {
   render() {
     const date = this.pickedDate()
     if (!date) {
-      this.textTarget.textContent = "期限なし"
+      this.textTarget.textContent = this.emptyValue
       this.leftTarget.textContent = "押すとカレンダーがひらきます"
       this.leftTarget.classList.remove("font-bold", "text-unpaid")
       this.calMonthTarget.textContent = "—"
@@ -120,7 +122,7 @@ export default class extends Controller {
           <button type="button" class="${chip}" data-action="deadline-picker#addDays" data-deadline-picker-days-param="7">1週間後</button>
           <button type="button" class="${chip}" data-action="deadline-picker#addDays" data-deadline-picker-days-param="14">2週間後</button>
           <button type="button" class="${chip}" data-action="deadline-picker#endOfMonth">今月末</button>
-          <button type="button" class="${chip} text-ink-soft" data-action="deadline-picker#clear">✕ 期限なし</button>
+          <button type="button" class="${chip} text-ink-soft" data-action="deadline-picker#clear">✕ ${this.emptyValue}</button>
         </div>
       </div>`
   }

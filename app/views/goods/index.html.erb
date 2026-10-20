@@ -48,7 +48,11 @@
     <% end %>
   </div>
 
-  <% if @items.any? %>
+  <% if @wanted_groups.present? %>
+    <div class="mt-2">
+      <%= render "top/wanted_list", groups: @wanted_groups %>
+    </div>
+  <% elsif @items.any? %>
     <div class="mt-2 grid grid-cols-2 gap-3">
       <% @items.each do |item| %>
         <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "flex flex-col overflow-hidden rounded-2xl bg-white" do %>

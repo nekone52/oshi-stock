@@ -27,6 +27,18 @@ RSpec.describe "グッズの消去", type: :request do
       expect(response.body).to include("グッズを消去しました")
     end
 
+    it "ほしい物リストの「諦めた」は、付せん back_to の画面(ホーム)にもどる" do
+      sign_in_as(user)
+      expect { delete good_path(item), params: { back_to: "/" } }.to change(Item, :count).by(-1)
+      expect(response).to redirect_to("/")
+    end
+
+    it "back_to にほかのサイトの住所を入れられても、そこへは飛ばない" do
+      sign_in_as(user)
+      delete good_path(item), params: { back_to: "https://evil.example.com/" }
+      expect(response).to redirect_to(goods_path(status: "wanted"))
+    end
+
     it "予約中のグッズを消去すると、予約画面へ移る" do
       reserved_item = create(:item, character: item.character, status: :reserved)
 

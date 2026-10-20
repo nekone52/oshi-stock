@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["price", "quantity", "total", "goalSwitch", "goalField", "goalInput"]
+  static targets = ["price", "quantity", "total", "goalSwitch", "goalField", "goalInput", "reservationFields"]
 
   connect() {
     this.updateTotal()
@@ -9,6 +9,14 @@ export default class extends Controller {
       this.goalSwitchTarget.checked = this.goalInputTarget.value !== ""
       this.showGoal()
     }
+    this.showReservation()
+  }
+
+  // 予約開始日・〆切は「ほしい物」のときだけ出す(ほかの状態にしても、入れた日付は消さない)
+  showReservation() {
+    if (!this.hasReservationFieldsTarget) return
+    const wanted = this.element.querySelector("input[name='item[status]'][value='wanted']")
+    this.reservationFieldsTarget.hidden = !wanted?.checked
   }
 
   toggleGoal() {

@@ -134,4 +134,39 @@ RSpec.describe Item, type: :model do
       expect(Item.unpaid_first).to eq([ soon, later, no_deadline, paid ])
     end
   end
+
+  describe "予約の予定(#104)" do
+    let(:today) { Date.new(2026, 10, 21) }
+
+    it "今日とくらべて、受付中・開始前・まだ分からない・〆切すぎに分ける" do
+      open_item = build(:item, reservation_start_on: today - 1, reservation_deadline_on: today + 9)
+      upcoming_item = build(:item, reservation_start_on: today + 4, reservation_deadline_on: today + 9)
+      expect(open_item.reservation_phase(today)).to eq(:open)
+      expect(build(:item, reservation_deadline_on: today).reservation_phase(today)).to eq(:open)
+      expect(upcoming_item.reservation_phase(today)).to eq(:upcoming)
+      expect(build(:item).reservation_phase(today)).to eq(:unknown)
+      expect(build(:item, reservation_deadline_on: today - 1).reservation_phase(today)).to eq(:closed)
+    end
+
+    it "受付中は〆切が近い順、開始前は開始が近い順。〆切すぎはいちばん下" do
+      later = build(:item, reservation_deadline_on: today + 9)
+      soon = build(:item, reservation_deadline_on: today + 3)
+      start_far = build(:item, reservation_start_on: today + 20)
+      start_near = build(:item, reservation_start_on: today + 5)
+      unknown = build(:item)
+      closed = build(:item, reservation_deadline_on: today - 1)
+
+      groups = Item.group_by_reservation([ closed, later, start_far, unknown, soon, start_near ], today: today)
+      expect(groups.map(&:first)).to eq(%i[open upcoming unknown closed])
+      expect(groups.to_h).to eq(open: [ soon, later ], upcoming: [ start_near, start_far ],
+                                unknown: [ unknown ], closed: [ closed ])
+    end
+
+    it "limit をつけると、並べたあとの上から limit 個まで" do
+      items = [ build(:item), build(:item, reservation_deadline_on: today + 1),
+                build(:item, reservation_start_on: today + 1) ]
+      groups = Item.group_by_reservation(items, today: today, limit: 2)
+      expect(groups.map(&:first)).to eq(%i[open upcoming])
+    end
+  end
 end

@@ -139,12 +139,19 @@
       <div class="grid grid-cols-3 gap-1 rounded-xl bg-accent-soft/60 p-1">
         <% ItemsHelper::STATUS_LABELS.each do |value, label| %>
           <label class="flex h-10 cursor-pointer items-center justify-center rounded-lg text-[13px] text-ink has-checked:bg-white has-checked:font-bold has-checked:text-accent-strong">
-            <%= f.radio_button :status, value, class: "sr-only" %>
+            <%= f.radio_button :status, value, class: "sr-only", data: { action: "change->item-form#showReservation" } %>
             <%= label %>
           </label>
         <% end %>
       </div>
     </fieldset>
+
+    <%# 予約の予定:「ほしい物」を選んだときだけ出す %>
+    <%# 【自分の言葉】カレンダーの部品を呼んで、予約日と締め日を入れる %>
+    <div class="flex flex-col gap-4" data-item-form-target="reservationFields">
+      <%= render "goods/date_picker", f: f, field: :reservation_start_on, label: "予約開始日", empty: "まだ分からない" %>
+      <%= render "goods/date_picker", f: f, field: :reservation_deadline_on, label: "予約の〆切", empty: "まだ分からない" %>
+    </div>
 
     <div class="flex flex-col gap-1.5" data-controller="month-picker">
       <span id="release_month_label" class="text-[15px] font-bold text-ink">発売月</span>

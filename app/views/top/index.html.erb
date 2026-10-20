@@ -74,20 +74,7 @@
                  border: "border-chara-a", badge: "bg-chara-a-soft text-chara-a",
                  more_label: "ほしい物", more_path: goods_path({ status: "wanted", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-a text-chara-a" %>
       <% if @wanted_items.any? %>
-        <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
-          <% @wanted_items.limit(4).each do |item| %>
-            <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
-              <%= render "top/item_thumb", item: item, css: "h-20" %>
-              <div class="p-2">
-                <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug"><%= item.name %></p>
-                <p class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 shrink-0 rounded-full"></span><span class="truncate"><%= item.character.name %></span></p>
-                <% if item.url.present? && !item.image.attached? %>
-                  <span class="mt-1 inline-block rounded-full border border-line bg-bg px-2 py-0.5 text-[10px] font-bold text-ink-faint">URLのみ</span>
-                <% end %>
-              </div>
-            <% end %>
-          <% end %>
-        </div>
+        <%= render "top/wanted_list", groups: @wanted_groups %>
       <% else %>
         <%= render "top/empty" %>
       <% end %>

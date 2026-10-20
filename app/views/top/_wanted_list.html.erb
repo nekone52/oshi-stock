@@ -1,0 +1,42 @@
+<%# ほしい物リストを予約の予定ごとに並べる(分け方は Item#reservation_phase)。ホームと、グッズ一覧の「ほしい物」タブで使う %>
+<div class="flex flex-col gap-2.5">
+  <% groups.each do |phase, items| %>
+    <p class="mt-1 text-[11px] font-bold text-ink-soft"><%= ItemsHelper::RESERVATION_GROUP_LABELS[phase] %></p>
+    <% items.each do |item| %>
+      <div style="border: 2px solid <%= item.character.display_color %>" class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
+        <div class="flex min-w-0 flex-1 flex-col gap-1">
+          <%= link_to good_path(item), class: "flex min-w-0 items-center gap-3" do %>
+            <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl" %>
+            <div class="min-w-0 flex-1">
+              <p class="mb-1 truncate text-[14px] font-medium"><%= item.name %></p>
+              <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 rounded-full"></span><%= item.character.name %></span>
+                <span class="text-[11px] tabular-nums text-ink-soft"><%= release_label(item) %></span>
+                <% if (chip = reservation_chip(item)) %>
+                  <span class="rounded-full px-2 py-0.5 text-[10px] font-bold tabular-nums <%= chip[1] %>"><%= chip[0] %></span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          <%# 「諦めた」= 消去する(押す前に確認を出す)。リンクの中にはボタンを入れられないので、リンクの外に置く %>
+          <div class="pl-16">
+            <%= button_to good_path(item), method: :delete, params: { back_to: request.fullpath },
+                  form: { data: { turbo_confirm: "「#{item.name}」を諦める?\nほしい物リストから消去します。" } },
+                  class: "inline-flex cursor-pointer items-center gap-0.5 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-bold text-ink-soft" do %>
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17"/></svg>諦めた
+            <% end %>
+          </div>
+        </div>
+        <%# 「予約した」= 予約中にする / 「届いた」= 所持にする(予約注文中の「届いた」と同じ行き先) %>
+        <div class="flex shrink-0 flex-col gap-1.5">
+          <%= button_to reserve_good_path(item), method: :patch, class: "inline-flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-full border-[1.5px] border-unpaid bg-white px-3 py-1.5 text-xs font-bold text-unpaid" do %>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 13l2 2 4-4"/><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4"/></svg>予約した
+          <% end %>
+          <%= button_to receive_good_path(item), method: :patch, class: "inline-flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-full border-[1.5px] border-received bg-white px-3 py-1.5 text-xs font-bold text-received-strong" do %>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg>届いた
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

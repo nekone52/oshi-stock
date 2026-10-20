@@ -131,4 +131,25 @@ RSpec.describe "グッズの編集", type: :request do
       end
     end
   end
+
+  describe "予約開始日・〆切(#104)" do
+    let(:character) { create(:character, user: user) }
+    let(:item) { create(:item, character: character) }
+
+    it "編集で予約開始日と〆切を保存できる" do
+      sign_in_as(user)
+      dates = { reservation_start_on: "2026-10-25", reservation_deadline_on: "2026-10-30" }
+      patch good_path(item), params: { item: { character_id: character.id, **dates } }
+      item.reload
+      expect(item.reservation_start_on).to eq(Date.new(2026, 10, 25))
+      expect(item.reservation_deadline_on).to eq(Date.new(2026, 10, 30))
+    end
+
+    it "編集画面に、予約開始日と〆切のカレンダーが出る" do
+      sign_in_as(user)
+      get edit_good_path(item)
+      expect(response.body).to include("予約開始日", "予約の〆切", 'data-item-form-target="reservationFields"',
+                                       'name="item[reservation_start_on]"', 'name="item[reservation_deadline_on]"')
+    end
+  end
 end

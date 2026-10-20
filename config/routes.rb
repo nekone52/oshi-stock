@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     member do
       patch :receive
       patch :toggle_paid
+      patch :reserve
     end
   end
   resources :oshis, only: [ :index, :new, :create, :edit, :update, :destroy ] do

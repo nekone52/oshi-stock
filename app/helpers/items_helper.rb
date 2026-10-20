@@ -11,6 +11,23 @@ module ItemsHelper
     "#{item.release_month.month}月#{item.release_period}予定"
   end
 
+  RESERVATION_GROUP_LABELS = {
+    open: "予約受付中(〆切が近い順)", upcoming: "予約開始前", unknown: "まだ分からない", closed: "〆切すぎ"
+  }.freeze
+
+  # ほしい物の予約のチップ:[文字, 色のクラス]。まだ分からないときは nil
+  def reservation_chip(item)
+    case item.reservation_phase
+    when :open
+      deadline = item.reservation_deadline_on
+      [ deadline ? "予約受付中 〆 #{deadline.month}/#{deadline.day}" : "予約受付中", "bg-[#FDE4E4] text-[#C23A3A]" ]
+    when :upcoming
+      [ "予約 #{item.reservation_start_on.month}/#{item.reservation_start_on.day} から", "bg-[#EAF2FB] text-[#3B6FA8]" ]
+    when :closed
+      [ "〆切すぎ #{item.reservation_deadline_on.month}/#{item.reservation_deadline_on.day}", "bg-line text-ink-soft" ]
+    end
+  end
+
   def payment_deadline_label(item)
     return "支払期限 未定" if item.payment_deadline.blank?
 
