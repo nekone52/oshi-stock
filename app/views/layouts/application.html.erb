@@ -9,6 +9,19 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%# OGP:リンクを貼ったときに SNS が読む「帯」(タイトル・説明・画像)。画像は public/ogp.png %>
+    <% ogp_description = "推し活グッズの持ち物・予約・ほしい物を、まとめて管理できるアプリ" %>
+    <meta property="og:title" content="推しストック">
+    <meta property="og:description" content="<%= ogp_description %>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<%= root_url %>">
+    <%# 【自分の言葉】リンクを貼ったら、アプリの説明画像(public/ogp.png)が見えるようにするため %>
+    <meta property="og:image" content="<%= "#{request.base_url}/ogp.png" %>">
+    <meta property="og:site_name" content="推しストック">
+    <meta name="description" content="<%= ogp_description %>">
+    <%# X(旧 Twitter)で大きい画像のカードにする %>
+    <meta name="twitter:card" content="summary_large_image">
+
     <%= yield :head %>
 
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
