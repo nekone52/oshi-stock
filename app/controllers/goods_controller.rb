@@ -4,10 +4,8 @@ class GoodsController < ApplicationController
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid, :reserve ]
 
   def index
-    @items = Current.user.items.includes(:character, :category, image_attachment: :blob).order(created_at: :desc)
     @status = params[:status] if Item.statuses.key?(params[:status])
-    @items = @items.where(status: @status) if @status.present?
-    @items = @items.unpaid_first if @status == "reserved"
+    @items = items_for_status
 
     @selected_character = find_selected_character
     @items = @items.where(character: @selected_character) if @selected_character
@@ -18,6 +16,7 @@ class GoodsController < ApplicationController
     @categories = Current.user.categories.order(:created_at)
     @selected_category = @categories.find_by(id: params[:category_id]) if params[:category_id].present?
     @items = @items.where(category: @selected_category) if @selected_category
+    @wanted_groups = Item.group_by_reservation(@items) if @status == "wanted"
   end
 
   def show
@@ -97,6 +96,16 @@ class GoodsController < ApplicationController
 
   def set_item
     @item = Current.user.items.find(params[:id])
+  end
+
+  # 状態のタブでしぼる。「ほしい物」タブの1行の見た目はカテゴリを出さないので、ほかのタブのときだけカテゴリを読みこむ
+  def items_for_status
+    items = Current.user.items.includes(:character, image_attachment: :blob).order(created_at: :desc)
+    return items.includes(:category) if @status.blank?
+
+    items = items.where(status: @status)
+    items = items.unpaid_first if @status == "reserved"
+    @status == "wanted" ? items : items.includes(:category)
   end
 
   def assign_character_and_category
