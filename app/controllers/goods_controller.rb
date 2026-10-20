@@ -70,7 +70,8 @@ class GoodsController < ApplicationController
 
   def destroy
     @item.destroy
-    redirect_to helpers.back_path_for(@item), status: :see_other, notice: "グッズを消去しました"
+    # ほしい物リストの「諦めた」は、付せん back_to の画面(ホーム・一覧)にもどる。url_from でアプリの中の住所だけ通す
+    redirect_to url_from(params[:back_to]) || helpers.back_path_for(@item), status: :see_other, notice: "グッズを消去しました"
   end
 
   def receive
