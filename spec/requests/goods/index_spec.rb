@@ -46,6 +46,14 @@ RSpec.describe "グッズの一覧", type: :request do
       expect(response.body).not_to include("ヒナタのアクスタ")
     end
 
+    it "ほかの人の推しの番号が送られてきたら、しぼらずに自分のグッズを全部出す(#149)" do
+      someone_character = create(:character, user: create(:user))
+      get goods_path(character_id: someone_character.id)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("ヒナタのアクスタ", "アオイのぬい")
+      expect(response.body).not_to include("ほかの人のグッズ")
+    end
+
     it "カテゴリでしぼれる" do
       get goods_path(category_id: user.categories.find_by!(name: "缶バッジ").id)
       expect(response.body).to include("ヒナタの缶バッジ")
