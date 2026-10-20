@@ -2,7 +2,10 @@
 <div class="mx-auto max-w-[430px] px-4 pb-16">
 
   <header class="flex items-center gap-1 pt-4 pb-2">
-    <%= link_to settings_path, aria: { label: "戻る" }, class: "flex h-11 w-11 items-center justify-center text-ink" do %>
+    <%# 新規登録から来たとき(from=signup)は、入力を残したまま新規登録にもどる。それ以外は設定画面へ %>
+    <%# 【自分の言葉】受け取るのは新規登録だ!(受け取った付せんが signup かを見る) %>
+    <% from_signup = params[:from] == "signup" %>
+    <%= link_to (from_signup ? signup_path : settings_path), aria: { label: "戻る" }, data: (from_signup ? { controller: "history-back", action: "history-back#back" } : {}), class: "flex h-11 w-11 items-center justify-center text-ink" do %>
       <svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
     <% end %>
     <h1 class="font-display text-xl font-bold text-ink">プライバシーポリシー</h1>
