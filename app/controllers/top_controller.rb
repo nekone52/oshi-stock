@@ -10,6 +10,7 @@ class TopController < ApplicationController
     @items = @items.search_name(@query) if @query.present?
 
     @wanted_items   = @items.wanted
+    @wanted_groups  = Item.group_by_reservation(@wanted_items, limit: 4)
     @reserved_items = @items.reserved_or_unpaid.unpaid_first
     @owned_items    = @items.owned
 

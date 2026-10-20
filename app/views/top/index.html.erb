@@ -74,15 +74,24 @@
                  border: "border-chara-a", badge: "bg-chara-a-soft text-chara-a",
                  more_label: "ほしい物", more_path: goods_path({ status: "wanted", character_id: @selected_character&.id, q: @query.presence }.compact), more_class: "border-chara-a text-chara-a" %>
       <% if @wanted_items.any? %>
-        <div class="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
-          <% @wanted_items.limit(4).each do |item| %>
-            <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "w-[132px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-sm" do %>
-              <%= render "top/item_thumb", item: item, css: "h-20" %>
-              <div class="p-2">
-                <p class="mb-1 line-clamp-2 text-[13px] font-medium leading-snug"><%= item.name %></p>
-                <p class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 shrink-0 rounded-full"></span><span class="truncate"><%= item.character.name %></span></p>
-                <% if item.url.present? && !item.image.attached? %>
-                  <span class="mt-1 inline-block rounded-full border border-line bg-bg px-2 py-0.5 text-[10px] font-bold text-ink-faint">URLのみ</span>
+        <%# 予約の予定ごとに分けて並べる(分け方は Item#reservation_phase) %>
+        <div class="flex flex-col gap-2.5">
+          <% @wanted_groups.each do |phase, items| %>
+            <p class="mt-1 text-[11px] font-bold text-ink-soft"><%= ItemsHelper::RESERVATION_GROUP_LABELS[phase] %></p>
+            <% items.each do |item| %>
+              <div style="border: 2px solid <%= item.character.display_color %>" class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
+                <%= link_to good_path(item), class: "flex min-w-0 flex-1 items-center gap-3" do %>
+                  <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl" %>
+                  <div class="min-w-0 flex-1">
+                    <p class="mb-1 truncate text-[14px] font-medium"><%= item.name %></p>
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span class="flex items-center gap-1 text-[11px] text-ink-soft"><span style="background-color: <%= item.character.display_color %>" class="h-2 w-2 rounded-full"></span><%= item.character.name %></span>
+                      <span class="text-[11px] tabular-nums text-ink-soft"><%= release_label(item) %></span>
+                      <% if (chip = reservation_chip(item)) %>
+                        <span class="rounded-full px-2 py-0.5 text-[10px] font-bold tabular-nums <%= chip[1] %>"><%= chip[0] %></span>
+                      <% end %>
+                    </div>
+                  </div>
                 <% end %>
               </div>
             <% end %>
