@@ -51,5 +51,13 @@ RSpec.describe "推しキャラの一覧", type: :request do
       expect(response.body).to include(edit_oshi_path(character))
       expect(response.body).to include(confirm_delete_oshi_path(character))
     end
+
+    it "名刺に、その推しを選んだグッズ一覧へのリンクがある(#149)" do
+      character = create(:character, user: user)
+
+      sign_in_as(user)
+      get oshis_path
+      expect(response.body).to include(%(href="#{goods_path(character_id: character.id)}"))
+    end
   end
 end
