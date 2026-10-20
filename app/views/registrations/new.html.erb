@@ -49,7 +49,7 @@
         </div>
 
         <div class="flex flex-col items-center gap-3 px-4 pb-5">
-          <p class="text-xs leading-relaxed text-ink-soft">登録すると、<%= link_to "利用規約", terms_path, class: "font-bold text-accent-strong underline" %>と<%= link_to "プライバシーポリシー", privacy_path, class: "font-bold text-accent-strong underline" %>に同意したことになります。</p>
+          <p class="text-xs leading-relaxed text-ink-soft">登録すると、<%= link_to "利用規約", terms_path(from: "signup"), class: "font-bold text-accent-strong underline" %>と<%= link_to "プライバシーポリシー", privacy_path(from: "signup"), class: "font-bold text-accent-strong underline" %>に同意したことになります。</p>
           <%= f.submit "登録する", class: "w-full cursor-pointer rounded-full bg-accent px-6 py-2.5 font-display text-sm font-bold text-on-accent transition hover:-translate-y-0.5 hover:shadow-md active:scale-95" %>
         </div>
       <% end %>
