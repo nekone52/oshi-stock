@@ -1,7 +1,7 @@
 class GoodsController < ApplicationController
   include KeepsChosenImage
 
-  before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid ]
+  before_action :set_item, only: [ :show, :edit, :update, :destroy, :receive, :toggle_paid, :reserve ]
 
   def index
     @items = Current.user.items.includes(:character, :category, image_attachment: :blob).order(created_at: :desc)
@@ -77,6 +77,11 @@ class GoodsController < ApplicationController
   def receive
     @item.owned!
     redirect_back_or_to root_path, celebrate: "「#{@item.name}」を所持グッズに移しました"
+  end
+
+  def reserve
+    @item.reserved!
+    redirect_back_or_to root_path, celebrate: "「#{@item.name}」を予約注文中に移しました"
   end
 
   def toggle_paid

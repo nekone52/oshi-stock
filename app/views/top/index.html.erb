@@ -93,6 +93,15 @@
                     </div>
                   </div>
                 <% end %>
+                <%# 「予約した」= 予約中にする / 「届いた」= 所持にする(予約注文中の「届いた」と同じ行き先) %>
+                <div class="flex shrink-0 flex-col gap-1.5">
+                  <%= button_to reserve_good_path(item), method: :patch, class: "inline-flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-full border-[1.5px] border-unpaid bg-white px-3 py-1.5 text-xs font-bold text-unpaid" do %>
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 13l2 2 4-4"/><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4"/></svg>予約した
+                  <% end %>
+                  <%= button_to receive_good_path(item), method: :patch, class: "inline-flex w-full cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-full border-[1.5px] border-received bg-white px-3 py-1.5 text-xs font-bold text-received-strong" do %>
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></svg>届いた
+                  <% end %>
+                </div>
               </div>
             <% end %>
           <% end %>
