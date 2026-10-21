@@ -57,10 +57,8 @@
       <% @items.each do |item| %>
         <%= link_to good_path(item), style: "border: 2px solid #{item.character.display_color}", class: "flex flex-col overflow-hidden rounded-2xl bg-white" do %>
           <div class="relative">
-            <%= render "top/item_thumb", item: item, css: "h-24" %>
-            <% unless @status %>
-              <span class="absolute top-2 left-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm"><%= status_label(item) %></span>
-            <% end %>
+            <%# 「すべて」タブのときだけ、状態のバッジも左上にならべる %>
+            <%= render "top/item_thumb", item: item, css: "h-24", shop_tag: :corner, badge: (status_label(item) unless @status) %>
             <% if !item.paid && !item.wanted? %>
               <span class="absolute right-2 bottom-2 rounded-full bg-unpaid-bg px-2 py-0.5 text-[10px] font-bold text-unpaid">未払い</span>
             <% end %>
