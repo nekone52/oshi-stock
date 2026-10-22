@@ -89,7 +89,7 @@
           <% @reserved_items.limit(4).each do |item| %>
             <div style="border: 2px solid <%= item.character.display_color %>" class="flex items-center gap-3 rounded-2xl bg-white p-2.5 shadow-sm">
               <%= link_to good_path(item), class: "flex min-w-0 flex-1 items-center gap-3" do %>
-                <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl" %>
+                <%= render "top/item_thumb", item: item, css: "h-[52px] w-[52px] shrink-0 rounded-xl", shop_tag: :band %>
                 <div class="min-w-0 flex-1">
                   <p class="mb-1 truncate text-[14px] font-medium"><%= item.name %></p>
                   <div class="flex flex-wrap items-center gap-x-2 gap-y-1">

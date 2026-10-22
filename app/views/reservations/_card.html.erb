@@ -1,7 +1,7 @@
 <% soon = !item.paid && payment_due_soon?(item) %>
 <li style="border: 2px solid <%= item.character.display_color %>" class="flex flex-col gap-2.5 rounded-2xl bg-white p-3">
   <%= link_to good_path(item), class: "flex items-start gap-3" do %>
-    <%= render "top/item_thumb", item: item, css: "h-16 w-16 shrink-0 rounded-2xl" %>
+    <%= render "top/item_thumb", item: item, css: "h-16 w-16 shrink-0 rounded-2xl", shop_tag: :band %>
     <div class="flex min-w-0 flex-1 flex-col gap-1">
       <div class="flex items-center justify-between gap-2">
         <% if item.paid %>

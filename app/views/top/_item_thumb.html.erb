@@ -1,8 +1,9 @@
 <% color = item.character.display_color %>
-<%# shop_tag: :corner = 左上にお店のタグ(渡さないときは出さない)/ badge: 左上にならべる状態のバッジ %>
+<%# shop_tag: :corner = 左上にお店のタグ / :band = 写真の下にお店の帯(渡さないときは出さない)/ badge: 左上にならべる状態のバッジ %>
 <% shop_tag = local_assigns[:shop_tag] %>
 <% badge = local_assigns[:badge] %>
 <% show_shop = shop_tag == :corner && item.show_shop_tag? %>
+<% show_band = shop_tag == :band && item.show_shop_tag? %>
 <div style="background-color: color-mix(in srgb, <%= color %> 18%, white); color: <%= color %>" class="relative flex items-center justify-center overflow-hidden <%= css %>">
   <% if item.image.attached? %>
     <%= image_tag item.image.variant(:display), alt: item.name, draggable: false, class: "h-full w-full object-cover select-none [-webkit-touch-callout:none]" %>
@@ -19,5 +20,9 @@
         <span class="max-w-full truncate rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm"><%= item.shop_name %></span>
       <% end %>
     </div>
+  <% end %>
+  <%# 下の帯:写真の下のはしに白い帯でお店の名前。小さい写真なので、長い名前は「…」で切る %>
+  <% if show_band %>
+    <span class="absolute inset-x-0 bottom-0 truncate bg-white/90 px-1 py-px text-center text-[9px] font-bold text-ink"><%= item.shop_name %></span>
   <% end %>
 </div>
