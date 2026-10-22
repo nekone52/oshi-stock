@@ -17,12 +17,12 @@
         <span class="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm"><%= badge %></span>
       <% end %>
       <% if show_shop %>
-        <span class="max-w-full truncate rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm"><%= item.shop_name %></span>
+        <span data-shop-tag="corner" class="max-w-full truncate rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm"><%= item.shop_name %></span>
       <% end %>
     </div>
   <% end %>
   <%# 下の帯:写真の下のはしに白い帯でお店の名前。小さい写真なので、長い名前は「…」で切る %>
   <% if show_band %>
-    <span class="absolute inset-x-0 bottom-0 truncate bg-white/90 px-1 py-px text-center text-[9px] font-bold text-ink"><%= item.shop_name %></span>
+    <span data-shop-tag="band" class="absolute inset-x-0 bottom-0 truncate bg-white/90 px-1 py-px text-center text-[9px] font-bold text-ink"><%= item.shop_name %></span>
   <% end %>
 </div>
