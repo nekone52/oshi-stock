@@ -169,4 +169,17 @@ RSpec.describe Item, type: :model do
       expect(groups.map(&:first)).to eq(%i[open upcoming])
     end
   end
+
+  describe "#show_shop_tag?(写真にお店のタグを出すか #103)" do
+    it "お店の名前があって、予約中・ほしい物・届いた未払いのときは出す" do
+      expect(build(:item, shop_name: "アニメイト通販", status: :reserved).show_shop_tag?).to be true
+      expect(build(:item, shop_name: "アニメイト通販", status: :wanted).show_shop_tag?).to be true
+      expect(build(:item, shop_name: "アニメイト通販", status: :owned, paid: false).show_shop_tag?).to be true
+    end
+
+    it "届いて支払いも済んだもの・お店の名前が空のものには出さない" do
+      expect(build(:item, shop_name: "アニメイト通販", status: :owned, paid: true).show_shop_tag?).to be false
+      expect(build(:item, shop_name: "", status: :reserved).show_shop_tag?).to be false
+    end
+  end
 end

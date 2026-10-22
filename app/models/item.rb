@@ -48,6 +48,12 @@ class Item < ApplicationRecord
     wanted? ? 0 : quantity
   end
 
+  # 写真の上にお店の名前を出すか:購入先があって、届いた・未払い か 予約中 か ほしい物のとき(届いて支払いも済んだものには出さない)
+  # 【自分の言葉】届いて支払い済みのグッズは ((owned? && !paid) || reserved? || wanted?) に引っかからないので、ショップのタグは出ない
+  def show_shop_tag?
+    shop_name.present? && ((owned? && !paid) || reserved? || wanted?)
+  end
+
   # 予約の予定は保存しないで、今日の日付と予約開始日・〆切をくらべて毎回決める
   def reservation_phase(today = Date.current)
     return :closed if reservation_deadline_on.present? && reservation_deadline_on < today
